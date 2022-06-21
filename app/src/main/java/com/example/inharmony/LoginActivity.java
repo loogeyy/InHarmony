@@ -1,69 +1,50 @@
 package com.example.inharmony;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.spotify.android.appremote.api.ConnectionParams;
-import com.spotify.android.appremote.api.Connector;
-import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import com.spotify.protocol.types.Track;
-import com.spotify.sdk.android.auth.AuthorizationClient;
-import com.spotify.sdk.android.auth.AuthorizationRequest;
-import com.spotify.sdk.android.auth.AuthorizationResponse;
+import java.util.concurrent.TimeUnit;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends Activity {
 
-    private static String CLIENT_ID = "2a47f203a16d4b45aaaef910d6b4b547";
-    private static final String REDIRECT_URI = "http://com.example.inharmony/callback";
+    private static final String TAG = LoginActivity.class.getSimpleName();
+
+    @SuppressWarnings("SpellCheckingInspection")
+    private static final String CLIENT_ID = "8a91678afa49446c9aff1beaabe9c807";
+    @SuppressWarnings("SpellCheckingInspection")
+    private static final String REDIRECT_URI = "testschema://callback";
+
     private static final int REQUEST_CODE = 1337;
-    private SpotifyAppRemote mSpotifyAppRemote;
-    private String token;
-
-    AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(CLIENT_ID, AuthorizationResponse.Type.TOKEN, REDIRECT_URI);
-
-    private Button btnConnectToSpotify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        btnConnectToSpotify = findViewById(R.id.btnConnectToSpotify);
+        String token = CredentialsHandler.getToken(this);
+        if (token == null) {
+            setContentView(R.layout.activity_login);
+        } else {
+            startMainActivity(token);
+        }
+    }
 
-        btnConnectToSpotify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // set authorization scopes for endpoints
-                // https://developer.spotify.com/documentation/general/guides/authorization/scopes/
-
-                // potential issue with built-in authorization for android sdk not allowing multiple scopes?
-                // https://developer.spotify.com/documentation/android/
-                builder.setScopes(new String[]{"streaming", "user-read-recently-played", "user-modify-playback-state",
+    public void onLoginButtonClicked(View view) {
+        final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
+                .setScopes(new String[]{"streaming", "user-read-recently-played", "user-modify-playback-state",
                         "playlist-read-collaborative", "user-read-playback-state", "user-read-email", "user-top-read",
                         "playlist-modify-public", "user-library-modify", "user-follow-read", "user-read-currently-playing",
-                        "user-library-read", "user-read-private"
-                });
-                AuthorizationRequest request = builder.build();
+                        "user-library-read", "user-read-private"})
+                .build();
 
-                AuthorizationClient.openLoginActivity(LoginActivity.this, REQUEST_CODE, request);
-                /*
-                 // To start LoginActivity from a Fragment:
-                 Intent intent = AuthorizationClient.createLoginActivityIntent(getActivity(), request);
-                 startActivityForResult(intent, REQUEST_CODE);
-
-                 // To close LoginActivity
-                 AuthorizationClient.stopLoginActivity(getActivity(), REQUEST_CODE);
-
-                 */
-            }
-        });
+        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
     @Override
@@ -72,80 +53,41 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
-            // https://spotify.github.io/android-sdk/auth-lib/docs/com/spotify/sdk/android/auth/AuthorizationResponse.html
-            AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, intent);
-
+            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    // Handle successful response
-                    token = response.getAccessToken();
-                    Log.d("token", response.getAccessToken());
-                    //response.g
-
+                    logMessage("Got token: " + response.getAccessToken());
+                    CredentialsHandler.setToken(this, response.getAccessToken(), response.getExpiresIn(), TimeUnit.SECONDS);
+                    startMainActivity(response.getAccessToken());
                     break;
 
                 // Auth flow returned an error
                 case ERROR:
-                    // Handle error response
+                    logError("Auth error: " + response.getError());
                     break;
 
                 // Most likely auth flow was cancelled
                 default:
-
-                    // Handle other cases
+                    logError("Auth result: " + response.getType());
             }
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        ConnectionParams connectionParams =
-                new ConnectionParams.Builder(CLIENT_ID)
-                        .setRedirectUri(REDIRECT_URI)
-                        .showAuthView(true)
-                        .build();
-
-        SpotifyAppRemote.connect(this, connectionParams,
-                new Connector.ConnectionListener() {
-
-                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                        mSpotifyAppRemote = spotifyAppRemote;
-                        Log.d("MainActivity", "Connected! Yay!");
-
-                        // Now you can start interacting with App Remote
-                        connected();
-
-                    }
-
-                    public void onFailure(Throwable throwable) {
-                        Toast.makeText(LoginActivity.this, "Please download spotify", Toast.LENGTH_SHORT).show();
-                        Log.e("MainActivity", throwable.getMessage(), throwable);
-
-                        // Something went wrong when attempting to connect! Handle errors here
-                    }
-                });
+    private void startMainActivity(String token) {
+        Intent intent = MainActivity.createIntent(this);
+        intent.putExtra(MainActivity.EXTRA_TOKEN, token);
+        startActivity(intent);
+        finish();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+    private void logError(String msg) {
+        Toast.makeText(this, "Error: " + msg, Toast.LENGTH_SHORT).show();
+        Log.e(TAG, msg);
     }
 
-    private void connected() {
-        // Play a playlist
-        mSpotifyAppRemote.getPlayerApi().play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
-
-        // Subscribe to PlayerState
-        mSpotifyAppRemote.getPlayerApi()
-                .subscribeToPlayerState()
-                .setEventCallback(playerState -> {
-                    final Track track = playerState.track;
-                    if (track != null) {
-                        Log.d("MainActivity", track.name + " by " + track.artist.name);
-                    }
-                });
+    private void logMessage(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        Log.d(TAG, msg);
     }
 }
