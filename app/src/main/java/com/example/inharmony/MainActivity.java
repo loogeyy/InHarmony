@@ -16,6 +16,20 @@ import java.util.List;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class MainActivity extends AppCompatActivity implements Search.View {
+    /*
+    SENDING:
+    Fragment fragment = new PostDetailsFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("post", posts.get(getAdapterPosition()));
+                    fragment.setArguments(bundle);
+                    fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+
+    RECEIVING:
+     Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            user = bundle.getParcelable("user");
+        }
+     */
 
     static final String EXTRA_TOKEN = "EXTRA_TOKEN";
     private static final String KEY_CURRENT_QUERY = "CURRENT_QUERY";
@@ -48,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements Search.View {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //grabs intent from login including token
         Intent intent = getIntent();
         String token = intent.getStringExtra(EXTRA_TOKEN);
 

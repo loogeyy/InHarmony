@@ -45,6 +45,7 @@ public class SearchPager {
         options.put(SpotifyService.OFFSET, offset);
         options.put(SpotifyService.LIMIT, limit);
 
+
         mSpotifyApi.searchTracks(query, options, new SpotifyCallback<TracksPager>() {
             @Override
             public void success(TracksPager tracksPager, Response response) {

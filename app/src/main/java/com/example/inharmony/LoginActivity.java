@@ -29,6 +29,7 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         String token = CredentialsHandler.getToken(this);
+        // login page if no token is found
         if (token == null) {
             setContentView(R.layout.activity_login);
         } else {
@@ -44,9 +45,11 @@ public class LoginActivity extends Activity {
                         "user-library-read", "user-read-private"})
                 .build();
 
+        // open up spotify log in scree
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
+    // post-login
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
