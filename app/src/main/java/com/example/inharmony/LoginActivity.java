@@ -13,23 +13,20 @@ import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 
-import com.spotify.protocol.client.Subscription;
-import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
-    private static final String CLIENT_ID = "2a47f203a16d4b45aaaef910d6b4b547";
+    private static String CLIENT_ID = "2a47f203a16d4b45aaaef910d6b4b547";
     private static final String REDIRECT_URI = "http://com.example.inharmony/callback";
     private static final int REQUEST_CODE = 1337;
     private SpotifyAppRemote mSpotifyAppRemote;
+    private String token;
 
     AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(CLIENT_ID, AuthorizationResponse.Type.TOKEN, REDIRECT_URI);
-
-
 
     private Button btnConnectToSpotify;
 
@@ -43,11 +40,28 @@ public class MainActivity extends AppCompatActivity {
         btnConnectToSpotify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                builder.setScopes(new String[]{"streaming"});
+                // set authorization scopes for endpoints
+                // https://developer.spotify.com/documentation/general/guides/authorization/scopes/
+
+                // potential issue with built-in authorization for android sdk not allowing multiple scopes?
+                // https://developer.spotify.com/documentation/android/
+                builder.setScopes(new String[]{"streaming", "user-read-recently-played", "user-modify-playback-state",
+                        "playlist-read-collaborative", "user-read-playback-state", "user-read-email", "user-top-read",
+                        "playlist-modify-public", "user-library-modify", "user-follow-read", "user-read-currently-playing",
+                        "user-library-read", "user-read-private"
+                });
                 AuthorizationRequest request = builder.build();
 
-                AuthorizationClient.openLoginActivity(MainActivity.this, REQUEST_CODE, request);
+                AuthorizationClient.openLoginActivity(LoginActivity.this, REQUEST_CODE, request);
+                /*
+                 // To start LoginActivity from a Fragment:
+                 Intent intent = AuthorizationClient.createLoginActivityIntent(getActivity(), request);
+                 startActivityForResult(intent, REQUEST_CODE);
 
+                 // To close LoginActivity
+                 AuthorizationClient.stopLoginActivity(getActivity(), REQUEST_CODE);
+
+                 */
             }
         });
     }
@@ -58,12 +72,17 @@ public class MainActivity extends AppCompatActivity {
 
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
+            // https://spotify.github.io/android-sdk/auth-lib/docs/com/spotify/sdk/android/auth/AuthorizationResponse.html
             AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, intent);
 
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
                     // Handle successful response
+                    token = response.getAccessToken();
+                    Log.d("token", response.getAccessToken());
+                    //response.g
+
                     break;
 
                 // Auth flow returned an error
@@ -73,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Most likely auth flow was cancelled
                 default:
+
                     // Handle other cases
             }
         }
@@ -100,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     public void onFailure(Throwable throwable) {
-                        Toast.makeText(MainActivity.this, "Please download spotify", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Please download spotify", Toast.LENGTH_SHORT).show();
                         Log.e("MainActivity", throwable.getMessage(), throwable);
 
                         // Something went wrong when attempting to connect! Handle errors here
