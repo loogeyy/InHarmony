@@ -52,6 +52,8 @@ public class SearchPresenter implements Search.ActionListener {
         logMessage("Api Client created");
         SpotifyApi spotifyApi = new SpotifyApi();
 
+
+
         if (accessToken != null) {
             spotifyApi.setAccessToken(accessToken);
         } else {

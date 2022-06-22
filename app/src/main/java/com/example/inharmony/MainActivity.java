@@ -20,8 +20,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.inharmony.fragments.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.models.Track;
 
@@ -72,12 +74,13 @@ public class MainActivity extends AppCompatActivity {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                intent.putExtra("logout", true);
+                //AuthenticationClient.clearCookies(getApplicationContext());
+                CredentialsHandler.setToken(MainActivity.this, null, 0, TimeUnit.SECONDS);
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(i);
             }
         });
-
+        bottomMenu.setSelectedItemId(R.id.actionProfile);
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -106,6 +109,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // sets default screen
-        bottomMenu.setSelectedItemId(R.id.actionProfile);
+
     }
 }

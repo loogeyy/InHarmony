@@ -5,16 +5,16 @@
     <item
         android:id="@+id/actionProfile"
         android:icon="@drawable/person"
-        android:title="Home"
+        android:title="Profile"
         app:showAsAction="always" />
     <item
         android:id="@+id/actionMatch"
         android:icon="@drawable/match"
-        android:title="Post"
+        android:title="Match"
         app:showAsAction="always" />
     <item
         android:id="@+id/actionMessage"
         android:icon="@drawable/message"
-        android:title="Profile"
+        android:title="Message"
         app:showAsAction="always" />
 </menu>
