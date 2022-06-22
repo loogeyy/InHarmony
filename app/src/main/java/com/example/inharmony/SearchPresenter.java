@@ -9,6 +9,8 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -63,7 +65,7 @@ public class SearchPresenter implements Search.ActionListener {
 
 
     @Override
-    public void search(String searchQuery) {
+    public void search(@Nullable String searchQuery) {
         if (searchQuery != null && !searchQuery.isEmpty() && !searchQuery.equals(mCurrentQuery)) {
             logMessage("query text submit " + searchQuery);
             mCurrentQuery = searchQuery;
@@ -90,6 +92,7 @@ public class SearchPresenter implements Search.ActionListener {
     }
 
     @Override
+    @Nullable
     public String getCurrentQuery() {
         return mCurrentQuery;
     }

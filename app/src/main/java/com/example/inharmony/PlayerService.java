@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import androidx.annotation.Nullable;
+
 
 public class PlayerService extends Service {
 
@@ -22,7 +24,7 @@ public class PlayerService extends Service {
         }
     }
 
-
+    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;

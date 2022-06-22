@@ -4,18 +4,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.SearchView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.inharmony.fragments.SearchFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Track;
 
-public class MainActivity extends AppCompatActivity implements Search.View {
+public class MainActivity extends AppCompatActivity {
     /*
     SENDING:
     Fragment fragment = new PostDetailsFragment();
@@ -30,28 +40,18 @@ public class MainActivity extends AppCompatActivity implements Search.View {
             user = bundle.getParcelable("user");
         }
      */
+    private BottomNavigationView bottomMenu;
+    private Button btnLogout;
 
     static final String EXTRA_TOKEN = "EXTRA_TOKEN";
     private static final String KEY_CURRENT_QUERY = "CURRENT_QUERY";
 
+    final FragmentManager fragmentManager = getSupportFragmentManager();
     private Search.ActionListener mActionListener;
 
     private LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
-    private ScrollListener mScrollListener = new ScrollListener(mLayoutManager);
     private SearchResultsAdapter mAdapter;
 
-
-    private class ScrollListener extends ResultListScrollListener {
-
-        public ScrollListener(LinearLayoutManager layoutManager) {
-            super(layoutManager);
-        }
-
-        @Override
-        public void onLoadMore() {
-            mActionListener.loadMoreResults();
-        }
-    }
 
     public static Intent createIntent(Context context) {
         return new Intent(context, MainActivity.class);
@@ -66,82 +66,46 @@ public class MainActivity extends AppCompatActivity implements Search.View {
         Intent intent = getIntent();
         String token = intent.getStringExtra(EXTRA_TOKEN);
 
-        mActionListener = new SearchPresenter(this, this);
-        mActionListener.init(token);
+        bottomMenu = findViewById(R.id.bottomMenu);
+        btnLogout = findViewById(R.id.btnLogout);
 
-        // Setup search field
-        final SearchView searchView = (SearchView) findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                mActionListener.search(query);
-                searchView.clearFocus();
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                intent.putExtra("logout", true);
+                startActivity(i);
+            }
+        });
+
+        bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment = new SearchFragment();
+                switch (item.getItemId()) {
+
+                    case R.id.actionMatch:
+                        //fragment = new MatchFragment();
+                        break;
+                    case R.id.actionMessage:
+                        break;
+                    case R.id.actionProfile:
+                    default:
+                        Toast.makeText(MainActivity.this, "Profile", Toast.LENGTH_SHORT).show();
+                        Log.d("Menu", "Profile pressed");
+                        fragment = new SearchFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(SearchFragment.EXTRA_TOKEN, token);
+                        fragment.setArguments(bundle);
+                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                        //fragment = new MatchFragment(ParseUser.getCurrentUser());
+                        break;
+                }
+                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
             }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
         });
-
-
-        // Setup search results list
-        mAdapter = new SearchResultsAdapter(this, new SearchResultsAdapter.ItemSelectedListener() {
-            @Override
-            public void onItemSelected(View itemView, Track item) {
-                mActionListener.selectTrack(item);
-            }
-        });
-
-        RecyclerView resultsList = (RecyclerView) findViewById(R.id.search_results);
-        resultsList.setHasFixedSize(true);
-        resultsList.setLayoutManager(mLayoutManager);
-        resultsList.setAdapter(mAdapter);
-        resultsList.addOnScrollListener(mScrollListener);
-
-        // If Activity was recreated wit active search restore it
-        if (savedInstanceState != null) {
-            String currentQuery = savedInstanceState.getString(KEY_CURRENT_QUERY);
-            mActionListener.search(currentQuery);
-        }
+        // sets default screen
+        bottomMenu.setSelectedItemId(R.id.actionProfile);
     }
-
-    @Override
-    public void reset() {
-        mScrollListener.reset();
-        mAdapter.clearData();
-    }
-
-    @Override
-    public void addData(List<Track> items) {
-        mAdapter.addData(items);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mActionListener.pause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mActionListener.resume();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mActionListener.getCurrentQuery() != null) {
-            outState.putString(KEY_CURRENT_QUERY, mActionListener.getCurrentQuery());
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        mActionListener.destroy();
-        super.onDestroy();
-    }
-
 }

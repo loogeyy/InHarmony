@@ -11,6 +11,8 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
+import org.parceler.Parcels;
+
 import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends Activity {
@@ -27,14 +29,19 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        String token = CredentialsHandler.getToken(this);
+        String token;
+        if (Parcels.unwrap(getIntent().getParcelableExtra("logout")) != null) {
+            token = null;
+        } else {
+            token = CredentialsHandler.getToken(this);
+        }
         // login page if no token is found
         if (token == null) {
             setContentView(R.layout.activity_login);
         } else {
             startMainActivity(token);
         }
+
     }
 
     public void onLoginButtonClicked(View view) {
@@ -60,7 +67,7 @@ public class LoginActivity extends Activity {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    logMessage("Got token: " + response.getAccessToken());
+                    //logMessage("Got token: " + response.getAccessToken());
                     CredentialsHandler.setToken(this, response.getAccessToken(), response.getExpiresIn(), TimeUnit.SECONDS);
                     startMainActivity(response.getAccessToken());
                     break;

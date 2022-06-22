@@ -14,9 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InHarmony">
         <activity
+            android:name=".SignUpActivity"
+            android:exported="false" />
+        <activity
             android:name=".MatchingActivity"
             android:exported="false" />
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">

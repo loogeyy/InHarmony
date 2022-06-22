@@ -1,6 +1,7 @@
 package com.example.inharmony;
 
 
+import androidx.annotation.Nullable;
 
 public interface Player {
 
@@ -12,7 +13,7 @@ public interface Player {
 
     boolean isPlaying();
 
-
+    @Nullable
     String getCurrentTrack();
 
     void release();

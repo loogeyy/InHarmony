@@ -5,6 +5,8 @@ import android.media.MediaPlayer;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import java.io.IOException;
 
 public class PreviewPlayer implements Player, MediaPlayer.OnCompletionListener {
@@ -79,6 +81,7 @@ public class PreviewPlayer implements Player, MediaPlayer.OnCompletionListener {
     }
 
     @Override
+    @Nullable
     public String getCurrentTrack() {
         return mCurrentTrack;
     }
