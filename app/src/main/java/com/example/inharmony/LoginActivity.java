@@ -2,6 +2,7 @@ package com.example.inharmony;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -111,26 +112,29 @@ public class LoginActivity extends Activity {
                 // Response was successful and contains auth token
                 case TOKEN:
                     //logMessage("Got token: " + response.getAccessToken());
-                    CredentialsHandler.setToken(this, response.getAccessToken(), response.getExpiresIn(), TimeUnit.SECONDS);
-                    startMainActivity(response.getAccessToken());
+                    CredentialsHandler.setToken(this, token, response.getExpiresIn(), TimeUnit.SECONDS);
+                    //startMainActivity(response.getAccessToken());
 
-
-
-
-
-
-
-                    token = CredentialsHandler.getToken(this);
+                    token = response.getAccessToken();
 
                     SpotifyApi spotifyApi = new SpotifyApi();
                     spotifyApi.setAccessToken(token);
-                   // SpotifyService service =  new SpotifyApi().getService();
-                   // String email = service.getMe().email;
-                    //String id = service.getMe().id;
-//                    Log.i("EMAIL", email);
-//                    Log.i("ID", id);
-//                    createUser(email, id);
-//                    startMainActivity(token);
+                    SpotifyService service = spotifyApi.getService();
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            String email = service.getMe().email;
+                            String id = service.getMe().id;
+                            loginUser(email, id);
+                            Log.i("EMAIL", email);
+                            Log.i("ID", id);
+                            //createUser(email, id);
+                        }
+                    });
+
+
+
+                   startMainActivity(token);
                     break;
 
                 // Auth flow returned an error

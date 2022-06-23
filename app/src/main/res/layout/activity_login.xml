@@ -18,4 +18,9 @@
         android:layout_centerVertical="true"
         android:onClick="onLoginButtonClicked"
         android:text="@string/login_button"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log into Spotify to begin connecting with other users!" />
 </RelativeLayout>

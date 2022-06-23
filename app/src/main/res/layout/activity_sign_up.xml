@@ -6,4 +6,31 @@
     android:layout_height="match_parent"
     tools:context=".SignUpActivity">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="324dp"
+        android:layout_height="63dp"
+        android:text="It looks like you're new here! Let's start by filling out some basic profile details."
+        tools:layout_editor_absoluteX="34dp"
+        tools:layout_editor_absoluteY="41dp" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        tools:layout_editor_absoluteX="80dp"
+        tools:layout_editor_absoluteY="130dp" />
+
+    <EditText
+        android:id="@+id/editTextNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:text="Age"
+        tools:layout_editor_absoluteX="80dp"
+        tools:layout_editor_absoluteY="187dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

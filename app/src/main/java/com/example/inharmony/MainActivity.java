@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.inharmony.fragments.MatchingFragment;
 import com.example.inharmony.fragments.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
 
                     case R.id.actionMatch:
-                        //fragment = new MatchFragment();
+                        fragment = new MatchingFragment();
                         break;
                     case R.id.actionMessage:
                         break;
