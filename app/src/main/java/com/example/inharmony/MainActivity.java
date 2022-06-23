@@ -21,6 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.inharmony.fragments.MatchingFragment;
 import com.example.inharmony.fragments.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.LogOutCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseUser;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 
 import java.util.List;
@@ -75,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ParseUser.logOutInBackground(new LogOutCallback() {
+                    @Override
+                    public void done(ParseException e) {
+
+                    }
+                });
                 //AuthenticationClient.clearCookies(getApplicationContext());
                 CredentialsHandler.setToken(MainActivity.this, null, 0, TimeUnit.SECONDS);
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);

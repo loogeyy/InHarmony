@@ -45,6 +45,7 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         //AuthenticationClient.clearCookies(this);
         token = CredentialsHandler.getToken(this);
+        ParseUser.logOutInBackground();
         // login page if no token is found
         if (token == null) {
             setContentView(R.layout.activity_login);
@@ -54,39 +55,45 @@ public class LoginActivity extends Activity {
 
     }
 
-    private void loginUser(String username, String password) {
+    private void loginUser(String username, String password, String token) {
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
                 if (e != null) {
-                    Log.e("LoginActivity","Issue with log in:", e);
+                    Log.i("E code:", Integer.toString(e.getCode()));
+                    if (e.getCode() == 101) {
+                        Log.i("loginUser TOKEN: ", token);
+                        Log.i("login user E code:", Integer.toString(e.getCode()));
+                        Log.i("Sign up requested: ", "redirect to sign up page");
+                        createUser(username, password, token);
+                        startSignUpActivity(token);
+                    }
                     return;
                 }
+                startMainActivity(token);
             }
         });
     }
 
-    private void createUser(String username, String password) {
+    private void createUser(String username, String password, String token) {
         Log.i(TAG, "Attempting to create user " + username + "...");
         ParseUser user = new ParseUser();
         user.setUsername(username);
         user.setPassword(password);
-        //initialized liked array here
         user.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    //Toast.makeText(LoginActivity.this, "Error on sign-up!", Toast.LENGTH_SHORT);
-                    Log.e(TAG, "Issue with login", e);
+                     Log.i("createUser TOKEN: ", token);
+                     Log.i("create user E code:", Integer.toString(e.getCode()));
+                     Log.e(TAG, "Issue with sign up", e);
+                     //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
                     return;
                 }
-                // Navigate to main activity upon successful sign-in
-                //Toast.makeText(LoginActivity.this, "Success!", Toast.LENGTH_SHORT);
+               startSignUpActivity(token);
             }
         });
     }
-
-
 
     public void onLoginButtonClicked(View view) {
         final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
@@ -125,16 +132,12 @@ public class LoginActivity extends Activity {
                         public void run() {
                             String email = service.getMe().email;
                             String id = service.getMe().id;
-                            loginUser(email, id);
+                            loginUser(email, id, token);
                             Log.i("EMAIL", email);
                             Log.i("ID", id);
-                            //createUser(email, id);
+                            //createUser(email, id, token);
                         }
                     });
-
-
-
-                   startMainActivity(token);
                     break;
 
                 // Auth flow returned an error
@@ -152,6 +155,13 @@ public class LoginActivity extends Activity {
     private void startMainActivity(String token) {
         Intent intent = MainActivity.createIntent(this);
         intent.putExtra(MainActivity.EXTRA_TOKEN, token);
+        startActivity(intent);
+        finish();
+    }
+
+    private void startSignUpActivity(String token) {
+        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+        intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
         startActivity(intent);
         finish();
     }
