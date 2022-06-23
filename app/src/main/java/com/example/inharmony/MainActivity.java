@@ -79,12 +79,6 @@ public class MainActivity extends AppCompatActivity {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseUser.logOutInBackground(new LogOutCallback() {
-                    @Override
-                    public void done(ParseException e) {
-
-                    }
-                });
                 //AuthenticationClient.clearCookies(getApplicationContext());
                 CredentialsHandler.setToken(MainActivity.this, null, 0, TimeUnit.SECONDS);
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
