@@ -49,6 +49,7 @@ dependencies {
     annotationProcessor 'org.parceler:parceler:1.1.12'
     implementation 'com.github.parse-community.Parse-SDK-Android:parse:3.0.0'
     implementation 'com.google.guava:guava:27.0.1-android'
+    implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
 
 
 

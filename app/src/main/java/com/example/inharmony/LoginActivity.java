@@ -43,7 +43,6 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //AuthenticationClient.clearCookies(this);
         token = CredentialsHandler.getToken(this);
         ParseUser.logOutInBackground();
         // login page if no token is found
@@ -55,6 +54,7 @@ public class LoginActivity extends Activity {
 
     }
 
+    //TO-DO: rather than rely on error codes, query the user database and collect list of users to check against
     private void loginUser(String username, String password, String token) {
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
@@ -120,7 +120,6 @@ public class LoginActivity extends Activity {
                 case TOKEN:
                     //logMessage("Got token: " + response.getAccessToken());
                     CredentialsHandler.setToken(this, token, response.getExpiresIn(), TimeUnit.SECONDS);
-                    //startMainActivity(response.getAccessToken());
 
                     token = response.getAccessToken();
 
@@ -132,10 +131,11 @@ public class LoginActivity extends Activity {
                         public void run() {
                             String email = service.getMe().email;
                             String id = service.getMe().id;
+                            List<String> genreList = service.getSeedsGenres().genres;
                             loginUser(email, id, token);
                             Log.i("EMAIL", email);
                             Log.i("ID", id);
-                            //createUser(email, id, token);
+                            Log.i("GENRES", genreList.toString());
                         }
                     });
                     break;
@@ -160,7 +160,7 @@ public class LoginActivity extends Activity {
     }
 
     private void startSignUpActivity(String token) {
-        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+        Intent intent = SignUpActivity.createIntent(this);
         intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
         startActivity(intent);
         finish();
