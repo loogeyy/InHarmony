@@ -161,7 +161,9 @@ public class LoginActivity extends Activity {
 
     private void startSignUpActivity(String token) {
         Intent intent = SignUpActivity.createIntent(this);
+        String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
         intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
+        intent.putExtra("tvWelcomeText", welcomeText);
         startActivity(intent);
         finish();
     }

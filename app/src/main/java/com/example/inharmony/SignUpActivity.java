@@ -7,7 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidbuts.multispinnerfilter.KeyPairBoolData;
@@ -32,6 +37,11 @@ public class SignUpActivity extends AppCompatActivity {
     private List<String> genreList = Arrays.asList("hi", "hello", "hey");
 
     private MultiSpinnerSearch genres;
+    private TextView tvWelcomeText;
+    private Button btnUpdateProfile;
+    private EditText etName;
+    private EditText etAge;
+    //private EditText etGender;
 
     public static Intent createIntent(Context context) {
         return new Intent(context, SignUpActivity.class);
@@ -41,9 +51,19 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
         genres = findViewById(R.id.genres);
+        tvWelcomeText = findViewById(R.id.tvWelcomeText);
+        btnUpdateProfile = findViewById(R.id.btnUpdateProfile);
+        etName = findViewById(R.id.etName);
+        etAge = findViewById(R.id.etAge);
+        //etGender = findViewById(R.id.etGender);
+
+
+
         Intent intent = getIntent();
         String token = intent.getStringExtra(EXTRA_TOKEN);
+        tvWelcomeText.setText(intent.getStringExtra("tvWelcomeText"));
 
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
@@ -69,6 +89,31 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(etName.getText())) {
+                    etName.setError("First name is required!");
+                    return;
+                }
+//                if (!TextUtils.isDigitsOnly(etAge.getText())){
+//                    etAge.setError("Please enter your age as a number.");
+//                    return;
+//                }
+                if (TextUtils.isEmpty(etAge.getText())) {
+                    etAge.setError("Please enter your age.");
+                    return;
+                }
+                if (Integer.parseInt(etAge.getText().toString()) < 13) {
+                    etAge.setError("Users must be above 13 to make an account");
+                    return;
+                }
+
+
+                    Intent i = new Intent(SignUpActivity.this, MainActivity.class);
+
+            }
+        });
     }
 
     private List<KeyPairBoolData> generateGenresList(List<String> list) {
@@ -107,7 +152,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onLimitListener(KeyPairBoolData data) {
                 Toast.makeText(getApplicationContext(),
-                        "Limit exceed", Toast.LENGTH_LONG).show();
+                        "You may only sel", Toast.LENGTH_LONG).show();
             }
         });
     }
