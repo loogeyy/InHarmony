@@ -31,6 +31,7 @@ import com.parse.SignUpCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -230,25 +231,19 @@ public class EditProfileFragment extends Fragment {
             KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
             keyPairBoolData.setId(i + 1);
             keyPairBoolData.setName(list.get(i));
-            keyPairBoolData.setSelected(false);
-            newList.add(keyPairBoolData);
-        }
-        if (!newSignUp) {
-            JSONArray array = (JSONArray) ParseUser.getCurrentUser().get("favGenres");
-            for (int j = 0; j < array.length(); j++) {
-                try {
-                    String genre = array.get(j).toString();
-                    Integer index = newList.indexOf(genre);
-
-                    KeyPairBoolData updated = new KeyPairBoolData();
-                    updated.setName(genre);
-                    updated.setSelected(true);
-                    newList.set(index, updated);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            if (!newSignUp) {
+                ArrayList<String> array = (ArrayList<String>) ParseUser.getCurrentUser().get("favGenres");
+                if (array.contains(list.get(i))) {
+                    keyPairBoolData.setSelected(true);
+                } else {
+                    keyPairBoolData.setSelected(false);
                 }
+
+            } else {
+                keyPairBoolData.setSelected(false);
             }
+
+            newList.add(keyPairBoolData);
         }
         return newList;
     }

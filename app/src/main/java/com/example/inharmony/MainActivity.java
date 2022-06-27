@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.inharmony.fragments.EditProfileFragment;
 import com.example.inharmony.fragments.MatchingFragment;
+import com.example.inharmony.fragments.MyProfileFragment;
 import com.example.inharmony.fragments.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.concurrent.TimeUnit;
@@ -99,24 +100,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(SearchFragment.EXTRA_TOKEN, token);
                 switch (item.getItemId()) {
                     case R.id.actionMatch:
                         fragment = new MatchingFragment();
                         break;
                     case R.id.actionMessage:
-                        break;
-                    case R.id.actionProfile:
-                    default:
                         Toast.makeText(MainActivity.this, "Profile", Toast.LENGTH_SHORT).show();
                         Log.d("Menu", "Profile pressed");
                         fragment = new SearchFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(SearchFragment.EXTRA_TOKEN, token);
-                        fragment.setArguments(bundle);
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                         //fragment = new MatchFragment(ParseUser.getCurrentUser());
                         break;
+                    case R.id.actionProfile:
+                    default:
+                        fragment = new EditProfileFragment();
+                        //fragment = new MyProfileFragment();
+                        break;
                 }
+                fragment.setArguments(bundle);
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
             }
