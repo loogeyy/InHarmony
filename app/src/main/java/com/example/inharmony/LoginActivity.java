@@ -1,20 +1,15 @@
 package com.example.inharmony;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
-import com.parse.FindCallback;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import com.parse.LogInCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.ParseObject;
 import com.parse.SignUpCallback;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -28,14 +23,13 @@ import java.util.concurrent.TimeUnit;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends AppCompatActivity {
     public static String token = null;
 
     private static final String TAG = LoginActivity.class.getSimpleName();
+    final FragmentManager fragmentManager = getSupportFragmentManager();
 
-    @SuppressWarnings("SpellCheckingInspection")
     private static final String CLIENT_ID = "8a91678afa49446c9aff1beaabe9c807";
-    @SuppressWarnings("SpellCheckingInspection")
     private static final String REDIRECT_URI = "testschema://callback";
 
     private static final int REQUEST_CODE = 1337;
@@ -49,7 +43,7 @@ public class LoginActivity extends Activity {
         if (token == null) {
             setContentView(R.layout.activity_login);
         } else {
-            startMainActivity(token);
+            startMainActivity(token, false);
         }
 
     }
@@ -66,11 +60,12 @@ public class LoginActivity extends Activity {
                         Log.i("login user E code:", Integer.toString(e.getCode()));
                         Log.i("Sign up requested: ", "redirect to sign up page");
                         //createUser(username, password, token);
-                        startSignUpActivity(token);
+                        //startSignUpFragment(token);
+                        startMainActivity(token, true);
                     }
                     return;
                 }
-                startMainActivity(token);
+                startMainActivity(token, false);
             }
         });
     }
@@ -153,16 +148,30 @@ public class LoginActivity extends Activity {
         }
     }
 
-    private void startMainActivity(String token) {
+    private void startMainActivity(String token, boolean signUp) {
         Intent intent = MainActivity.createIntent(this);
         intent.putExtra(MainActivity.EXTRA_TOKEN, token);
+        Log.i("SIGN UP IN LOGIN ACTIVITY", String.valueOf(signUp));
+        if (signUp) {
+            intent.putExtra(String.valueOf(MainActivity.NEW_SIGN_UP), true);
+        } else {
+            intent.putExtra(String.valueOf(MainActivity.NEW_SIGN_UP), false);
+        }
         startActivity(intent);
         finish();
     }
 
-    private void startSignUpActivity(String token) {
+    private void startSignUpFragment(String token) {
+//        Fragment fragment = new EditProfileFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+//        bundle.putBoolean("newSignUp", true);
+       String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
+//        bundle.putString("tvWelcomeText", welcomeText);
+//
+//        fragment.setArguments(bundle);
+//        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
         Intent intent = SignUpActivity.createIntent(this);
-        String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
         intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
         intent.putExtra("tvWelcomeText", welcomeText);
         intent.putExtra("newSignUp", true); //put this as false for edit profile intent
