@@ -10,4 +10,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- InHarmony Color Scheme -->
+    <color name="dark_navy">#050A30</color>
+    <color name="navy">#12229D</color>
+    <color name="medium_blue">#233DFF</color>
+    <color name="baby_blue">#5CB6F9</color>
+    <color name="light_blue">#CAE8FF</color>
+
 </resources>

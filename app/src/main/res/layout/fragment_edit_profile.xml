@@ -12,10 +12,11 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvWelcomeText"
         tools:src="@tools:sample/avatars" />
 
     <ImageButton
@@ -37,9 +38,9 @@
         android:fontFamily="sans-serif"
         android:hint="Bio"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.163"
+        app:layout_constraintHorizontal_bias="0.295"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="280dp" />
+        tools:layout_editor_absoluteY="423dp" />
 
     <TextView
         android:id="@+id/tvWelcomeText"
@@ -61,13 +62,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvWelcomeText" />
+        app:layout_constraintTop_toBottomOf="@+id/ivChangeProfilePic" />
 
     <EditText
         android:id="@+id/etAge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="number"
         android:text="Age"
@@ -83,7 +84,7 @@
         android:text="Gender"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="385dp" />
+        tools:layout_editor_absoluteY="542dp" />
 
     <TextView
         android:id="@+id/textView5"
@@ -91,8 +92,9 @@
         android:layout_height="wrap_content"
         android:text="Favorite Artists"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.139"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="423dp" />
+        tools:layout_editor_absoluteY="542dp" />
 
     <TextView
         android:id="@+id/textView6"
@@ -118,6 +120,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:layout_marginTop="24dp"
         android:backgroundTint="#C63E3E"
         app:hintText="Select Your Top 3 Genres"
         app:layout_constraintEnd_toEndOf="parent"

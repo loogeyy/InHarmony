@@ -16,16 +16,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidbuts.multispinnerfilter.KeyPairBoolData;
 import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
 import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
+import com.bumptech.glide.Glide;
 import com.example.inharmony.MainActivity;
 import com.example.inharmony.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -33,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,11 +61,18 @@ public class EditProfileFragment extends Fragment {
     private EditText etName;
     private EditText etAge;
     private BottomNavigationView bottomMenu;
+    private ImageButton btnChangePic;
+    private ImageView ivChangeProfilePic;
 
     private boolean newSignUp;
     private String username;
     private String password;
     private String token;
+
+    private File photoFile;
+    private String photoFileName = "photo.jpg";
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
+
 
     public EditProfileFragment() {
         // Required empty public constructor
@@ -83,6 +95,8 @@ public class EditProfileFragment extends Fragment {
         etName = view.findViewById(R.id.etName);
         etAge = view.findViewById(R.id.etAge);
         bottomMenu = getActivity().findViewById(R.id.bottomMenu);
+        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
+        btnChangePic = view.findViewById(R.id.btnChangePic);
         //etGender = findViewById(R.id.etGender);
 
         Bundle bundle = this.getArguments();
@@ -95,6 +109,17 @@ public class EditProfileFragment extends Fragment {
 
         if (newSignUp) {
             bottomMenu.setVisibility(View.GONE);
+        } else {
+                etAge.setText(ParseUser.getCurrentUser().get("age").toString());
+                etName.setText(ParseUser.getCurrentUser().get("name").toString());
+
+                ParseFile profilePic = (ParseFile) ParseUser.getCurrentUser().get("profilePic");
+            if (profilePic != null) {
+                Glide.with(getContext()).load(profilePic.getUrl()).into(ivChangeProfilePic);
+            } else {
+                ivChangeProfilePic.setImageResource(R.drawable.nopfp);
+            }
+
         }
 
 
