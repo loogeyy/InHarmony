@@ -18,6 +18,13 @@ import android.widget.Toast;
 import com.androidbuts.multispinnerfilter.KeyPairBoolData;
 import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
 import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +48,12 @@ public class SignUpActivity extends AppCompatActivity {
     private Button btnUpdateProfile;
     private EditText etName;
     private EditText etAge;
+
+    private boolean newSignUp;
+    private String username;
+    private String password;
+    private String token;
+
     //private EditText etGender;
 
     public static Intent createIntent(Context context) {
@@ -59,19 +72,20 @@ public class SignUpActivity extends AppCompatActivity {
         etAge = findViewById(R.id.etAge);
         //etGender = findViewById(R.id.etGender);
 
-
-
         Intent intent = getIntent();
-        String token = intent.getStringExtra(EXTRA_TOKEN);
+        newSignUp = intent.getExtras().getBoolean("newSignUp");
+        token = intent.getStringExtra(EXTRA_TOKEN);
         tvWelcomeText.setText(intent.getStringExtra("tvWelcomeText"));
 
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
         SpotifyService service = spotifyApi.getService();
-        // Why doesn't this work like it does in LoginActivity?
+
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
+                username = service.getMe().email;
+                password = service.getMe().id;
                 Log.i("Token", token);
                 service.getSeedsGenres(new Callback<SeedsGenres>() {
                     @Override
@@ -83,56 +97,129 @@ public class SignUpActivity extends AppCompatActivity {
 
                     @Override
                     public void failure(RetrofitError error) {
-                        Log.e(TAG, "retrofiterror", error);
+                        Log.e(TAG, "Retrofit error", error);
                     }
                 });
             }
         });
 
+        checkButtonClicked();
+    }
+
+    private void checkButtonClicked() {
         btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(etName.getText())) {
-                    etName.setError("First name is required!");
-                    return;
+
+                Log.i("newsignup", String.valueOf(newSignUp));
+
+                String name;
+                Integer age;
+                JSONArray selectedGenres = new JSONArray();
+
+                // create a new user in the database
+                if (newSignUp) {
+                    // all fields must be filled out
+                    if (TextUtils.isEmpty(etName.getText())) {
+                        etName.setError("First name is required!");
+                        return;
+                    }
+                    name = etName.getText().toString();
+
+                    if (TextUtils.isEmpty(etAge.getText())) {
+                        etAge.setError("Please enter your age.");
+                        return;
+                    }
+                    if (Integer.parseInt(etAge.getText().toString()) < 13) {
+                        etAge.setError("Users must be above 13 to make an account");
+                        return;
+                    }
+                    if (!TextUtils.isDigitsOnly(etAge.getText())){
+                        etAge.setError("Please enter your age as a number.");
+                        return;
+                    }
+                    age = Integer.parseInt(etAge.getText().toString());
+
+                    //Log.i("LIST OF SELECTED ITEMS", selectedGenres.toString());
+                    selectedGenres = getSelectedGenres();
+                    if (selectedGenres.length() == 0) {
+                        ((TextView)genres.getSelectedView()).setError("Please select up to 3 genres.");
+                        ((TextView) genres.getSelectedView()).setText("Please select up to 3 genres.");
+                        return;
+                    }
+
+                    createUser(username, password, name, age, selectedGenres, token);
+                    Log.i("HELLO", "HELLO");
                 }
-//                if (!TextUtils.isDigitsOnly(etAge.getText())){
-//                    etAge.setError("Please enter your age as a number.");
-//                    return;
-//                }
-                if (TextUtils.isEmpty(etAge.getText())) {
-                    etAge.setError("Please enter your age.");
-                    return;
-                }
-                if (Integer.parseInt(etAge.getText().toString()) < 13) {
-                    etAge.setError("Users must be above 13 to make an account");
-                    return;
+                // only update user in the database
+                else {
+                    if (!TextUtils.isEmpty(etName.getText())) {
+                        name = etName.getText().toString();
+                        ParseUser.getCurrentUser().put("name", name);
+                    }
+
+                    if (!TextUtils.isEmpty(etAge.getText())) {
+                        if (Integer.parseInt(etAge.getText().toString()) < 13) {
+                            etAge.setError("Users must be above 13 to make an account");
+                            return;
+                        }
+                        if (!TextUtils.isDigitsOnly(etAge.getText())){
+                            etAge.setError("Please enter your age as a number.");
+                            return;
+                        }
+                        age = Integer.parseInt(etAge.getText().toString());
+                        ParseUser.getCurrentUser().put("age", age);
+                    }
+
+                    if (selectedGenres.length() != 0) {
+                        ((TextView)genres.getSelectedView()).setError("Please select up to 3 genres.");
+                        ((TextView) genres.getSelectedView()).setText("Please select up to 3 genres.");
+                        selectedGenres = getSelectedGenres();
+                        ParseUser.getCurrentUser().put("favGenre", selectedGenres);
+                    }
                 }
 
-
-                    Intent i = new Intent(SignUpActivity.this, MainActivity.class);
-
+                Intent i = new Intent(SignUpActivity.this, MainActivity.class);
+                startActivity(i);
             }
         });
     }
 
+    // populates genres into the dropdown
     private List<KeyPairBoolData> generateGenresList(List<String> list) {
         List<KeyPairBoolData> newList = new ArrayList<>();
-        Log.i("Genres Size ", String.valueOf(list.size()));
 
-        // set up list of displayed genres as unselected
-        for (int i = 0; i < list.size(); i++) {
-            KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
-            keyPairBoolData.setId(i + 1);
-            keyPairBoolData.setName(list.get(i));
-            keyPairBoolData.setSelected(false);
-            newList.add(keyPairBoolData);
-        }
+            Log.i("Genres Size ", String.valueOf(list.size()));
 
+            // set up list of displayed genres as unselected
+            for (int i = 0; i < list.size(); i++) {
+                KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+                keyPairBoolData.setId(i + 1);
+                keyPairBoolData.setName(list.get(i));
+                keyPairBoolData.setSelected(false);
+                newList.add(keyPairBoolData);
+                }
+            if (!newSignUp) {
+                JSONArray array = (JSONArray) ParseUser.getCurrentUser().get("favGenres");
+                for (int j = 0; j < array.length(); j++) {
+                    try {
+                        String genre = array.get(j).toString();
+                        Integer index = newList.indexOf(genre);
+
+                        KeyPairBoolData updated = new KeyPairBoolData();
+                        updated.setName(genre);
+                        updated.setSelected(true);
+                        newList.set(index, updated);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         return newList;
     }
 
-
+    // set up dropdown properties
     private void initializeGenreSelector(MultiSpinnerSearch genres) {
         genres.setSearchEnabled(true);
         genres.setSearchHint("Select your top genres");
@@ -148,6 +235,7 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
         });
+        // maximum of 3 genres can be selected
         genres.setLimit(3, new MultiSpinnerSearch.LimitExceedListener() {
             @Override
             public void onLimitListener(KeyPairBoolData data) {
@@ -155,5 +243,38 @@ public class SignUpActivity extends AppCompatActivity {
                         "You may only sel", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    // add new user to the database
+    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, String token) {
+        Log.i(TAG, "Attempting to create user " + username + "...");
+        ParseUser user = new ParseUser();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.put("name", name);
+        user.put("age", age);
+        user.put("favGenres", selectedGenres);
+
+        user.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.i("createUser TOKEN: ", token);
+                    Log.i("create user E code:", Integer.toString(e.getCode()));
+                    Log.e(TAG, "Issue with sign up", e);
+                    //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
+                    return;
+                }
+            }
+        });
+    }
+
+    private JSONArray getSelectedGenres() {
+        List<KeyPairBoolData> selectedGenres = genres.getSelectedItems();
+        JSONArray list = new JSONArray();
+        for (int i = 0; i < selectedGenres.size(); i++) {
+            list.put(selectedGenres.get(i).getName());
+        }
+        return list;
     }
 }

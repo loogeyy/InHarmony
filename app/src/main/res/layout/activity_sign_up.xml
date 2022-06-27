@@ -83,7 +83,7 @@
     <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
         android:id="@+id/genres"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_marginTop="28dp"
         android:backgroundTint="#C63E3E"
@@ -98,8 +98,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Update Profile"
-        tools:layout_editor_absoluteX="125dp"
-        tools:layout_editor_absoluteY="635dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="125dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

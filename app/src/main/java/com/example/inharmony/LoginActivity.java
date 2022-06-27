@@ -65,7 +65,7 @@ public class LoginActivity extends Activity {
                         Log.i("loginUser TOKEN: ", token);
                         Log.i("login user E code:", Integer.toString(e.getCode()));
                         Log.i("Sign up requested: ", "redirect to sign up page");
-                        createUser(username, password, token);
+                        //createUser(username, password, token);
                         startSignUpActivity(token);
                     }
                     return;
@@ -75,6 +75,8 @@ public class LoginActivity extends Activity {
         });
     }
 
+
+    //delete this later
     private void createUser(String username, String password, String token) {
         Log.i(TAG, "Attempting to create user " + username + "...");
         ParseUser user = new ParseUser();
@@ -90,7 +92,6 @@ public class LoginActivity extends Activity {
                      //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
                     return;
                 }
-               startSignUpActivity(token);
             }
         });
     }
@@ -164,6 +165,7 @@ public class LoginActivity extends Activity {
         String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
         intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
         intent.putExtra("tvWelcomeText", welcomeText);
+        intent.putExtra("newSignUp", true); //put this as false for edit profile intent
         startActivity(intent);
         finish();
     }
