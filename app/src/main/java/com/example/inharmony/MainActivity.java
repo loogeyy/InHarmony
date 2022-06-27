@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomMenu;
     private Button btnLogout;
 
-    static String NEW_SIGN_UP = "NEW_SIGN_UP";
-    static final String EXTRA_TOKEN = "EXTRA_TOKEN";
+    public static String NEW_SIGN_UP = "NEW_SIGN_UP";
+    public static final String EXTRA_TOKEN = "EXTRA_TOKEN";
 
     final FragmentManager fragmentManager = getSupportFragmentManager();
     private Search.ActionListener mActionListener;

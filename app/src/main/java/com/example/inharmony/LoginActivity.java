@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -14,8 +15,6 @@ import com.parse.SignUpCallback;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-
-import org.parceler.Parcels;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         token = CredentialsHandler.getToken(this);
-        ParseUser.logOutInBackground();
+        //ParseUser.logOutInBackground();
         // login page if no token is found
         if (token == null) {
             setContentView(R.layout.activity_login);
@@ -162,21 +161,21 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startSignUpFragment(String token) {
-//        Fragment fragment = new EditProfileFragment();
-//        Bundle bundle = new Bundle();
-//        bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
-//        bundle.putBoolean("newSignUp", true);
-       String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
-//        bundle.putString("tvWelcomeText", welcomeText);
-//
-//        fragment.setArguments(bundle);
-//        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-        Intent intent = SignUpActivity.createIntent(this);
-        intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
-        intent.putExtra("tvWelcomeText", welcomeText);
-        intent.putExtra("newSignUp", true); //put this as false for edit profile intent
-        startActivity(intent);
-        finish();
+////        Fragment fragment = new EditProfileFragment();
+////        Bundle bundle = new Bundle();
+////        bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+////        bundle.putBoolean("newSignUp", true);
+//       String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
+////        bundle.putString("tvWelcomeText", welcomeText);
+////
+////        fragment.setArguments(bundle);
+////        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+//        Intent intent = SignUpActivity.createIntent(this);
+//        intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
+//        intent.putExtra("tvWelcomeText", welcomeText);
+//        intent.putExtra("newSignUp", true); //put this as false for edit profile intent
+//        startActivity(intent);
+//        finish();
     }
 
     private void logError(String msg) {

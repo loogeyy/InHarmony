@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.text.TextUtils;
@@ -25,7 +24,6 @@ import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
 import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
 import com.example.inharmony.MainActivity;
 import com.example.inharmony.R;
-import com.example.inharmony.SignUpActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -162,7 +160,7 @@ public class EditProfileFragment extends Fragment {
                         etAge.setError("Please enter your age.");
                         return;
                     }
-                    if (!TextUtils.isDigitsOnly(etAge.getText())){
+                    if (!TextUtils.isDigitsOnly(etAge.getText().toString())){
                         etAge.setError("Please enter your age as a number.");
                         return;
                     }
@@ -213,7 +211,10 @@ public class EditProfileFragment extends Fragment {
                 }
 
                 Intent i = new Intent(getContext(), MainActivity.class);
+                i.putExtra(MainActivity.EXTRA_TOKEN, token);
+                i.putExtra(String.valueOf(MainActivity.NEW_SIGN_UP), false);
                 startActivity(i);
+                getActivity().finish();
             }
         });
     }

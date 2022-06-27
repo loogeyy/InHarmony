@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.example.inharmony.MatchingActivity;
 import com.example.inharmony.R;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 

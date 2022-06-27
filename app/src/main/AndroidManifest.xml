@@ -16,10 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InHarmony">
         <activity
-            android:name=".SignUpActivity"
+            android:name=".outdated.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".MatchingActivity"
+            android:name=".outdated.MatchingActivity"
             android:exported="false" />
         <activity android:name=".MainActivity" />
         <activity
