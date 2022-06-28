@@ -3,34 +3,29 @@ package com.example.inharmony;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SearchView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.inharmony.fragments.EditProfileFragment;
 import com.example.inharmony.fragments.MatchingFragment;
+import com.example.inharmony.fragments.MyProfileFragment;
 import com.example.inharmony.fragments.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.LogOutCallback;
-import com.parse.Parse;
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import kaaes.spotify.webapi.android.models.Track;
 
 public class MainActivity extends AppCompatActivity {
     /*
@@ -50,15 +45,14 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomMenu;
     private Button btnLogout;
 
-    static final String EXTRA_TOKEN = "EXTRA_TOKEN";
-    private static final String KEY_CURRENT_QUERY = "CURRENT_QUERY";
+    public static String NEW_SIGN_UP = "NEW_SIGN_UP";
+    public static final String EXTRA_TOKEN = "EXTRA_TOKEN";
 
     final FragmentManager fragmentManager = getSupportFragmentManager();
     private Search.ActionListener mActionListener;
 
     private LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
     private SearchResultsAdapter mAdapter;
-
 
     public static Intent createIntent(Context context) {
         return new Intent(context, MainActivity.class);
@@ -72,6 +66,21 @@ public class MainActivity extends AppCompatActivity {
         //grabs intent from login including token
         Intent intent = getIntent();
         String token = intent.getStringExtra(EXTRA_TOKEN);
+        Boolean newSignUp = intent.getExtras().getBoolean(NEW_SIGN_UP);
+        Log.i("newSignUp", String.valueOf(newSignUp));
+
+        if (newSignUp) {
+            Log.i("newSignUp", "Changing to edit profile screen");
+            Fragment fragment = new EditProfileFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+            bundle.putBoolean("newSignUp", true);
+            String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
+            bundle.putString("tvWelcomeText", welcomeText);
+
+            fragment.setArguments(bundle);
+            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+        }
 
         bottomMenu = findViewById(R.id.bottomMenu);
         btnLogout = findViewById(R.id.btnLogout);
@@ -85,30 +94,31 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
         bottomMenu.setSelectedItemId(R.id.actionProfile);
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(SearchFragment.EXTRA_TOKEN, token);
                 switch (item.getItemId()) {
-
                     case R.id.actionMatch:
                         fragment = new MatchingFragment();
                         break;
                     case R.id.actionMessage:
-                        break;
-                    case R.id.actionProfile:
-                    default:
                         Toast.makeText(MainActivity.this, "Profile", Toast.LENGTH_SHORT).show();
                         Log.d("Menu", "Profile pressed");
                         fragment = new SearchFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(SearchFragment.EXTRA_TOKEN, token);
-                        fragment.setArguments(bundle);
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                         //fragment = new MatchFragment(ParseUser.getCurrentUser());
                         break;
+                    case R.id.actionProfile:
+                    default:
+                        fragment = new EditProfileFragment();
+                        //fragment = new MyProfileFragment();
+                        break;
                 }
+                fragment.setArguments(bundle);
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
             }

@@ -1,26 +1,20 @@
 package com.example.inharmony;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
-import com.parse.FindCallback;
 import com.parse.LogInCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.ParseObject;
 import com.parse.SignUpCallback;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-
-import org.parceler.Parcels;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,14 +22,13 @@ import java.util.concurrent.TimeUnit;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends AppCompatActivity {
     public static String token = null;
 
     private static final String TAG = LoginActivity.class.getSimpleName();
+    final FragmentManager fragmentManager = getSupportFragmentManager();
 
-    @SuppressWarnings("SpellCheckingInspection")
     private static final String CLIENT_ID = "8a91678afa49446c9aff1beaabe9c807";
-    @SuppressWarnings("SpellCheckingInspection")
     private static final String REDIRECT_URI = "testschema://callback";
 
     private static final int REQUEST_CODE = 1337;
@@ -43,18 +36,18 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //AuthenticationClient.clearCookies(this);
         token = CredentialsHandler.getToken(this);
-        ParseUser.logOutInBackground();
+        ParseUser.logOutInBackground(); // token error if i dont include this, how to remove while preserving access?
         // login page if no token is found
         if (token == null) {
             setContentView(R.layout.activity_login);
         } else {
-            startMainActivity(token);
+            startMainActivity(token, false);
         }
 
     }
 
+    //TO-DO: rather than rely on error codes, query the user database and collect list of users to check against
     private void loginUser(String username, String password, String token) {
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
@@ -65,16 +58,20 @@ public class LoginActivity extends Activity {
                         Log.i("loginUser TOKEN: ", token);
                         Log.i("login user E code:", Integer.toString(e.getCode()));
                         Log.i("Sign up requested: ", "redirect to sign up page");
-                        createUser(username, password, token);
-                        startSignUpActivity(token);
+                        //createUser(username, password, token);
+                        //startSignUpFragment(token);
+                        startMainActivity(token, true);
                     }
                     return;
                 }
-                startMainActivity(token);
+                Log.i("loginUser TOKEN: ", token);
+                startMainActivity(token, false);
             }
         });
     }
 
+
+    //delete this later
     private void createUser(String username, String password, String token) {
         Log.i(TAG, "Attempting to create user " + username + "...");
         ParseUser user = new ParseUser();
@@ -90,7 +87,6 @@ public class LoginActivity extends Activity {
                      //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
                     return;
                 }
-               startSignUpActivity(token);
             }
         });
     }
@@ -120,7 +116,6 @@ public class LoginActivity extends Activity {
                 case TOKEN:
                     //logMessage("Got token: " + response.getAccessToken());
                     CredentialsHandler.setToken(this, token, response.getExpiresIn(), TimeUnit.SECONDS);
-                    //startMainActivity(response.getAccessToken());
 
                     token = response.getAccessToken();
 
@@ -132,10 +127,11 @@ public class LoginActivity extends Activity {
                         public void run() {
                             String email = service.getMe().email;
                             String id = service.getMe().id;
+                            List<String> genreList = service.getSeedsGenres().genres;
                             loginUser(email, id, token);
                             Log.i("EMAIL", email);
                             Log.i("ID", id);
-                            //createUser(email, id, token);
+                            Log.i("GENRES", genreList.toString());
                         }
                     });
                     break;
@@ -152,18 +148,35 @@ public class LoginActivity extends Activity {
         }
     }
 
-    private void startMainActivity(String token) {
+    private void startMainActivity(String token, boolean signUp) {
         Intent intent = MainActivity.createIntent(this);
         intent.putExtra(MainActivity.EXTRA_TOKEN, token);
+        Log.i("SIGN UP IN LOGIN ACTIVITY", String.valueOf(signUp));
+        if (signUp) {
+            intent.putExtra(String.valueOf(MainActivity.NEW_SIGN_UP), true);
+        } else {
+            intent.putExtra(String.valueOf(MainActivity.NEW_SIGN_UP), false);
+        }
         startActivity(intent);
         finish();
     }
 
-    private void startSignUpActivity(String token) {
-        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-        intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
-        startActivity(intent);
-        finish();
+    private void startSignUpFragment(String token) {
+////        Fragment fragment = new EditProfileFragment();
+////        Bundle bundle = new Bundle();
+////        bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+////        bundle.putBoolean("newSignUp", true);
+//       String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
+////        bundle.putString("tvWelcomeText", welcomeText);
+////
+////        fragment.setArguments(bundle);
+////        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+//        Intent intent = SignUpActivity.createIntent(this);
+//        intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
+//        intent.putExtra("tvWelcomeText", welcomeText);
+//        intent.putExtra("newSignUp", true); //put this as false for edit profile intent
+//        startActivity(intent);
+//        finish();
     }
 
     private void logError(String msg) {
