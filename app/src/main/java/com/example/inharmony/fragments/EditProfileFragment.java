@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -45,7 +47,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -80,6 +86,7 @@ public class EditProfileFragment extends Fragment {
     private File photoFile;
     private String photoFileName = "photo.jpg";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
+    public final static int PICK_PHOTO_CODE = 1046;
 
 
     public EditProfileFragment() {
@@ -125,7 +132,7 @@ public class EditProfileFragment extends Fragment {
                 if (profilePic != null) {
                     Glide.with(getContext()).load(profilePic.getUrl()).into(ivChangeProfilePic);
                 } else {
-                    //ivChangeProfilePic.setImageResource(R.drawable.nopfp);
+                    ivChangeProfilePic.setImageResource(R.drawable.nopfp);
                 }
 
         }
@@ -174,7 +181,7 @@ public class EditProfileFragment extends Fragment {
         btnChangePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchCamera();
+                onPickPhoto(v);
             }
         });
 
@@ -382,6 +389,38 @@ public class EditProfileFragment extends Fragment {
 
     }
 
+    private void onPickPhoto(View view) {
+        // Create intent for picking a photo from the gallery
+        Log.i("onPickPhoto","Opening camera roll");
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+            // Bring up gallery to select a photo
+            startActivityForResult(intent, PICK_PHOTO_CODE);
+        }
+    }
+
+    public Bitmap loadFromUri(Uri photoUri) {
+        Bitmap image = null;
+        try {
+            // check version of Android on device
+            if(Build.VERSION.SDK_INT > 27){
+                // on newer versions of Android, use the new decodeBitmap method
+                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), photoUri);
+                image = ImageDecoder.decodeBitmap(source);
+            } else {
+                // support older versions of Android by using getBitmap
+                image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -395,6 +434,52 @@ public class EditProfileFragment extends Fragment {
                 ivChangeProfilePic.setImageBitmap(takenImage);
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if ((data != null) && requestCode == PICK_PHOTO_CODE && (resultCode == RESULT_OK)) {
+//            Uri photoUri = data.getData();
+//            // how to get photo file?
+//            //photoFile = getPhotoFileUri(photoUri.toString());
+//
+//            // Load the image located at photoUri into selectedImage
+//            Bitmap selectedImage = loadFromUri(photoUri);
+//
+//            // Load the selected image into a preview
+//            ivChangeProfilePic.setImageBitmap(selectedImage);
+            Uri selectedImage = data.getData();
+            try {
+                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), selectedImage);
+                Bitmap bitmap = ImageDecoder.decodeBitmap(source);
+
+                // Store smaller bitmap to disk
+                // Configure byte output stream
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                // Compress the image further
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
+                // Create a new file for the resized bitmap
+                File resizedFile = getPhotoFileUri(photoFileName + "_resized");
+                try {
+                    resizedFile.createNewFile();
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(resizedFile);
+                        // Write the bytes of the bitmap to file
+                        fos.write(bytes.toByteArray());
+                        fos.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                ivChangeProfilePic.setImageBitmap(bitmap);
+                photoFile = resizedFile;
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

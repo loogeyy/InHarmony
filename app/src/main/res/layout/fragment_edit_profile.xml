@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/dark_navy"
     android:orientation="vertical"
     tools:context=".fragments.EditProfileFragment">
 
@@ -13,19 +14,21 @@
         android:layout_height="150dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="15dp"
+        android:src="@drawable/nopfp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvWelcomeText"
-        tools:src="@tools:sample/avatars" />
+        tools:src="@drawable/nopfp" />
 
     <ImageButton
         android:id="@+id/btnChangePic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="228dp"
-        android:layout_marginTop="104dp"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="220dp"
+        android:layout_marginTop="100dp"
         android:background="@drawable/ic_camera"
+        android:backgroundTint="@color/white"
         android:scaleType="centerInside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ivChangeProfilePic" />
@@ -60,6 +63,7 @@
         android:fontFamily="@font/anteb_bold"
         android:inputType="textPersonName"
         android:text="Name"
+        android:textColor="@color/light_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,6 +78,7 @@
         android:fontFamily="@font/anteb_bold"
         android:inputType="number"
         android:text="Age"
+        android:textColor="@color/light_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -128,7 +133,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etAge" />
+        app:layout_constraintTop_toBottomOf="@+id/etAge"
+        app:textColor="@color/white" />
 
     <Button
         android:id="@+id/btnUpdateProfile"
