@@ -22,6 +22,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -30,6 +31,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.PopupMenu;
 
 import com.androidbuts.multispinnerfilter.KeyPairBoolData;
 import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
@@ -181,7 +183,25 @@ public class EditProfileFragment extends Fragment {
         btnChangePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onPickPhoto(v);
+                PopupMenu popUp = new PopupMenu(getContext(), btnChangePic);
+                popUp.getMenuInflater().inflate(R.menu.edit_profile_pic_menu, popUp.getMenu());
+                popUp.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getItemId() == R.id.photogallery) {
+                            onPickPhoto(v);
+                            return true;
+                        }
+                        if (item.getItemId() == R.id.camera) {
+                            launchCamera();
+                            return true;
+                        }
+                        return true;
+                    }
+
+                });
+                popUp.show();
+
             }
         });
 
