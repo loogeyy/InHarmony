@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -79,6 +80,7 @@ public class EditProfileFragment extends Fragment {
     private BottomNavigationView bottomMenu;
     private ImageButton btnChangePic;
     private ImageView ivChangeProfilePic;
+    private Button btnFavSong;
 
     private boolean newSignUp;
     private String username;
@@ -89,7 +91,6 @@ public class EditProfileFragment extends Fragment {
     private String photoFileName = "photo.jpg";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
     public final static int PICK_PHOTO_CODE = 1046;
-
 
     public EditProfileFragment() {
         // Required empty public constructor
@@ -114,6 +115,7 @@ public class EditProfileFragment extends Fragment {
         bottomMenu = getActivity().findViewById(R.id.bottomMenu);
         ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
         btnChangePic = view.findViewById(R.id.btnChangePic);
+        btnFavSong = view.findViewById(R.id.btnFavSong);
         //etGender = findViewById(R.id.etGender);
 
         Bundle bundle = this.getArguments();
@@ -123,6 +125,7 @@ public class EditProfileFragment extends Fragment {
             tvWelcomeText.setText(bundle.getString("tvWelcomeText"));
             Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
         }
+        Log.i("EDITPROFILEFRAGMENT NEWSIGNUP", String.valueOf(newSignUp));
 
         if (newSignUp) {
             bottomMenu.setVisibility(View.GONE);
@@ -173,6 +176,7 @@ public class EditProfileFragment extends Fragment {
 
         checkUpdatePhotoButtonClicked();
         checkUpdateProfileButtonClicked();
+        checkFavSongButtonClicked();
     }
 
     public static Intent createIntent(Context context) {
@@ -220,6 +224,7 @@ public class EditProfileFragment extends Fragment {
 
                 // create a new user in the database
                 if (newSignUp) {
+                    Log.i("NEW SIGN UP", "OPENED UP EDIT PROFILE FRAGMENT");
                     // all fields must be filled out
                     if (TextUtils.isEmpty(etName.getText())) {
                         etName.setError("First name is required!");
@@ -255,7 +260,7 @@ public class EditProfileFragment extends Fragment {
                 }
                 // only update user in the database
                 else {
-                    Log.i("NOT NEw SIGN UP", "WORK PLEASE");
+                    Log.i("NOT NEW SIGN UP", "WORK PLEASE");
                     if (!TextUtils.isEmpty(etName.getText())) {
                         name = etName.getText().toString();
                         ParseUser.getCurrentUser().put("name", name);
@@ -291,10 +296,23 @@ public class EditProfileFragment extends Fragment {
 
                 Intent i = new Intent(getContext(), MainActivity.class);
                 i.putExtra(MainActivity.EXTRA_TOKEN, token);
-                i.putExtra(String.valueOf(MainActivity.NEW_SIGN_UP), false);
+                i.putExtra(MainActivity.NEW_SIGN_UP, false);
                 startActivity(i);
                 getActivity().finish();
             }
+        });
+    }
+
+    private void checkFavSongButtonClicked() {
+        btnFavSong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchFragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(SearchFragment.EXTRA_TOKEN, token);
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+               }
         });
     }
 
@@ -382,6 +400,10 @@ public class EditProfileFragment extends Fragment {
     private JSONArray getSelectedGenres() {
         List<KeyPairBoolData> selectedGenres = genres.getSelectedItems();
         JSONArray list = new JSONArray();
+        if (selectedGenres.size() == 0) {
+            return list;
+        }
+
         for (int i = 0; i < selectedGenres.size(); i++) {
             list.put(selectedGenres.get(i).getName());
         }

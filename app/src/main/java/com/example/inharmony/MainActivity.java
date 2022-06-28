@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static String NEW_SIGN_UP = "NEW_SIGN_UP";
     public static final String EXTRA_TOKEN = "EXTRA_TOKEN";
+    private String token;
 
     final FragmentManager fragmentManager = getSupportFragmentManager();
     private Search.ActionListener mActionListener;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         return new Intent(context, MainActivity.class);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,37 +67,13 @@ public class MainActivity extends AppCompatActivity {
 
         //grabs intent from login including token
         Intent intent = getIntent();
-        String token = intent.getStringExtra(EXTRA_TOKEN);
+        token = intent.getStringExtra(EXTRA_TOKEN);
         Boolean newSignUp = intent.getExtras().getBoolean(NEW_SIGN_UP);
-        Log.i("newSignUp", String.valueOf(newSignUp));
-
-        if (newSignUp) {
-            Log.i("newSignUp", "Changing to edit profile screen");
-            Fragment fragment = new EditProfileFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
-            bundle.putBoolean("newSignUp", true);
-            String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
-            bundle.putString("tvWelcomeText", welcomeText);
-
-            fragment.setArguments(bundle);
-            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-        }
+        Log.i("MAINACTIVITY NEWSIGNUP", String.valueOf(newSignUp));
 
         bottomMenu = findViewById(R.id.bottomMenu);
         btnLogout = findViewById(R.id.btnLogout);
 
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //AuthenticationClient.clearCookies(getApplicationContext());
-                CredentialsHandler.setToken(MainActivity.this, null, 0, TimeUnit.SECONDS);
-                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(i);
-            }
-        });
-
-        bottomMenu.setSelectedItemId(R.id.actionProfile);
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -113,9 +91,21 @@ public class MainActivity extends AppCompatActivity {
                         //fragment = new MatchFragment(ParseUser.getCurrentUser());
                         break;
                     case R.id.actionProfile:
-                    default:
+                        Log.i("MAINACTIVITY ACTIONRPOFILE", "SWITCHING TO EDIT");
                         fragment = new EditProfileFragment();
-                        //fragment = new MyProfileFragment();
+                        if (newSignUp) {
+                            bundle.putBoolean("newSignUp", true);
+                        } else {
+                            bundle.putBoolean("newSignUp", false);
+                        }
+                    default:
+                        Log.i("DEFAULT", "NEW EDITPROFILEFRAGMENT");
+                        fragment = new EditProfileFragment();
+                        if (newSignUp) {
+                            bundle.putBoolean("newSignUp", true);
+                        } else {
+                            bundle.putBoolean("newSignUp", false);
+                        }
                         break;
                 }
                 fragment.setArguments(bundle);
@@ -124,6 +114,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // sets default screen
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //AuthenticationClient.clearCookies(getApplicationContext());
+                CredentialsHandler.setToken(MainActivity.this, null, 0, TimeUnit.SECONDS);
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(i);
+            }
+        });
+
+        if (newSignUp) {
+            Log.i("newSignUp", "Changing to edit profile screen");
+            Fragment fragment = new EditProfileFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+            bundle.putBoolean("newSignUp", true);
+            String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
+            bundle.putString("tvWelcomeText", welcomeText);
+            fragment.setArguments(bundle);
+            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+            bottomMenu.setSelectedItemId(R.id.actionProfile);
+        } else {
+            bottomMenu.setSelectedItemId(R.id.actionMatch);
+        }
 
     }
+
 }
