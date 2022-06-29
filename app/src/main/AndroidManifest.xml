@@ -24,7 +24,8 @@
         android:icon="@mipmap/ic_launcher2"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.InHarmony">
+        android:theme="@style/Theme.InHarmony"
+        >
 
         <activity android:name=".MainActivity"
             android:exported="false" />

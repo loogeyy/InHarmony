@@ -4,20 +4,21 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/person.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.34122924804687504" />
         <entry key="app/src/main/res/layout/activity_login_temp.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1629257202148438" />
         <entry key="app/src/main/res/layout/activity_matching.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_matching_temp.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.38457014416460467" />
-        <entry key="app/src/main/res/layout/fragment_edit_profile.xml" value="0.28271789550781246" />
+        <entry key="app/src/main/res/layout/fragment_edit_profile.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_matching.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_my_profile.xml" value="0.4823379516601563" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.30262451171875004" />
         <entry key="app/src/main/res/layout/item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/list_item.xml" value="0.26556776556776557" />
         <entry key="app/src/main/res/menu/edit_profile_pic_menu.xml" value="0.19918060302734375" />
-        <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.2408625284830729" />
         <entry key="app/src/main/res/xml/fileprovider.xml" value="0.1" />
       </map>
     </option>

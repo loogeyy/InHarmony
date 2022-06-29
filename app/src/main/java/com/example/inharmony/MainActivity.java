@@ -95,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new EditProfileFragment();
                         if (newSignUp) {
                             bundle.putBoolean("newSignUp", true);
+                            String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
+                            bundle.putString("tvWelcomeText", welcomeText);
                         } else {
                             bundle.putBoolean("newSignUp", false);
                         }
@@ -125,15 +127,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (newSignUp) {
-            Log.i("newSignUp", "Changing to edit profile screen");
-            Fragment fragment = new EditProfileFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
-            bundle.putBoolean("newSignUp", true);
-            String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
-            bundle.putString("tvWelcomeText", welcomeText);
-            fragment.setArguments(bundle);
-            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+//            Log.i("newSignUp", "Changing to edit profile screen");
+//            Fragment fragment = new EditProfileFragment();
+//            Bundle bundle = new Bundle();
+//            bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+//            bundle.putBoolean("newSignUp", true);
+//            String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
+//            bundle.putString("tvWelcomeText", welcomeText);
+//            fragment.setArguments(bundle);
+//            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
             bottomMenu.setSelectedItemId(R.id.actionProfile);
         } else {
             bottomMenu.setSelectedItemId(R.id.actionMatch);

@@ -44,6 +44,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import org.json.JSONArray;
@@ -87,6 +88,7 @@ public class EditProfileFragment extends Fragment {
     private String password;
     private String token;
 
+    private ParseFile photo;
     private File photoFile;
     private String photoFileName = "photo.jpg";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
@@ -122,6 +124,7 @@ public class EditProfileFragment extends Fragment {
         if (bundle != null) {
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
             newSignUp = bundle.getBoolean("newSignUp");
+            //Log.i("WELCOME TEXT", bundle.getString("tvWelcomeText").toString());
             tvWelcomeText.setText(bundle.getString("tvWelcomeText"));
             Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
         }
@@ -129,7 +132,8 @@ public class EditProfileFragment extends Fragment {
 
         if (newSignUp) {
             bottomMenu.setVisibility(View.GONE);
-        } else {
+        }
+        else {
                 etAge.setText(ParseUser.getCurrentUser().get("age").toString());
                 etName.setText(ParseUser.getCurrentUser().get("name").toString());
 
@@ -139,9 +143,7 @@ public class EditProfileFragment extends Fragment {
                 } else {
                     ivChangeProfilePic.setImageResource(R.drawable.nopfp);
                 }
-
         }
-
 
 //        //Intent intent = getIntent();
 //        newSignUp = intent.getExtras().getBoolean("newSignUp");
@@ -205,7 +207,6 @@ public class EditProfileFragment extends Fragment {
 
                 });
                 popUp.show();
-
             }
         });
 
@@ -255,8 +256,11 @@ public class EditProfileFragment extends Fragment {
                         return;
                     }
 
-                    createUser(username, password, name, age, selectedGenres, token);
-                    Log.i("HELLO", "HELLO");
+                    if (photoFile != null) {
+                        photo = new ParseFile(photoFile);
+                    }
+
+                    createUser(username, password, name, age, selectedGenres, photo, token);
                 }
                 // only update user in the database
                 else {
@@ -289,7 +293,9 @@ public class EditProfileFragment extends Fragment {
                     ParseUser.getCurrentUser().put("favGenres", selectedGenres);
 
                     if (photoFile != null) {
-                        ParseUser.getCurrentUser().put("profilePic", new ParseFile(photoFile));
+                        Log.i("PHOTOFILE NOT NEW", photoFile.toString());
+                        photo = new ParseFile(photoFile);
+                        ParseUser.getCurrentUser().put("profilePic", photo);
                     }
                     ParseUser.getCurrentUser().saveInBackground();
                 }
@@ -371,7 +377,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     // add new user to the database
-    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, String token) {
+    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, ParseFile parseFile, String token) {
         Log.i(TAG, "Attempting to create user " + username + "...");
         ParseUser user = new ParseUser();
         user.setUsername(username);
@@ -379,22 +385,44 @@ public class EditProfileFragment extends Fragment {
         user.put("name", name);
         user.put("age", age);
         user.put("favGenres", selectedGenres);
-        if (photoFile != null) {
-            user.put("profilePic", new ParseFile(photoFile));
+        if (parseFile != null) {
+            parseFile.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (null == e) {
+                        user.put("profilePic", parseFile);
+                        Log.i("PROFILE PIC", "NEW IMAGE UPLOADED");
+                        user.signUpInBackground(new SignUpCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e != null) {
+                                    Log.i("createUser TOKEN: ", token);
+                                    Log.i("create user E code:", Integer.toString(e.getCode()));
+                                    Log.e(TAG, "Issue with sign up", e);
+                                    //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
+                                    return;
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            user.signUpInBackground(new SignUpCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        Log.i("createUser TOKEN: ", token);
+                        Log.i("create user E code:", Integer.toString(e.getCode()));
+                        Log.e(TAG, "Issue with sign up", e);
+                        //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
+                        return;
+                    }
+                }
+            });
         }
 
-        user.signUpInBackground(new SignUpCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                    Log.i("createUser TOKEN: ", token);
-                    Log.i("create user E code:", Integer.toString(e.getCode()));
-                    Log.e(TAG, "Issue with sign up", e);
-                    //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
-                    return;
-                }
-            }
-        });
     }
 
     private JSONArray getSelectedGenres() {
