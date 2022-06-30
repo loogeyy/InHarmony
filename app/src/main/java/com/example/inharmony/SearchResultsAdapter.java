@@ -78,6 +78,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     public void clearData() {
         mTracks.clear();
+        mArtists.clear();
+        mAlbums.clear();
     }
 
     public void addDataTracks(List<Track> tracks) {
@@ -87,11 +89,13 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     public void addDataArtists(List<Artist> artists) {
         mArtists.addAll(artists);
+        Log.i("ADDING ARTISTS", "...");
         notifyDataSetChanged();
     }
 
     public void addDataAlbums(List<AlbumSimple> albums) {
         mAlbums.addAll(albums);
+        Log.i("ADDING ALBUMS", "...");
         notifyDataSetChanged();
     }
 
