@@ -82,6 +82,8 @@ public class EditProfileFragment extends Fragment {
     private ImageButton btnChangePic;
     private ImageView ivChangeProfilePic;
     private Button btnFavSong;
+    private Button btnFavArtist;
+    private Button btnFavAlbum;
 
     private boolean newSignUp;
     private String username;
@@ -118,6 +120,8 @@ public class EditProfileFragment extends Fragment {
         ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
         btnChangePic = view.findViewById(R.id.btnChangePic);
         btnFavSong = view.findViewById(R.id.btnFavSong);
+        btnFavArtist = view.findViewById(R.id.btnFavArtist);
+        btnFavAlbum = view.findViewById(R.id.btnFavAlbum);
         //etGender = findViewById(R.id.etGender);
 
         Bundle bundle = this.getArguments();
@@ -179,6 +183,8 @@ public class EditProfileFragment extends Fragment {
         checkUpdatePhotoButtonClicked();
         checkUpdateProfileButtonClicked();
         checkFavSongButtonClicked();
+        checkFavArtistButtonClicked();
+        checkFavAlbumButtonClicked();
     }
 
     public static Intent createIntent(Context context) {
@@ -316,11 +322,42 @@ public class EditProfileFragment extends Fragment {
                 SearchFragment fragment = new SearchFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(SearchFragment.EXTRA_TOKEN, token);
+                bundle.putString(SearchFragment.SEARCH_TYPE, "TRACK");
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
                }
         });
     }
+
+    private void checkFavArtistButtonClicked() {
+        btnFavArtist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchFragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(SearchFragment.EXTRA_TOKEN, token);
+                bundle.putString(SearchFragment.SEARCH_TYPE, "ARTIST");
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+            }
+        });
+    }
+
+    private void checkFavAlbumButtonClicked() {
+        btnFavAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchFragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(SearchFragment.EXTRA_TOKEN, token);
+                bundle.putString(SearchFragment.SEARCH_TYPE, "ALBUM");
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+            }
+        });
+    }
+
+
 
     // populates genres into the dropdown
     private List<KeyPairBoolData> generateGenresList(List<String> list) {

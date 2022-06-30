@@ -67,7 +67,7 @@ public class SearchPresenter implements Search.ActionListener {
 
 
     @Override
-    public void search(@Nullable String searchQuery) {
+    public void searchTracks(@Nullable String searchQuery) {
         if (searchQuery != null && !searchQuery.isEmpty() && !searchQuery.equals(mCurrentQuery)) {
             logMessage("query text submit " + searchQuery);
             mCurrentQuery = searchQuery;
@@ -75,7 +75,7 @@ public class SearchPresenter implements Search.ActionListener {
             mSearchListener = new SearchPager.CompleteListener() {
                 @Override
                 public void onComplete(List<Track> items) {
-                    mView.addData(items);
+                    mView.addDataTracks(items);
                 }
 
                 @Override
@@ -85,6 +85,16 @@ public class SearchPresenter implements Search.ActionListener {
             };
             mSearchPager.getFirstPage(searchQuery, PAGE_SIZE, mSearchListener);
         }
+    }
+
+    @Override
+    public void searchArtists(@Nullable String searchQuery) {
+
+    }
+
+    @Override
+    public void searchAlbums(@Nullable String searchQuery) {
+
     }
 
 
@@ -132,6 +142,7 @@ public class SearchPresenter implements Search.ActionListener {
             mPlayer.play(previewUrl);
         } else if (mPlayer.isPlaying()) {
             mPlayer.pause();
+
         } else {
             mPlayer.resume();
         }

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import com.example.inharmony.SearchResultsAdapter;
 
 import java.util.List;
 
+import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
 
 
@@ -30,6 +33,8 @@ public class SearchFragment extends Fragment implements Search.View {
 
     public static final String EXTRA_TOKEN = "EXTRA_TOKEN";
     private static final String KEY_CURRENT_QUERY = "CURRENT_QUERY";
+    public static String SEARCH_TYPE = "SEARCH_TYPE";
+    private String searchType;
 
     private RecyclerView resultsList;
     private SearchView searchView;
@@ -74,6 +79,7 @@ public class SearchFragment extends Fragment implements Search.View {
         if (bundle != null) {
             token = bundle.getString(SearchFragment.EXTRA_TOKEN);
             Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
+            searchType = bundle.getString(SearchFragment.SEARCH_TYPE);
         }
 
         mActionListener = new SearchPresenter(getContext(), this);
@@ -84,7 +90,9 @@ public class SearchFragment extends Fragment implements Search.View {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mActionListener.search(query);
+                Log.i("SEARCH TYPE IS", SEARCH_TYPE);
+                if (SEARCH_TYPE.equals("TRACK"))
+                mActionListener.searchTracks(query);
                 searchView.clearFocus();
                 return true;
             }
@@ -101,6 +109,7 @@ public class SearchFragment extends Fragment implements Search.View {
             @Override
             public void onItemSelected(View itemView, Track item) {
                 mActionListener.selectTrack(item);
+                //HERE
             }
         });
 
@@ -113,7 +122,7 @@ public class SearchFragment extends Fragment implements Search.View {
         // If Activity was recreated wit active search restore it
         if (savedInstanceState != null) {
             String currentQuery = savedInstanceState.getString(KEY_CURRENT_QUERY);
-            mActionListener.search(currentQuery);
+            mActionListener.searchTracks(currentQuery);
         }
 
     }
@@ -125,8 +134,18 @@ public class SearchFragment extends Fragment implements Search.View {
     }
 
     @Override
-    public void addData(List<Track> items) {
-        mAdapter.addData(items);
+    public void addDataTracks(List<Track> tracks) {
+        mAdapter.addDataTracks(tracks);
+    }
+
+    @Override
+    public void addDataArtists(List<Artist> artists) {
+        mAdapter.addDataArtists(artists);
+    }
+
+    @Override
+    public void addDataAlbums(List<Album> albums) {
+        mAdapter.addDataAlbums(albums);
     }
 
     @Override

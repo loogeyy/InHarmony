@@ -15,13 +15,18 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.ViewHolder> {
 
-    private final List<Track> mItems = new ArrayList<>();
+    private final List<Track> mTracks = new ArrayList<>();
+    private final List<Artist> mArtists = new ArrayList<>();
+    private final List<Album> mAlbums = new ArrayList<>();
+
     private final Context mContext;
     private final ItemSelectedListener mListener;
 
@@ -42,7 +47,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         @Override
         public void onClick(View v) {
             notifyItemChanged(getLayoutPosition());
-            mListener.onItemSelected(v, mItems.get(getAdapterPosition()));
+            mListener.onItemSelected(v, mTracks.get(getAdapterPosition()));
         }
     }
 
@@ -56,11 +61,21 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     }
 
     public void clearData() {
-        mItems.clear();
+        mTracks.clear();
     }
 
-    public void addData(List<Track> items) {
-        mItems.addAll(items);
+    public void addDataTracks(List<Track> tracks) {
+        mTracks.addAll(tracks);
+        notifyDataSetChanged();
+    }
+
+    public void addDataArtists(List<Artist> artists) {
+        mArtists.addAll(artists);
+        notifyDataSetChanged();
+    }
+
+    public void addDataAlbums(List<Album> albums) {
+        mAlbums.addAll(albums);
         notifyDataSetChanged();
     }
 
@@ -72,7 +87,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Track item = mItems.get(position);
+        Track item = mTracks.get(position);
 
         holder.title.setText(item.name);
 
@@ -91,6 +106,6 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mTracks.size();
     }
 }
