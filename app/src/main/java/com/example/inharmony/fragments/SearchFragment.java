@@ -25,6 +25,7 @@ import com.example.inharmony.SearchResultsAdapter;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
 
@@ -121,7 +122,7 @@ public class SearchFragment extends Fragment implements Search.View {
             public void onItemSelectedTrack(View itemView, Track track) {
                 //mActionListener.selectTrack(track); // this makes it play, use this code for later
 
-                SearchFragment fragment = new SearchFragment();
+                EditProfileFragment fragment = new EditProfileFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favTrack", track);
@@ -135,7 +136,7 @@ public class SearchFragment extends Fragment implements Search.View {
             public void onItemSelectedArtist(View itemView, Artist artist) {
                 mActionListener.selectArtist(artist); // in searchpresenter, doesn't need to do anything
 
-                SearchFragment fragment = new SearchFragment();
+                EditProfileFragment fragment = new EditProfileFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favArtist", artist);
@@ -146,13 +147,13 @@ public class SearchFragment extends Fragment implements Search.View {
             }
 
             @Override
-            public void onItemSelectedAlbum(View itemView, Album album) {
+            public void onItemSelectedAlbum(View itemView, AlbumSimple album) {
                 mActionListener.selectAlbum(album);
 
-
-                SearchFragment fragment = new SearchFragment();
+                EditProfileFragment fragment = new EditProfileFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+                bundle.putParcelable("favAlbum", album);
 
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
@@ -202,7 +203,7 @@ public class SearchFragment extends Fragment implements Search.View {
     }
 
     @Override
-    public void addDataAlbums(List<Album> albums) {
+    public void addDataAlbums(List<AlbumSimple> albums) {
         mAdapter.addDataAlbums(albums);
     }
 

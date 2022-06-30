@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Image;
@@ -26,7 +27,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     private final List<Track> mTracks = new ArrayList<>();
     private final List<Artist> mArtists = new ArrayList<>();
-    private final List<Album> mAlbums = new ArrayList<>();
+    private final List<AlbumSimple> mAlbums = new ArrayList<>();
 
     private final Context mContext;
     private final ItemSelectedListener mListener;
@@ -66,7 +67,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     public interface ItemSelectedListener {
         void onItemSelectedTrack(View itemView, Track item);
         void onItemSelectedArtist(View itemView, Artist artist);
-        void onItemSelectedAlbum(View itemView, Album album);
+        void onItemSelectedAlbum(View itemView, AlbumSimple album);
     }
 
     public SearchResultsAdapter(String searchType, Context context, ItemSelectedListener listener) {
@@ -89,7 +90,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         notifyDataSetChanged();
     }
 
-    public void addDataAlbums(List<Album> albums) {
+    public void addDataAlbums(List<AlbumSimple> albums) {
         mAlbums.addAll(albums);
         notifyDataSetChanged();
     }
@@ -132,15 +133,17 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
         } else if (mSearchType.equals("ALBUM")) {
             Log.i("BINDVIEW" , "ALBUM");
-            Album album = mAlbums.get(position);
+            AlbumSimple album = mAlbums.get(position);
+            AlbumSimple albums = mAlbums.get(position);
 
             holder.title.setText(album.name);
             List<String> names = new ArrayList<>();
-            for (ArtistSimple i : album.artists) {
-                names.add(i.name);
-            }
-            Joiner joiner = Joiner.on(", ");
-            holder.subtitle.setText(joiner.join(names));
+            //can't do this with albumsimple :(
+//            for (ArtistSimple i : album.artists) {
+//                names.add(i.name);
+//            }
+//            Joiner joiner = Joiner.on(", ");
+//            holder.subtitle.setText(joiner.join(names));
             Image image = album.images.get(0);
             if (image != null) {
                 Picasso.with(mContext).load(image.url).into(holder.image);

@@ -150,12 +150,12 @@ public class SearchPresenter implements Search.ActionListener {
 
                 @Override
                 public void onCompleteArtists(List<Artist> artists) {
-
+                    mView.addDataArtists(artists);
                 }
 
                 @Override
                 public void onCompleteAlbums(List<AlbumSimple> albums) {
-
+                    mView.addDataAlbums(albums);
                 }
 
                 @Override
@@ -234,7 +234,7 @@ public class SearchPresenter implements Search.ActionListener {
     }
 
     @Override
-    public void selectAlbum(Album album) {
+    public void selectAlbum(AlbumSimple album) {
 
     }
 
