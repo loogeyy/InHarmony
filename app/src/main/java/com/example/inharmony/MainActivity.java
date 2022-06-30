@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
                             bundle.putString("tvWelcomeText", welcomeText);
                         } else {
                             bundle.putBoolean("newSignUp", false);
+                            String welcomeText = "Edit your profile details below.";
+                            bundle.putString("tvWelcomeText", welcomeText);
                         }
                     default:
                         Log.i("DEFAULT", "NEW EDITPROFILEFRAGMENT");

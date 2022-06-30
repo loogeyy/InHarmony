@@ -323,6 +323,11 @@ public class EditProfileFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString(SearchFragment.EXTRA_TOKEN, token);
                 bundle.putString(SearchFragment.SEARCH_TYPE, "TRACK");
+                if (newSignUp) {
+                    bundle.putBoolean("newSignUp", true);
+                } else {
+                    bundle.putBoolean("newSignUp", false);
+                }
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
                }
@@ -337,6 +342,11 @@ public class EditProfileFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString(SearchFragment.EXTRA_TOKEN, token);
                 bundle.putString(SearchFragment.SEARCH_TYPE, "ARTIST");
+                if (newSignUp) {
+                    bundle.putBoolean("newSignUp", true);
+                } else {
+                    bundle.putBoolean("newSignUp", false);
+                }
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
             }
@@ -350,7 +360,11 @@ public class EditProfileFragment extends Fragment {
                 SearchFragment fragment = new SearchFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(SearchFragment.EXTRA_TOKEN, token);
-                bundle.putString(SearchFragment.SEARCH_TYPE, "ALBUM");
+                bundle.putString(SearchFragment.SEARCH_TYPE, "ALBUM");if (newSignUp) {
+                    bundle.putBoolean("newSignUp", true);
+                } else {
+                    bundle.putBoolean("newSignUp", false);
+                }
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
             }

@@ -35,6 +35,7 @@ public class SearchFragment extends Fragment implements Search.View {
     public static final String EXTRA_TOKEN = "EXTRA_TOKEN";
     private static final String KEY_CURRENT_QUERY = "CURRENT_QUERY";
     public static String SEARCH_TYPE = "SEARCH_TYPE";
+    private boolean newSignUp;
     private String searchType;
     private String token;
 
@@ -81,6 +82,7 @@ public class SearchFragment extends Fragment implements Search.View {
             token = bundle.getString(SearchFragment.EXTRA_TOKEN);
             Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
             searchType = bundle.getString(SearchFragment.SEARCH_TYPE);
+            newSignUp = bundle.getBoolean("newSignUp");
             Log.i("SEARCH FRAGMENT SEARCHTYPE", searchType);
         }
 
@@ -126,6 +128,7 @@ public class SearchFragment extends Fragment implements Search.View {
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favTrack", track);
+                bundle.putBoolean("newSignUp", newSignUp);
                 //bundle.putString(EditProfileFragment.SEARCH_TYPE, "TRACK");
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
@@ -140,6 +143,7 @@ public class SearchFragment extends Fragment implements Search.View {
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favArtist", artist);
+                bundle.putBoolean("newSignUp", newSignUp);
                 //bundle.putString(EditProfileFragment.SEARCH_TYPE, "TRACK");
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
@@ -154,7 +158,7 @@ public class SearchFragment extends Fragment implements Search.View {
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favAlbum", album);
-
+                bundle.putBoolean("newSignUp", newSignUp);
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
 
