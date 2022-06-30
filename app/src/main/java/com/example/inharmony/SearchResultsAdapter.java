@@ -1,6 +1,7 @@
 package com.example.inharmony;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     private final Context mContext;
     private final ItemSelectedListener mListener;
+    private String mSearchType;
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -44,20 +46,33 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             itemView.setOnClickListener(this);
         }
 
+        // HOW TO DO THIS HERE
         @Override
         public void onClick(View v) {
             notifyItemChanged(getLayoutPosition());
-            mListener.onItemSelected(v, mTracks.get(getAdapterPosition()));
+            if (mSearchType.equals("TRACK")) {
+                mListener.onItemSelectedTrack(v, mTracks.get(getAdapterPosition()));
+            }
+            else if (mSearchType.equals("ARTIST")) {
+                mListener.onItemSelectedArtist(v, mArtists.get(getAdapterPosition()));
+            }
+            else if (mSearchType.equals("ALBUM")) {
+                mListener.onItemSelectedAlbum(v, mAlbums.get(getAdapterPosition()));
+            }
+
         }
     }
 
     public interface ItemSelectedListener {
-        void onItemSelected(View itemView, Track item);
+        void onItemSelectedTrack(View itemView, Track item);
+        void onItemSelectedArtist(View itemView, Artist artist);
+        void onItemSelectedAlbum(View itemView, Album album);
     }
 
-    public SearchResultsAdapter(Context context, ItemSelectedListener listener) {
+    public SearchResultsAdapter(String searchType, Context context, ItemSelectedListener listener) {
         mContext = context;
         mListener = listener;
+        mSearchType = searchType;
     }
 
     public void clearData() {
@@ -87,25 +102,62 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Track item = mTracks.get(position);
+        if (mSearchType.equals("TRACK")) {
+            Log.i("BINDVIEW" , "TRACK");
+            Track track = mTracks.get(position);
 
-        holder.title.setText(item.name);
+            holder.title.setText(track.name);
 
-        List<String> names = new ArrayList<>();
-        for (ArtistSimple i : item.artists) {
-            names.add(i.name);
-        }
-        Joiner joiner = Joiner.on(", ");
-        holder.subtitle.setText(joiner.join(names));
+            List<String> names = new ArrayList<>();
+            for (ArtistSimple i : track.artists) {
+                names.add(i.name);
+            }
+            Joiner joiner = Joiner.on(", ");
+            holder.subtitle.setText(joiner.join(names));
 
-        Image image = item.album.images.get(0);
-        if (image != null) {
-            Picasso.with(mContext).load(image.url).into(holder.image);
+            Image image = track.album.images.get(0);
+            if (image != null) {
+                Picasso.with(mContext).load(image.url).into(holder.image);
+            }
+        } else if (mSearchType.equals("ARTIST")) {
+            Log.i("BINDVIEW" , "ARTIST");
+            Artist artist = mArtists.get(position);
+
+            holder.title.setText(artist.name);
+            Image image = artist.images.get(0);
+            if (image != null) {
+                Picasso.with(mContext).load(image.url).into(holder.image);
+            }
+
+
+        } else if (mSearchType.equals("ALBUM")) {
+            Log.i("BINDVIEW" , "ALBUM");
+            Album album = mAlbums.get(position);
+
+            holder.title.setText(album.name);
+            List<String> names = new ArrayList<>();
+            for (ArtistSimple i : album.artists) {
+                names.add(i.name);
+            }
+            Joiner joiner = Joiner.on(", ");
+            holder.subtitle.setText(joiner.join(names));
+            Image image = album.images.get(0);
+            if (image != null) {
+                Picasso.with(mContext).load(image.url).into(holder.image);
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return mTracks.size();
+        if (mSearchType.equals("TRACK")) {
+            return mTracks.size();
+        }
+        else if (mSearchType.equals("ARTIST")) {
+            return mArtists.size();
+        }
+        else {
+            return mAlbums.size();
+        }
     }
 }

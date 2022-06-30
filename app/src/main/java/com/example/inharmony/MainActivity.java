@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Profile", Toast.LENGTH_SHORT).show();
                         Log.d("Menu", "Profile pressed");
                         fragment = new SearchFragment();
+                        bundle.putString(SearchFragment.SEARCH_TYPE, "TRACK");
                         //fragment = new MatchFragment(ParseUser.getCurrentUser());
                         break;
                     case R.id.actionProfile:

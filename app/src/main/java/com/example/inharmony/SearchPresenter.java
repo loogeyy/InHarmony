@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 
 import android.util.Log;
@@ -11,9 +12,15 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.inharmony.fragments.EditProfileFragment;
+import com.example.inharmony.fragments.SearchFragment;
+
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.AlbumSimple;
+import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class SearchPresenter implements Search.ActionListener {
@@ -74,8 +81,18 @@ public class SearchPresenter implements Search.ActionListener {
             mView.reset();
             mSearchListener = new SearchPager.CompleteListener() {
                 @Override
-                public void onComplete(List<Track> items) {
+                public void onCompleteTracks(List<Track> items) {
                     mView.addDataTracks(items);
+                }
+
+                @Override
+                public void onCompleteArtists(List<Artist> artists) {
+
+                }
+
+                @Override
+                public void onCompleteAlbums(List<AlbumSimple> albums) {
+
                 }
 
                 @Override
@@ -83,18 +100,71 @@ public class SearchPresenter implements Search.ActionListener {
                     logError(error.getMessage());
                 }
             };
-            mSearchPager.getFirstPage(searchQuery, PAGE_SIZE, mSearchListener);
+            mSearchPager.getFirstPage("TRACK", searchQuery, PAGE_SIZE, mSearchListener);
         }
     }
 
     @Override
     public void searchArtists(@Nullable String searchQuery) {
+        if (searchQuery != null && !searchQuery.isEmpty() && !searchQuery.equals(mCurrentQuery)) {
+            logMessage("query text submit " + searchQuery);
+            mCurrentQuery = searchQuery;
+            mView.reset();
+            mSearchListener = new SearchPager.CompleteListener() {
+                @Override
+                public void onCompleteTracks(List<Track> tracks) {
+                    mView.addDataTracks(tracks);
+                }
 
+                @Override
+                public void onCompleteArtists(List<Artist> artists) {
+                    mView.addDataArtists(artists);
+                }
+
+                @Override
+                public void onCompleteAlbums(List<AlbumSimple> albums) {
+                    //mView.addDataAlbums(albums);
+                }
+
+                @Override
+                public void onError(Throwable error) {
+                    logError(error.getMessage());
+                }
+            };
+            mSearchPager.getFirstPage("ARTIST", searchQuery, PAGE_SIZE, mSearchListener);
+        }
     }
 
     @Override
     public void searchAlbums(@Nullable String searchQuery) {
+        if (searchQuery != null && !searchQuery.isEmpty() && !searchQuery.equals(mCurrentQuery)) {
+            logMessage("query text submit " + searchQuery);
+            mCurrentQuery = searchQuery;
+            mView.reset();
+            mSearchListener = new SearchPager.CompleteListener() {
 
+                @Override
+                public void onCompleteTracks(List<Track> tracks) {
+                    mView.addDataTracks(tracks);
+                }
+
+                @Override
+                public void onCompleteArtists(List<Artist> artists) {
+
+                }
+
+                @Override
+                public void onCompleteAlbums(List<AlbumSimple> albums) {
+
+                }
+
+                @Override
+                public void onError(Throwable error) {
+                    logError(error.getMessage());
+                }
+            };
+            mSearchPager.getFirstPage("ALBUM", searchQuery, PAGE_SIZE, mSearchListener);
+        }
     }
 
 
@@ -120,13 +190,23 @@ public class SearchPresenter implements Search.ActionListener {
     }
 
     @Override
-    public void loadMoreResults() {
+    public void loadMoreResults(String searchType) {
         Log.d(TAG, "Load more...");
-        mSearchPager.getNextPage(mSearchListener);
+        if (searchType.equals("TRACK")) {
+            mSearchPager.getNextPage("TRACK", mSearchListener);
+        }
+        if (searchType.equals("ARTIST")) {
+            mSearchPager.getNextPage("ARTIST", mSearchListener);
+        }
+        if (searchType.equals("ALBUM")) {
+            mSearchPager.getNextPage("ALBUM", mSearchListener);
+        }
+
     }
 
     @Override
     public void selectTrack(Track item) {
+
         String previewUrl = item.preview_url;
 
         if (previewUrl == null) {
@@ -146,6 +226,16 @@ public class SearchPresenter implements Search.ActionListener {
         } else {
             mPlayer.resume();
         }
+    }
+
+    @Override
+    public void selectArtist(Artist artist) {
+        //do i need anything here? figure out how to populate adapter screen
+    }
+
+    @Override
+    public void selectAlbum(Album album) {
+
     }
 
     private void logError(String msg) {

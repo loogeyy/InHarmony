@@ -33,9 +33,13 @@ public class Search {
 
         void searchAlbums(String searchQuery);
 
-        void loadMoreResults();
+        void loadMoreResults(String searchType);
 
         void selectTrack(Track item);
+
+        void selectArtist(Artist artist);
+
+        void selectAlbum(Album album);
 
         void resume();
 

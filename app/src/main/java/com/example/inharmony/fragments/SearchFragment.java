@@ -35,6 +35,7 @@ public class SearchFragment extends Fragment implements Search.View {
     private static final String KEY_CURRENT_QUERY = "CURRENT_QUERY";
     public static String SEARCH_TYPE = "SEARCH_TYPE";
     private String searchType;
+    private String token;
 
     private RecyclerView resultsList;
     private SearchView searchView;
@@ -53,7 +54,7 @@ public class SearchFragment extends Fragment implements Search.View {
 
         @Override
         public void onLoadMore() {
-            mActionListener.loadMoreResults();
+            mActionListener.loadMoreResults(searchType);
         }
     }
 
@@ -74,12 +75,12 @@ public class SearchFragment extends Fragment implements Search.View {
         super.onViewCreated(view, savedInstanceState);
         //Toast.makeText(getContext(), "SearchFragment", Toast.LENGTH_SHORT).show();
 
-        String token = "";
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             token = bundle.getString(SearchFragment.EXTRA_TOKEN);
             Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
             searchType = bundle.getString(SearchFragment.SEARCH_TYPE);
+            Log.i("SEARCH FRAGMENT SEARCHTYPE", searchType);
         }
 
         mActionListener = new SearchPresenter(getContext(), this);
@@ -88,12 +89,22 @@ public class SearchFragment extends Fragment implements Search.View {
         // Setup search field
         searchView = (SearchView) view.findViewById(R.id.search_view);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i("SEARCH TYPE IS", SEARCH_TYPE);
-                if (SEARCH_TYPE.equals("TRACK"))
-                mActionListener.searchTracks(query);
-                searchView.clearFocus();
+                if (searchType.equals("TRACK")) {
+                    mActionListener.searchTracks(query);
+                    searchView.clearFocus();
+                }
+                if (searchType.equals("ARTIST")) {
+                    mActionListener.searchArtists(query);
+                    searchView.clearFocus();
+                }
+                if (searchType.equals("ALBUM")) {
+                    mActionListener.searchAlbums(query);
+                    searchView.clearFocus();
+                }
                 return true;
             }
 
@@ -105,12 +116,50 @@ public class SearchFragment extends Fragment implements Search.View {
 
 
         // Setup search results list
-        mAdapter = new SearchResultsAdapter(getContext(), new SearchResultsAdapter.ItemSelectedListener() {
+        mAdapter = new SearchResultsAdapter(searchType, getContext(), new SearchResultsAdapter.ItemSelectedListener()  {
             @Override
-            public void onItemSelected(View itemView, Track item) {
-                mActionListener.selectTrack(item);
-                //HERE
+            public void onItemSelectedTrack(View itemView, Track track) {
+                //mActionListener.selectTrack(track); // this makes it play, use this code for later
+
+                SearchFragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+                bundle.putParcelable("favTrack", track);
+                //bundle.putString(EditProfileFragment.SEARCH_TYPE, "TRACK");
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
             }
+
+            @Override
+            public void onItemSelectedArtist(View itemView, Artist artist) {
+                mActionListener.selectArtist(artist); // in searchpresenter, doesn't need to do anything
+
+                SearchFragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+                bundle.putParcelable("favArtist", artist);
+                //bundle.putString(EditProfileFragment.SEARCH_TYPE, "TRACK");
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
+            }
+
+            @Override
+            public void onItemSelectedAlbum(View itemView, Album album) {
+                mActionListener.selectAlbum(album);
+
+
+                SearchFragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
+            }
+
+
         });
 
         resultsList = view.findViewById(R.id.search_results);
@@ -122,7 +171,16 @@ public class SearchFragment extends Fragment implements Search.View {
         // If Activity was recreated wit active search restore it
         if (savedInstanceState != null) {
             String currentQuery = savedInstanceState.getString(KEY_CURRENT_QUERY);
-            mActionListener.searchTracks(currentQuery);
+            if (searchType.equals("TRACK")) {
+                mActionListener.searchTracks(currentQuery);
+            }
+            if (searchType.equals("ARTIST")) {
+                mActionListener.searchArtists(currentQuery);
+            }
+            if (searchType.equals("ALBUM")) {
+                mActionListener.searchAlbums(currentQuery);
+            }
+            //mActionListener.searchTracks(currentQuery);
         }
 
     }
