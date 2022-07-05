@@ -286,6 +286,7 @@ public class EditProfileFragment extends Fragment {
         checkFavSongButtonClicked();
         checkFavArtistButtonClicked();
         checkFavAlbumButtonClicked();
+
     }
 
     @Override
@@ -334,7 +335,23 @@ public class EditProfileFragment extends Fragment {
         btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (favTrack != null) {
+                    Log.i("EDITPROFILE FAVTRACK", favTrack.toString());
+                } else {
+                    Log.i("EDITPROFILE FAVTRACK", "NULL");
+                }
 
+                if (favArtist != null) {
+                    Log.i("EDITPROFILE FAVARTIST", favArtist.toString());
+                } else {
+                    Log.i("EDITPROFILE FAVARTIST", "NULL");
+                }
+
+                if (favAlbum != null) {
+                    Log.i("EDITPROFILE FAVALBUM", favAlbum.toString());
+                } else {
+                    Log.i("EDITPROFILE FAVALBUM", "NULL");
+                }
                 //Log.i("newsignup", String.valueOf(newSignUp));
 
                 String name;
@@ -440,26 +457,29 @@ public class EditProfileFragment extends Fragment {
                     bundle.putBoolean("newSignUp", false);
                 }
                 fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().setFragmentResultListener("hi", EditProfileFragment.this, new FragmentResultListener() {
+                getActivity().getSupportFragmentManager().setFragmentResultListener("favTrack", EditProfileFragment.this, new FragmentResultListener() {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                        favTrack = result.getParcelable("favSong");
-                        Log.i(TAG, "TRACK: " + favTrack.toString());
-                        Log.i(TAG, "ARTIST: " + favArtist.toString());
-                        Log.i(TAG, "ALBUM: " + favAlbum.toString());
+                        if (result != null) {
+                            favTrack = result.getParcelable("favTrack");
+                            Log.i(TAG, "TRACK: " + favTrack.toString());
+                            //Log.i(TAG, "ARTIST: " + favArtist.toString());
+                            //Log.i(TAG, "ALBUM: " + favAlbum.toString());
+                        } else {
+                            Log.i(TAG, "ONFRAGMENTRESULT BUNDLE IS NULL");
+                        }
+
                     }
                 });
-
-
+                fragment.setArguments(bundle);
                 //getActivity().getSupportFragmentManager().saveFragmentInstanceState(EditProfileFragment.this);
-//                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//                if (!fragment.isAdded()) {
-//                    ft.add(R.id.flContainer, fragment);
-//                }
-//                    ft.show(fragment);
-//                    ft.hide(EditProfileFragment.this);
-//                    ft.commit();
-                //.replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                if (!fragment.isAdded()) {
+                    ft.add(R.id.flContainer, fragment);
+                }
+                    ft.show(fragment);
+                    ft.hide(EditProfileFragment.this);
+                    ft.commit();
                }
         });
     }
@@ -477,8 +497,23 @@ public class EditProfileFragment extends Fragment {
                 } else {
                     bundle.putBoolean("newSignUp", false);
                 }
-                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().setFragmentResultListener("favArtist", EditProfileFragment.this, new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        if (result != null) {
+                            favArtist = result.getParcelable("favArtist");
+                            Log.i(TAG, "ARTIST: " + favArtist.toString());
+                            //Log.i(TAG, "ARTIST: " + favArtist.toString());
+                            //Log.i(TAG, "ALBUM: " + favAlbum.toString());
+                        } else {
+                            Log.i(TAG, "ONFRAGMENTRESULT BUNDLE IS NULL");
+                        }
+
+                    }
+                });
+
                 //getActivity().getSupportFragmentManager().saveFragmentInstanceState(EditProfileFragment.this);
+                fragment.setArguments(bundle);
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 if (!fragment.isAdded()) {
                     ft.add(R.id.flContainer, fragment);
@@ -486,9 +521,10 @@ public class EditProfileFragment extends Fragment {
                 ft.show(fragment);
                 ft.hide(EditProfileFragment.this);
                 ft.commit();
-                //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
             }
         });
+                //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
     }
 
     private void checkFavAlbumButtonClicked() {
@@ -498,14 +534,35 @@ public class EditProfileFragment extends Fragment {
                 SearchFragment fragment = new SearchFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(SearchFragment.EXTRA_TOKEN, token);
-                bundle.putString(SearchFragment.SEARCH_TYPE, "ALBUM");if (newSignUp) {
+                bundle.putString(SearchFragment.SEARCH_TYPE, "ALBUM");
+                if (newSignUp) {
                     bundle.putBoolean("newSignUp", true);
                 } else {
                     bundle.putBoolean("newSignUp", false);
                 }
-                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().setFragmentResultListener("favArtist", EditProfileFragment.this, new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        if (result != null) {
+                            favAlbum = result.getParcelable("favAlbum");
+                            Log.i(TAG, "ALBUM: " + favAlbum.toString());
+                            //Log.i(TAG, "ARTIST: " + favArtist.toString());
+                            //Log.i(TAG, "ALBUM: " + favAlbum.toString());
+                        } else {
+                            Log.i(TAG, "ONFRAGMENTRESULT BUNDLE IS NULL");
+                        }
+
+                    }
+                });
                 //getActivity().getSupportFragmentManager().saveFragmentInstanceState(EditProfileFragment.this);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                if (!fragment.isAdded()) {
+                    ft.add(R.id.flContainer, fragment);
+                }
+                ft.show(fragment);
+                ft.hide(EditProfileFragment.this);
+                ft.commit();
             }
         });
     }

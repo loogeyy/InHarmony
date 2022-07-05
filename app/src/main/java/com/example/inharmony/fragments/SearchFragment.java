@@ -131,15 +131,14 @@ public class SearchFragment extends Fragment implements Search.View {
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favTrack", track);
                 bundle.putBoolean("newSignUp", newSignUp);
-                getActivity().getSupportFragmentManager().setFragmentResult("hi", bundle);
-                //bundle.putString(EditProfileFragment.SEARCH_TYPE, "TRACK");
+                getActivity().getSupportFragmentManager().setFragmentResult("favTrack", bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
 //                fragment.setArguments(bundle);
 //                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
 //                ft.replace(R.id.flContainer, fragment).show(fragment);
 //                ft.commit();
                 //ft.commit();
                 //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-
             }
 
             @Override
@@ -153,15 +152,17 @@ public class SearchFragment extends Fragment implements Search.View {
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favArtist", artist);
                 bundle.putBoolean("newSignUp", newSignUp);
+                getActivity().getSupportFragmentManager().setFragmentResult("favArtist", bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
                 //bundle.putString(EditProfileFragment.SEARCH_TYPE, "TRACK");
-                fragment.setArguments(bundle);
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                if (!fragment.isAdded()) {
-                    ft.add(R.id.flContainer, fragment);
-                }
-                ft.remove(SearchFragment.this);
-                ft.replace(R.id.flContainer, fragment).show(fragment);
-                ft.commit();
+//                fragment.setArguments(bundle);
+//                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+//                if (!fragment.isAdded()) {
+//                    ft.add(R.id.flContainer, fragment);
+//                }
+//                ft.remove(SearchFragment.this);
+//                ft.replace(R.id.flContainer, fragment).show(fragment);
+//                ft.commit();
 
 //                ft.show(fragment);
 //                ft.hide(SearchFragment.this);
@@ -181,9 +182,8 @@ public class SearchFragment extends Fragment implements Search.View {
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favAlbum", album);
                 bundle.putBoolean("newSignUp", newSignUp);
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-
+                getActivity().getSupportFragmentManager().setFragmentResult("favAlbum", bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
             }
 
 
