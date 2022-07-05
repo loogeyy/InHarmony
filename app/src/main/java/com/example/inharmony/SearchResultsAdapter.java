@@ -89,13 +89,13 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     public void addDataArtists(List<Artist> artists) {
         mArtists.addAll(artists);
-        Log.i("ADDING ARTISTS", "...");
+        //Log.i("ADDING ARTISTS", "...");
         notifyDataSetChanged();
     }
 
     public void addDataAlbums(List<AlbumSimple> albums) {
         mAlbums.addAll(albums);
-        Log.i("ADDING ALBUMS", "...");
+        //Log.i("ADDING ALBUMS", "...");
         notifyDataSetChanged();
     }
 
@@ -108,7 +108,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (mSearchType.equals("TRACK")) {
-            Log.i("BINDVIEW" , "TRACK");
+            //Log.i("BINDVIEW" , "TRACK");
             Track track = mTracks.get(position);
 
             holder.title.setText(track.name);
@@ -125,7 +125,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                 Picasso.with(mContext).load(image.url).into(holder.image);
             }
         } else if (mSearchType.equals("ARTIST")) {
-            Log.i("BINDVIEW" , "ARTIST");
+            //Log.i("BINDVIEW" , "ARTIST");
             Artist artist = mArtists.get(position);
 
             holder.title.setText(artist.name);
@@ -136,7 +136,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
 
         } else if (mSearchType.equals("ALBUM")) {
-            Log.i("BINDVIEW" , "ALBUM");
+            //Log.i("BINDVIEW" , "ALBUM");
             AlbumSimple album = mAlbums.get(position);
             AlbumSimple albums = mAlbums.get(position);
 

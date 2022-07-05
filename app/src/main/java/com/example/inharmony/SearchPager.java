@@ -54,15 +54,15 @@ public class SearchPager {
     public void getNextPage(String searchType, CompleteListener listener) {
         mCurrentOffset += mPageSize;
         if (searchType.equals("TRACK")) {
-            Log.i("GET NEXT PAGE", "EQUALS TRACK");
+            //Log.i("GET NEXT PAGE", "EQUALS TRACK");
             getDataTracks(mCurrentQuery, mCurrentOffset, mPageSize, listener);
         }
         if (searchType.equals("ARTIST")) {
-            Log.i("GET NEXT PAGE", "EQUALS ARTIST");
+            //Log.i("GET NEXT PAGE", "EQUALS ARTIST");
             getDataArtists(mCurrentQuery, mCurrentOffset, mPageSize, listener);
         }
         if (searchType.equals("ALBUM")) {
-            Log.i("GET NEXT PAGE", "EQUALS ALBUM");
+            //Log.i("GET NEXT PAGE", "EQUALS ALBUM");
             getDataAlbums(mCurrentQuery, mCurrentOffset, mPageSize, listener);
         }
     }
