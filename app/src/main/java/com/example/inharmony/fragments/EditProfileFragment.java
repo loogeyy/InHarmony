@@ -48,6 +48,7 @@ import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,6 +67,7 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.SeedsGenres;
 import kaaes.spotify.webapi.android.models.Track;
 import retrofit.Callback;
@@ -93,6 +95,13 @@ public class EditProfileFragment extends Fragment {
     private ImageView ivChangeProfilePic;
     private BottomNavigationView bottomMenu;
 
+    private TextView tvEditFavTrack;
+    private TextView tvEditFavAlbum;
+    private TextView tvEditFavArtist;
+    private ImageView ivEditFavTrack;
+    private ImageView ivEditFavAlbum;
+    private ImageView ivEditFavArtist;
+
     private String username;
     private String password;
 
@@ -111,32 +120,10 @@ public class EditProfileFragment extends Fragment {
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
     private List<String> genreList = Arrays.asList("hi", "hello", "hey");
 
-
-
     public EditProfileFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-//        Log.i("SAVING INSTANCE STATE", "EDITPROFILEFRAG");
-//        if (favTrack != null) {
-//            outState.putParcelable(FAV_TRACK, favTrack);
-//            Log.i(TAG, "on saved instance saved favtrack");
-//        }
-//        if (favArtist != null) {
-//            outState.putParcelable(FAV_ARTIST, favArtist);
-//            Log.i(TAG, "on saved instance saved favartist");
-//        }
-//        if (favAlbum != null) {
-//            outState.putParcelable(FAV_ALBUM, favAlbum);
-//            Log.i(TAG, "on saved instance saved favalbum");
-//        }
-//        outState.putString(EXTRA_TOKEN, token);
-//        outState.putBoolean("newSignUp", newSignUp);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -170,17 +157,25 @@ public class EditProfileFragment extends Fragment {
         }
 
         //Log.i("EDITPROFILE NEWSIGNUP", String.valueOf(newSignUp));
-        genres = view.findViewById(R.id.genres);
-        tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
-        btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
-        etName = view.findViewById(R.id.etName);
         etAge = view.findViewById(R.id.etAge);
-        bottomMenu = getActivity().findViewById(R.id.bottomMenu);
-        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
-        btnChangePic = view.findViewById(R.id.btnChangePic);
+        etName = view.findViewById(R.id.etName);
+        genres = view.findViewById(R.id.genres);
         btnFavSong = view.findViewById(R.id.btnFavSong);
-        btnFavArtist = view.findViewById(R.id.btnFavArtist);
         btnFavAlbum = view.findViewById(R.id.btnFavAlbum);
+        btnChangePic = view.findViewById(R.id.btnChangePic);
+        btnFavArtist = view.findViewById(R.id.btnFavArtist);
+        tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
+        bottomMenu = getActivity().findViewById(R.id.bottomMenu);
+        btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
+        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
+
+        tvEditFavTrack = view.findViewById(R.id.tvEditFavTrack);
+        tvEditFavAlbum = view.findViewById(R.id.tvEditFavAlbum);
+        tvEditFavArtist = view.findViewById(R.id.tvEditFavArtist);
+        ivEditFavTrack = view.findViewById(R.id.ivEditFavTrack);
+        ivEditFavAlbum = view.findViewById(R.id.ivEditFavAlbum);
+        ivEditFavArtist = view.findViewById(R.id.ivEditFavArtist);
+
         //etGender = findViewById(R.id.etGender);
 
         Bundle bundle = this.getArguments();
@@ -462,6 +457,11 @@ public class EditProfileFragment extends Fragment {
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                         if (result != null) {
                             favTrack = result.getParcelable("favTrack");
+                            tvEditFavTrack.setText(favTrack.name);
+                            Image image = favTrack.album.images.get(0);
+                            if (image != null) {
+                                Glide.with(getContext()).load(image.url).into(ivEditFavTrack);
+                            }
                             Log.i(TAG, "TRACK: " + favTrack.toString());
                             //Log.i(TAG, "ARTIST: " + favArtist.toString());
                             //Log.i(TAG, "ALBUM: " + favAlbum.toString());
@@ -502,6 +502,11 @@ public class EditProfileFragment extends Fragment {
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                         if (result != null) {
                             favArtist = result.getParcelable("favArtist");
+                            tvEditFavArtist.setText(favArtist.name);
+                            Image image = favArtist.images.get(0);
+                            if (image != null) {
+                                Glide.with(getContext()).load(image.url).into(ivEditFavArtist);
+                            }
                             Log.i(TAG, "ARTIST: " + favArtist.toString());
                             //Log.i(TAG, "ARTIST: " + favArtist.toString());
                             //Log.i(TAG, "ALBUM: " + favAlbum.toString());
@@ -540,11 +545,16 @@ public class EditProfileFragment extends Fragment {
                 } else {
                     bundle.putBoolean("newSignUp", false);
                 }
-                getActivity().getSupportFragmentManager().setFragmentResultListener("favArtist", EditProfileFragment.this, new FragmentResultListener() {
+                getActivity().getSupportFragmentManager().setFragmentResultListener("favAlbum", EditProfileFragment.this, new FragmentResultListener() {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                         if (result != null) {
                             favAlbum = result.getParcelable("favAlbum");
+                            tvEditFavAlbum.setText(favAlbum.name);
+                            Image image = favAlbum.images.get(0);
+                            if (image != null) {
+                                Glide.with(getContext()).load(image.url).into(ivEditFavAlbum);
+                            }
                             Log.i(TAG, "ALBUM: " + favAlbum.toString());
                             //Log.i(TAG, "ARTIST: " + favArtist.toString());
                             //Log.i(TAG, "ALBUM: " + favAlbum.toString());
