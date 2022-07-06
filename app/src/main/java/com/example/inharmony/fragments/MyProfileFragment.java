@@ -15,9 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.inharmony.R;
+import com.parse.ParseUser;
 
 public class MyProfileFragment extends Fragment {
-    private ImageButton btnEditProfile;
+    private ImageView btnEditProfile;
     private ImageView ivProfilePic;
     private TextView tvName;
     private TextView tvAge;
@@ -30,11 +31,17 @@ public class MyProfileFragment extends Fragment {
     private ImageView ivFavTrack;
     private TextView tvFavTrack;
 
-
+    private boolean myProfile;
+    private ParseUser user;
 
 
     public MyProfileFragment() {
         // Required empty public constructor
+    }
+
+    public MyProfileFragment(boolean myProfile, ParseUser user) {
+        this.myProfile = myProfile;
+        this.user = user;
     }
 
 
@@ -48,8 +55,24 @@ public class MyProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        btnEditProfile = view.findViewById(R.id.btnUpdateProfile);
+        btnEditProfile = view.findViewById(R.id.btnEditProfile);
         ivProfilePic = view.findViewById(R.id.ivProfilePic);
+        tvName = view.findViewById(R.id.tvName);
+        tvAge = view.findViewById(R.id.tvAge);
+        tvFavGenres = view.findViewById(R.id.tvFavGenres);
+        tvFavAlbum = view.findViewById(R.id.tvFavAlbum);
+        tvFavArtist = view.findViewById(R.id.tvFavArtist);
+        tvFavTrack = view.findViewById(R.id.tvFavTrack);
+        ivFavArtist = view.findViewById(R.id.ivFavArtist);
+        ivFavAlbum = view.findViewById(R.id.ivFavAlbum);
+        ivFavTrack = view.findViewById(R.id.ivFavTrack);
+
+        if (!myProfile) {
+            btnEditProfile.setVisibility(View.GONE);
+        } else {
+            btnEditProfile.setVisibility(View.VISIBLE);
+        }
+
         btnEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

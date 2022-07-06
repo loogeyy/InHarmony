@@ -13,10 +13,10 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="12dp"
         android:src="@drawable/nopfp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.084"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvWelcomeText"
         tools:src="@drawable/nopfp" />
@@ -25,8 +25,8 @@
         android:id="@+id/btnChangePic"
         android:layout_width="47dp"
         android:layout_height="47dp"
-        android:layout_marginStart="220dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="96dp"
         android:background="@drawable/ic_camera"
         android:backgroundTint="@color/white"
         android:scaleType="centerInside"
@@ -52,6 +52,7 @@
         android:layout_width="324dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
+        android:textAlignment="center"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
@@ -63,7 +64,6 @@
         android:id="@+id/etName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:ems="10"
         android:fontFamily="@font/anteb_bold"
         android:hint="Name"
@@ -71,35 +71,23 @@
         android:textColor="@color/light_blue"
         android:textColorHint="@color/light_blue"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivChangeProfilePic" />
+        app:layout_constraintStart_toEndOf="@+id/ivChangeProfilePic"
+        tools:layout_editor_absoluteY="84dp" />
 
     <EditText
         android:id="@+id/etAge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:ems="10"
         android:fontFamily="@font/anteb_bold"
-        android:inputType="number"
         android:hint="Age"
+        android:inputType="number"
         android:textColor="@color/light_blue"
         android:textColorHint="@color/light_blue"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ivChangeProfilePic"
         app:layout_constraintTop_toBottomOf="@+id/etName" />
-
-    <TextView
-        android:id="@+id/etGender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gender"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.833"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/etChangeBio" />
 
     <TextView
         android:id="@+id/textView7"
@@ -116,13 +104,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_marginTop="24dp"
         app:hintText="Select Your Top 3 Genres"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etAge"
-        app:textColor="@color/white" />
+        app:textColor="@color/white"
+        tools:layout_editor_absoluteY="300dp" />
 
     <Button
         android:id="@+id/btnUpdateProfile"
@@ -188,7 +175,7 @@
         android:fontFamily="@font/anteb_bold"
         android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@+id/ivEditFavArtist"
-        app:layout_constraintTop_toBottomOf="@+id/tvEditFavTrack"
+        app:layout_constraintTop_toBottomOf="@+id/tvFavTrack"
         android:clickable="true"
         tools:text="Dayglow" />
 
@@ -225,7 +212,7 @@
         tools:src="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/tvEditFavTrack"
+        android:id="@+id/tvFavTrack"
         android:layout_width="82dp"
         android:layout_height="53dp"
         android:layout_marginStart="4dp"

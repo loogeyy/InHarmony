@@ -25,6 +25,8 @@ import com.example.inharmony.fragments.MatchingFragment;
 import com.example.inharmony.fragments.MyProfileFragment;
 import com.example.inharmony.fragments.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.ParseUser;
+
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.actionProfile:
                         Log.i("MAINACTIVITY ACTIONRPOFILE", "SWITCHING TO EDIT");
-                        fragment = new EditProfileFragment();
+                        fragment = new MyProfileFragment(true, ParseUser.getCurrentUser());
                         if (newSignUp) {
                             bundle.putBoolean("newSignUp", true);
                             String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";

@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -43,18 +42,14 @@ import com.bumptech.glide.Glide;
 import com.example.inharmony.MainActivity;
 import com.example.inharmony.R;
 import com.example.inharmony.Search;
-import com.example.inharmony.SearchPresenter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -153,7 +148,7 @@ public class EditProfileFragment extends Fragment {
         btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
         ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
 
-        tvEditFavTrack = view.findViewById(R.id.tvEditFavTrack);
+        tvEditFavTrack = view.findViewById(R.id.tvFavTrack);
         tvEditFavAlbum = view.findViewById(R.id.tvEditFavAlbum);
         tvEditFavArtist = view.findViewById(R.id.tvEditFavArtist);
         ivEditFavTrack = view.findViewById(R.id.ivEditFavTrack);
@@ -369,14 +364,21 @@ public class EditProfileFragment extends Fragment {
                 // only update user in the database
                 else {
                     if (favTrack != null) {
-                        ParseUser.getCurrentUser().put("favTrack", favTrack);
+                        ParseUser.getCurrentUser().put("favTrack", favTrack.name + " - " + favTrack.artists.get(0).name);
                     }
                     if (favArtist != null) {
-                        ParseUser.getCurrentUser().put("favArtist", favArtist);
+                        ParseUser.getCurrentUser().put("favArtist", favArtist.name);
                     }
                     if (favAlbum != null) {
-                        ParseUser.getCurrentUser().put("favAlbum", favAlbum);
+                        ParseUser.getCurrentUser().put("favAlbum", favAlbum.name);
+                        if (favAlbum.images.size() != 0) {
+                            ParseUser.getCurrentUser().put("favAlbumImageUrl", favAlbum.images.get(0).url);
+                        }
                     }
+
+                    SpotifyApi spotifyApi = new SpotifyApi();
+                    spotifyApi.setAccessToken(token);
+                    SpotifyService service = spotifyApi.getService();
 
                     if (!TextUtils.isEmpty(etName.getText())) {
                         name = etName.getText().toString();
@@ -624,9 +626,12 @@ public class EditProfileFragment extends Fragment {
         user.put("name", name);
         user.put("age", age);
         user.put("favGenres", selectedGenres);
-        user.put("favArtist", artist);
-        user.put("favTrack", track);
-        user.put("favAlbum", album);
+        user.put("favArtist", artist.name);
+        user.put("favTrack", track.name + " - " + track.artists.get(0).name);
+        user.put("favAlbum", album.name);
+        if (favAlbum.images.size() != 0) {
+            user.put("favAlbumImageUrl", favAlbum.images.get(0).url);
+        }
 
         if (parseFile != null) {
             parseFile.saveInBackground(new SaveCallback() {
