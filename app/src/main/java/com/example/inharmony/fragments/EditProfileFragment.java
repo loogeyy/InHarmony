@@ -43,6 +43,7 @@ import com.example.inharmony.MainActivity;
 import com.example.inharmony.R;
 import com.example.inharmony.Search;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -62,7 +63,10 @@ import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
+import kaaes.spotify.webapi.android.models.Albums;
+import kaaes.spotify.webapi.android.models.AlbumsPager;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.SeedsGenres;
@@ -148,21 +152,20 @@ public class EditProfileFragment extends Fragment {
         btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
         ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
 
-        tvEditFavTrack = view.findViewById(R.id.tvFavTrack);
+        tvEditFavTrack = view.findViewById(R.id.tvEditFavTrack);
         tvEditFavAlbum = view.findViewById(R.id.tvEditFavAlbum);
         tvEditFavArtist = view.findViewById(R.id.tvEditFavArtist);
+
         ivEditFavTrack = view.findViewById(R.id.ivEditFavTrack);
         ivEditFavAlbum = view.findViewById(R.id.ivEditFavAlbum);
         ivEditFavArtist = view.findViewById(R.id.ivEditFavArtist);
 
-        //etGender = findViewById(R.id.etGender);
-
         tvEditFavTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpotifyApi spotifyApi = new SpotifyApi();
-                spotifyApi.setAccessToken(token);
-                SpotifyService service = spotifyApi.getService();
+//                SpotifyApi spotifyApi = new SpotifyApi();
+//                spotifyApi.setAccessToken(token);
+//                SpotifyService service = spotifyApi.getService();
 
                 //service.
                 //save name and just do a search, retrieve it via search laterfububegidnhvggfkhlurblcukgjrtdhh
@@ -185,36 +188,55 @@ public class EditProfileFragment extends Fragment {
 
         //Log.i("EDITPROFILEFRAGMENT NEWSIGNUP", String.valueOf(newSignUp));
 
-        if (newSignUp) {
-            bottomMenu.setVisibility(View.GONE);
-        }
-        else {
-                etAge.setText(ParseUser.getCurrentUser().get("age").toString());
-                etName.setText(ParseUser.getCurrentUser().get("name").toString());
-
-                ParseFile profilePic = (ParseFile) ParseUser.getCurrentUser().get("profilePic");
-                if (profilePic != null) {
-                    Glide.with(getContext()).load(profilePic.getUrl()).into(ivChangeProfilePic);
-                } else {
-                    ivChangeProfilePic.setImageResource(R.drawable.nopfp);
-                }
-        }
-
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
         SpotifyService service = spotifyApi.getService();
+
+        Log.i(TAG, ParseUser.getCurrentUser().toString());
+        String h = ParseUser.getCurrentUser().get("favTrack").toString();
+        Log.i("h:", h);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!newSignUp) {
+                   favTrack = service.getTracks(h).tracks.get(0);
+                    List <Album> albums = service.getAlbums(ParseUser.getCurrentUser().get("favAlbum").toString()).albums;
+                    Log.i(TAG, "favTrack" + favTrack.name.toString());
+
+                    favArtist = service.getArtists(ParseUser.getCurrentUser().get("favArtist").toString()).artists.get(0);
+                    Log.i(TAG, "favArtist" + favArtist.name.toString());
+                    for (Album a : albums) {
+                        if (a.images.size() != 0) {
+                            if (a.images.get(0).url.equals(ParseUser.getCurrentUser().get("favAlbumImageUrl"))) {
+                                favAlbum = a;
+                                Log.i(TAG, "favAlbum" + favAlbum.name.toString());
+                                break;
+                            }
+                        }
+                    }
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            populateScreen(favTrack, favArtist, favAlbum);
+                        }
+                    });
+                }
+            }
+        });
 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 username = service.getMe().email;
                 password = service.getMe().id;
+
                 service.getSeedsGenres(new Callback<SeedsGenres>() {
                     @Override
                     public void success(SeedsGenres seedsGenres, Response response) {
                         //Log.i(TAG, "Success");
                         genreList = seedsGenres.genres;
                         initializeGenreSelector(genres);
+
                     }
 
                     @Override
@@ -222,7 +244,9 @@ public class EditProfileFragment extends Fragment {
                         Log.e(TAG, "Retrofit error", error);
                     }
                 });
+
             }
+
         });
 
         checkUpdatePhotoButtonClicked();
@@ -231,18 +255,48 @@ public class EditProfileFragment extends Fragment {
         checkFavArtistButtonClicked();
         checkFavAlbumButtonClicked();
 
+
+        if (newSignUp) {
+            bottomMenu.setVisibility(View.GONE);
+        } else {
+
+            }
+
+
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.i(TAG, "resumed");
+    private void populateScreen(Track favTrack, Artist favArtist, AlbumSimple favAlbum) {
+        if (!newSignUp){
+            tvEditFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
+            tvEditFavArtist.setText(favArtist.name.toString());
+            tvEditFavAlbum.setText(favAlbum.name.toString());
+            if (favTrack.album.images.size() != 0) {
+                Image image = favTrack.album.images.get(0);
+                Glide.with(getContext()).load(image.url).into(ivEditFavTrack);
+            }
+
+            if (favArtist.images.size() != 0) {
+                Image image = favArtist.images.get(0);
+                Glide.with(getContext()).load(image.url).into(ivEditFavArtist);
+            }
+
+            if (favAlbum.images.size() != 0) {
+                Image image = favAlbum.images.get(0);
+                Glide.with(getContext()).load(ParseUser.getCurrentUser().get("favAlbumImageUrl")).into(ivEditFavAlbum);
+            }
+
+            etAge.setText(ParseUser.getCurrentUser().get("age").toString());
+            etName.setText(ParseUser.getCurrentUser().get("name").toString());
+
+            ParseFile profilePic = (ParseFile) ParseUser.getCurrentUser().get("profilePic");
+            if (profilePic != null) {
+                Glide.with(getContext()).load(profilePic.getUrl()).into(ivChangeProfilePic);
+            } else {
+                ivChangeProfilePic.setImageResource(R.drawable.nopfp);
+            }
+        }
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.i(TAG, "onSTART");
-    }
+
 
     public static Intent createIntent(Context context) {
         return new Intent(context, EditProfileFragment.class);
@@ -279,6 +333,7 @@ public class EditProfileFragment extends Fragment {
         btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG, favTrack.toString());
                 if (favTrack != null) {
                     Log.i("EDITPROFILE FAVTRACK", favTrack.toString());
                 } else {
@@ -364,13 +419,17 @@ public class EditProfileFragment extends Fragment {
                 // only update user in the database
                 else {
                     if (favTrack != null) {
-                        ParseUser.getCurrentUser().put("favTrack", favTrack.name + " - " + favTrack.artists.get(0).name);
+                        //ParseUser.getCurrentUser().put("favTrack", favTrack.name + " - " + favTrack.artists.get(0).name);
+                        ParseUser.getCurrentUser().put("favTrack", favTrack.id);
+
                     }
                     if (favArtist != null) {
-                        ParseUser.getCurrentUser().put("favArtist", favArtist.name);
+                        ParseUser.getCurrentUser().put("favArtist", favArtist.id);
+                        //ParseUser.getCurrentUser().put("favArtist", favArtist.name);
                     }
                     if (favAlbum != null) {
-                        ParseUser.getCurrentUser().put("favAlbum", favAlbum.name);
+                        ParseUser.getCurrentUser().put("favAlbum", favAlbum.id);
+                        //ParseUser.getCurrentUser().put("favAlbum", favAlbum.name);
                         if (favAlbum.images.size() != 0) {
                             ParseUser.getCurrentUser().put("favAlbumImageUrl", favAlbum.images.get(0).url);
                         }
@@ -626,9 +685,12 @@ public class EditProfileFragment extends Fragment {
         user.put("name", name);
         user.put("age", age);
         user.put("favGenres", selectedGenres);
-        user.put("favArtist", artist.name);
-        user.put("favTrack", track.name + " - " + track.artists.get(0).name);
-        user.put("favAlbum", album.name);
+//        user.put("favArtist", artist.name);
+//        user.put("favTrack", track.name + " - " + track.artists.get(0).name);
+//        user.put("favAlbum", album.name);
+        user.put("favArtist", artist.id);
+        user.put("favTrack", track.id);
+        user.put("favAlbum", album.id);
         if (favAlbum.images.size() != 0) {
             user.put("favAlbumImageUrl", favAlbum.images.get(0).url);
         }

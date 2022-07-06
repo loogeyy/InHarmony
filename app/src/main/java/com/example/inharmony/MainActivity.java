@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         return new Intent(context, MainActivity.class);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,9 +79,8 @@ public class MainActivity extends AppCompatActivity {
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment = new SearchFragment();
+                Fragment fragment;
                 Bundle bundle = new Bundle();
-                bundle.putString(SearchFragment.EXTRA_TOKEN, token);
                 switch (item.getItemId()) {
                     case R.id.actionMatch:
                         fragment = new MatchingFragment();
@@ -101,19 +99,27 @@ public class MainActivity extends AppCompatActivity {
                         //fragment = new MatchFragment(ParseUser.getCurrentUser());
                         break;
                     case R.id.actionProfile:
-                        Log.i("MAINACTIVITY ACTIONRPOFILE", "SWITCHING TO EDIT");
-                        fragment = new MyProfileFragment(true, ParseUser.getCurrentUser());
+                        Log.i("MAINACTIVITY ACTIONPROFILE", "SWITCHING TO EDIT");
+
                         if (newSignUp) {
+                            fragment = new EditProfileFragment();
+                            bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                             bundle.putBoolean("newSignUp", true);
                             String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
                             bundle.putString("tvWelcomeText", welcomeText);
+                            fragment.setArguments(bundle);
+                            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
+
                         } else {
+                            fragment = new MyProfileFragment(true, ParseUser.getCurrentUser());
+                            bundle.putString(MyProfileFragment.EXTRA_TOKEN, token);
                             bundle.putBoolean("newSignUp", false);
                             String welcomeText = "Edit your profile details below.";
                             bundle.putString("tvWelcomeText", welcomeText);
+                            fragment.setArguments(bundle);
+                            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
                         }
-                        fragment.setArguments(bundle);
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
                         break;
                     default:
                         Log.i("DEFAULT", "NEW EDITPROFILEFRAGMENT");

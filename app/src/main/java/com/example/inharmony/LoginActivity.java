@@ -58,8 +58,6 @@ public class LoginActivity extends AppCompatActivity {
                         Log.i("loginUser TOKEN: ", token);
                         Log.i("login user E code:", Integer.toString(e.getCode()));
                         Log.i("Sign up requested: ", "redirect to sign up page");
-                        //createUser(username, password, token);
-                        //startSignUpFragment(token);
                         startMainActivity(token, true);
                     }
                     return;
