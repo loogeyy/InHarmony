@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -89,13 +90,13 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     public void addDataArtists(List<Artist> artists) {
         mArtists.addAll(artists);
-        Log.i("ADDING ARTISTS", "...");
+        //Log.i("ADDING ARTISTS", "...");
         notifyDataSetChanged();
     }
 
     public void addDataAlbums(List<AlbumSimple> albums) {
         mAlbums.addAll(albums);
-        Log.i("ADDING ALBUMS", "...");
+        //Log.i("ADDING ALBUMS", "...");
         notifyDataSetChanged();
     }
 
@@ -108,7 +109,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (mSearchType.equals("TRACK")) {
-            Log.i("BINDVIEW" , "TRACK");
+            //Log.i("BINDVIEW" , "TRACK");
+            if (mTracks.size() == 0) {
+                Toast.makeText(mContext, "No Results Found", Toast.LENGTH_LONG).show();
+                return;
+            }
             Track track = mTracks.get(position);
 
             holder.title.setText(track.name);
@@ -120,23 +125,34 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             Joiner joiner = Joiner.on(", ");
             holder.subtitle.setText(joiner.join(names));
 
-            Image image = track.album.images.get(0);
-            if (image != null) {
+            if (track.album.images.size() != 0) {
+                Image image = track.album.images.get(0);
                 Picasso.with(mContext).load(image.url).into(holder.image);
             }
-        } else if (mSearchType.equals("ARTIST")) {
-            Log.i("BINDVIEW" , "ARTIST");
+
+        }
+        else if (mSearchType.equals("ARTIST")) {
+            //Log.i("BINDVIEW" , "ARTIST");
+            if (mArtists.size() == 0) {
+                Toast.makeText(mContext, "No Results Found", Toast.LENGTH_LONG).show();
+                return;
+            }
             Artist artist = mArtists.get(position);
 
             holder.title.setText(artist.name);
-            Image image = artist.images.get(0);
-            if (image != null) {
+            if (artist.images.size() != 0) {
+                Image image = artist.images.get(0);
                 Picasso.with(mContext).load(image.url).into(holder.image);
             }
+        }
 
+        else if (mSearchType.equals("ALBUM")) {
+            //Log.i("BINDVIEW" , "ALBUM");
+            if (mAlbums.size() == 0) {
+                Toast.makeText(mContext, "No Results Found", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-        } else if (mSearchType.equals("ALBUM")) {
-            Log.i("BINDVIEW" , "ALBUM");
             AlbumSimple album = mAlbums.get(position);
             AlbumSimple albums = mAlbums.get(position);
 
@@ -148,10 +164,12 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 //            }
 //            Joiner joiner = Joiner.on(", ");
 //            holder.subtitle.setText(joiner.join(names));
-            Image image = album.images.get(0);
-            if (image != null) {
+
+            if (album.images.size() != 0) {
+                Image image = album.images.get(0);
                 Picasso.with(mContext).load(image.url).into(holder.image);
             }
+
         }
     }
 

@@ -17,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -40,12 +42,15 @@ import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
 import com.bumptech.glide.Glide;
 import com.example.inharmony.MainActivity;
 import com.example.inharmony.R;
+import com.example.inharmony.Search;
+import com.example.inharmony.SearchPresenter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,7 +67,11 @@ import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.AlbumSimple;
+import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.SeedsGenres;
+import kaaes.spotify.webapi.android.models.Track;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -70,40 +79,60 @@ import retrofit.client.Response;
 public class EditProfileFragment extends Fragment {
 
     static final String TAG = "EditProfileFragment";
-    public static String EXTRA_TOKEN = "EXTRA_TOKEN";
-    private List<String> genreList = Arrays.asList("hi", "hello", "hey");
 
-    private MultiSpinnerSearch genres;
+    public static String FAV_ALBUM = "FAV_ALBUM";
+    public static String FAV_TRACK = "FAV_TRACK";
+    public static String FAV_ARTIST = "FAV_ARTIST";
+    public static String EXTRA_TOKEN = "EXTRA_TOKEN";
+
+    private EditText etAge;
+    private EditText etName;
+    private Button btnFavSong;
+    private Button btnFavAlbum;
+    private Button btnFavArtist;
     private TextView tvWelcomeText;
     private Button btnUpdateProfile;
-    private EditText etName;
-    private EditText etAge;
-    private BottomNavigationView bottomMenu;
     private ImageButton btnChangePic;
+    private MultiSpinnerSearch genres;
     private ImageView ivChangeProfilePic;
-    private Button btnFavSong;
-    private Button btnFavArtist;
-    private Button btnFavAlbum;
+    private BottomNavigationView bottomMenu;
 
-    private boolean newSignUp;
+    private TextView tvEditFavTrack;
+    private TextView tvEditFavAlbum;
+    private TextView tvEditFavArtist;
+    private ImageView ivEditFavTrack;
+    private ImageView ivEditFavAlbum;
+    private ImageView ivEditFavArtist;
+
+    private Search.ActionListener mActionListener;
+
     private String username;
     private String password;
-    private String token;
 
-    private ParseFile photo;
+    // bundle values
+    private String token;
+    private boolean newSignUp;
+
+    private Track favTrack;
+    private Artist favArtist;
+    private AlbumSimple favAlbum;
+
     private File photoFile;
+    private ParseFile photo;
     private String photoFileName = "photo.jpg";
-    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
     public final static int PICK_PHOTO_CODE = 1046;
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
+    private List<String> genreList = Arrays.asList("hi", "hello", "hey");
 
     public EditProfileFragment() {
         // Required empty public constructor
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        Log.i(TAG, "ONCREATEVIEW");
         return inflater.inflate(R.layout.fragment_edit_profile, container, false);
     }
 
@@ -111,28 +140,55 @@ public class EditProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        genres = view.findViewById(R.id.genres);
-        tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
-        btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
-        etName = view.findViewById(R.id.etName);
+        //Log.i("EDITPROFILE NEWSIGNUP", String.valueOf(newSignUp));
         etAge = view.findViewById(R.id.etAge);
-        bottomMenu = getActivity().findViewById(R.id.bottomMenu);
-        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
-        btnChangePic = view.findViewById(R.id.btnChangePic);
+        etName = view.findViewById(R.id.etName);
+        genres = view.findViewById(R.id.genres);
         btnFavSong = view.findViewById(R.id.btnFavSong);
-        btnFavArtist = view.findViewById(R.id.btnFavArtist);
         btnFavAlbum = view.findViewById(R.id.btnFavAlbum);
+        btnChangePic = view.findViewById(R.id.btnChangePic);
+        btnFavArtist = view.findViewById(R.id.btnFavArtist);
+        tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
+        bottomMenu = getActivity().findViewById(R.id.bottomMenu);
+        btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
+        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
+
+        tvEditFavTrack = view.findViewById(R.id.tvEditFavTrack);
+        tvEditFavAlbum = view.findViewById(R.id.tvEditFavAlbum);
+        tvEditFavArtist = view.findViewById(R.id.tvEditFavArtist);
+        ivEditFavTrack = view.findViewById(R.id.ivEditFavTrack);
+        ivEditFavAlbum = view.findViewById(R.id.ivEditFavAlbum);
+        ivEditFavArtist = view.findViewById(R.id.ivEditFavArtist);
+
         //etGender = findViewById(R.id.etGender);
+
+        tvEditFavTrack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpotifyApi spotifyApi = new SpotifyApi();
+                spotifyApi.setAccessToken(token);
+                SpotifyService service = spotifyApi.getService();
+
+                //service.
+                //save name and just do a search, retrieve it via search laterfububegidnhvggfkhlurblcukgjrtdhh
+
+                //mActionListener = new SearchPresenter(getContext(), EditProfileFragment.this.getView());
+                //mActionListener.init(token);
+                //mActionListener.selectTrack(favTrack);
+            }
+        });
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
             newSignUp = bundle.getBoolean("newSignUp");
-            //Log.i("WELCOME TEXT", bundle.getString("tvWelcomeText").toString());
             tvWelcomeText.setText(bundle.getString("tvWelcomeText"));
-            Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
+        } else {
+            Log.i(TAG, "BUNDLE WAS NULL");
         }
-        Log.i("EDITPROFILEFRAGMENT NEWSIGNUP", String.valueOf(newSignUp));
+
+        //Log.i("EDITPROFILEFRAGMENT NEWSIGNUP", String.valueOf(newSignUp));
 
         if (newSignUp) {
             bottomMenu.setVisibility(View.GONE);
@@ -149,11 +205,6 @@ public class EditProfileFragment extends Fragment {
                 }
         }
 
-//        //Intent intent = getIntent();
-//        newSignUp = intent.getExtras().getBoolean("newSignUp");
-//        token = intent.getStringExtra(EXTRA_TOKEN);
-//        tvWelcomeText.setText(intent.getStringExtra("tvWelcomeText"));
-
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
         SpotifyService service = spotifyApi.getService();
@@ -163,11 +214,10 @@ public class EditProfileFragment extends Fragment {
             public void run() {
                 username = service.getMe().email;
                 password = service.getMe().id;
-                Log.i("Token", token);
                 service.getSeedsGenres(new Callback<SeedsGenres>() {
                     @Override
                     public void success(SeedsGenres seedsGenres, Response response) {
-                        Log.i(TAG, "Success");
+                        //Log.i(TAG, "Success");
                         genreList = seedsGenres.genres;
                         initializeGenreSelector(genres);
                     }
@@ -185,6 +235,18 @@ public class EditProfileFragment extends Fragment {
         checkFavSongButtonClicked();
         checkFavArtistButtonClicked();
         checkFavAlbumButtonClicked();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "resumed");
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG, "onSTART");
     }
 
     public static Intent createIntent(Context context) {
@@ -222,16 +284,33 @@ public class EditProfileFragment extends Fragment {
         btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (favTrack != null) {
+                    Log.i("EDITPROFILE FAVTRACK", favTrack.toString());
+                } else {
+                    Log.i("EDITPROFILE FAVTRACK", "NULL");
+                }
 
-                Log.i("newsignup", String.valueOf(newSignUp));
+                if (favArtist != null) {
+                    Log.i("EDITPROFILE FAVARTIST", favArtist.toString());
+                } else {
+                    Log.i("EDITPROFILE FAVARTIST", "NULL");
+                }
+
+                if (favAlbum != null) {
+                    Log.i("EDITPROFILE FAVALBUM", favAlbum.toString());
+                } else {
+                    Log.i("EDITPROFILE FAVALBUM", "NULL");
+                }
 
                 String name;
                 Integer age;
                 JSONArray selectedGenres = new JSONArray();
 
+                Log.i("newsignup", String.valueOf(newSignUp));
+
                 // create a new user in the database
                 if (newSignUp) {
-                    Log.i("NEW SIGN UP", "OPENED UP EDIT PROFILE FRAGMENT");
+                    //Log.i("NEW SIGN UP", "OPENED UP EDIT PROFILE FRAGMENT");
                     // all fields must be filled out
                     if (TextUtils.isEmpty(etName.getText())) {
                         etName.setError("First name is required!");
@@ -252,6 +331,25 @@ public class EditProfileFragment extends Fragment {
                         return;
                     }
 
+                    if (favTrack == null) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Please select your favorite track", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (favArtist == null) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Please select your favorite artist", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (favAlbum == null) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Please select your favorite album", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+
                     age = Integer.parseInt(etAge.getText().toString());
 
                     //Log.i("LIST OF SELECTED ITEMS", selectedGenres.toString());
@@ -266,11 +364,20 @@ public class EditProfileFragment extends Fragment {
                         photo = new ParseFile(photoFile);
                     }
 
-                    createUser(username, password, name, age, selectedGenres, photo, token);
+                    createUser(username, password, name, age, selectedGenres, photo, favTrack, favArtist, favAlbum, token);
                 }
                 // only update user in the database
                 else {
-                    Log.i("NOT NEW SIGN UP", "WORK PLEASE");
+                    if (favTrack != null) {
+                        ParseUser.getCurrentUser().put("favTrack", favTrack);
+                    }
+                    if (favArtist != null) {
+                        ParseUser.getCurrentUser().put("favArtist", favArtist);
+                    }
+                    if (favAlbum != null) {
+                        ParseUser.getCurrentUser().put("favAlbum", favAlbum);
+                    }
+
                     if (!TextUtils.isEmpty(etName.getText())) {
                         name = etName.getText().toString();
                         ParseUser.getCurrentUser().put("name", name);
@@ -329,7 +436,34 @@ public class EditProfileFragment extends Fragment {
                     bundle.putBoolean("newSignUp", false);
                 }
                 fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+                getActivity().getSupportFragmentManager().setFragmentResultListener("favTrack", EditProfileFragment.this, new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        if (result != null) {
+                            favTrack = result.getParcelable("favTrack");
+                            tvEditFavTrack.setText(favTrack.name);
+                            Image image = favTrack.album.images.get(0);
+                            if (image != null) {
+                                Glide.with(getContext()).load(image.url).into(ivEditFavTrack);
+                            }
+                            Log.i(TAG, "TRACK: " + favTrack.toString());
+                            //Log.i(TAG, "ARTIST: " + favArtist.toString());
+                            //Log.i(TAG, "ALBUM: " + favAlbum.toString());
+                        } else {
+                            Log.i(TAG, "ONFRAGMENTRESULT BUNDLE IS NULL");
+                        }
+
+                    }
+                });
+                fragment.setArguments(bundle);
+                //getActivity().getSupportFragmentManager().saveFragmentInstanceState(EditProfileFragment.this);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                if (!fragment.isAdded()) {
+                    ft.add(R.id.flContainer, fragment);
+                }
+                    ft.show(fragment);
+                    ft.hide(EditProfileFragment.this);
+                    ft.commit();
                }
         });
     }
@@ -347,10 +481,39 @@ public class EditProfileFragment extends Fragment {
                 } else {
                     bundle.putBoolean("newSignUp", false);
                 }
+                getActivity().getSupportFragmentManager().setFragmentResultListener("favArtist", EditProfileFragment.this, new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        if (result != null) {
+                            favArtist = result.getParcelable("favArtist");
+                            tvEditFavArtist.setText(favArtist.name);
+                            Image image = favArtist.images.get(0);
+                            if (image != null) {
+                                Glide.with(getContext()).load(image.url).into(ivEditFavArtist);
+                            }
+                            Log.i(TAG, "ARTIST: " + favArtist.toString());
+                            //Log.i(TAG, "ARTIST: " + favArtist.toString());
+                            //Log.i(TAG, "ALBUM: " + favAlbum.toString());
+                        } else {
+                            Log.i(TAG, "ONFRAGMENTRESULT BUNDLE IS NULL");
+                        }
+
+                    }
+                });
+
+                //getActivity().getSupportFragmentManager().saveFragmentInstanceState(EditProfileFragment.this);
                 fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                if (!fragment.isAdded()) {
+                    ft.add(R.id.flContainer, fragment);
+                }
+                ft.show(fragment);
+                ft.hide(EditProfileFragment.this);
+                ft.commit();
             }
         });
+                //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
     }
 
     private void checkFavAlbumButtonClicked() {
@@ -360,13 +523,40 @@ public class EditProfileFragment extends Fragment {
                 SearchFragment fragment = new SearchFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(SearchFragment.EXTRA_TOKEN, token);
-                bundle.putString(SearchFragment.SEARCH_TYPE, "ALBUM");if (newSignUp) {
+                bundle.putString(SearchFragment.SEARCH_TYPE, "ALBUM");
+                if (newSignUp) {
                     bundle.putBoolean("newSignUp", true);
                 } else {
                     bundle.putBoolean("newSignUp", false);
                 }
+                getActivity().getSupportFragmentManager().setFragmentResultListener("favAlbum", EditProfileFragment.this, new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        if (result != null) {
+                            favAlbum = result.getParcelable("favAlbum");
+                            tvEditFavAlbum.setText(favAlbum.name);
+                            Image image = favAlbum.images.get(0);
+                            if (image != null) {
+                                Glide.with(getContext()).load(image.url).into(ivEditFavAlbum);
+                            }
+                            Log.i(TAG, "ALBUM: " + favAlbum.toString());
+                            //Log.i(TAG, "ARTIST: " + favArtist.toString());
+                            //Log.i(TAG, "ALBUM: " + favAlbum.toString());
+                        } else {
+                            Log.i(TAG, "ONFRAGMENTRESULT BUNDLE IS NULL");
+                        }
+
+                    }
+                });
+                //getActivity().getSupportFragmentManager().saveFragmentInstanceState(EditProfileFragment.this);
                 fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                if (!fragment.isAdded()) {
+                    ft.add(R.id.flContainer, fragment);
+                }
+                ft.show(fragment);
+                ft.hide(EditProfileFragment.this);
+                ft.commit();
             }
         });
     }
@@ -376,8 +566,6 @@ public class EditProfileFragment extends Fragment {
     // populates genres into the dropdown
     private List<KeyPairBoolData> generateGenresList(List<String> list) {
         List<KeyPairBoolData> newList = new ArrayList<>();
-
-        Log.i("Genres Size ", String.valueOf(list.size()));
 
         // set up list of displayed genres as unselected
         for (int i = 0; i < list.size(); i++) {
@@ -428,7 +616,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     // add new user to the database
-    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, ParseFile parseFile, String token) {
+    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, String token) {
         Log.i(TAG, "Attempting to create user " + username + "...");
         ParseUser user = new ParseUser();
         user.setUsername(username);
@@ -436,6 +624,10 @@ public class EditProfileFragment extends Fragment {
         user.put("name", name);
         user.put("age", age);
         user.put("favGenres", selectedGenres);
+        user.put("favArtist", artist);
+        user.put("favTrack", track);
+        user.put("favAlbum", album);
+
         if (parseFile != null) {
             parseFile.saveInBackground(new SaveCallback() {
                 @Override

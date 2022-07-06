@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -75,15 +76,14 @@ public class SearchFragment extends Fragment implements Search.View {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //Toast.makeText(getContext(), "SearchFragment", Toast.LENGTH_SHORT).show();
-
+        Log.i("SEARCH FRAGMENT", "FRAGMENT CREATED");
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             token = bundle.getString(SearchFragment.EXTRA_TOKEN);
             Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
             searchType = bundle.getString(SearchFragment.SEARCH_TYPE);
             newSignUp = bundle.getBoolean("newSignUp");
-            Log.i("SEARCH FRAGMENT SEARCHTYPE", searchType);
+            //Log.i("SEARCH FRAGMENT SEARCHTYPE", searchType);
         }
 
         mActionListener = new SearchPresenter(getContext(), this);
@@ -123,45 +123,67 @@ public class SearchFragment extends Fragment implements Search.View {
             @Override
             public void onItemSelectedTrack(View itemView, Track track) {
                 //mActionListener.selectTrack(track); // this makes it play, use this code for later
-
-                EditProfileFragment fragment = new EditProfileFragment();
+                if (getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE") != null) {
+                    Log.i("SEARCHFRAGMENT", "EDITPROFILE FRAGMENT FOUND");
+                }
+                EditProfileFragment fragment = (EditProfileFragment) getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE");
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favTrack", track);
                 bundle.putBoolean("newSignUp", newSignUp);
-                //bundle.putString(EditProfileFragment.SEARCH_TYPE, "TRACK");
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-
+                getActivity().getSupportFragmentManager().setFragmentResult("favTrack", bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
+//                fragment.setArguments(bundle);
+//                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+//                ft.replace(R.id.flContainer, fragment).show(fragment);
+//                ft.commit();
+                //ft.commit();
+                //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
             }
 
             @Override
             public void onItemSelectedArtist(View itemView, Artist artist) {
                 mActionListener.selectArtist(artist); // in searchpresenter, doesn't need to do anything
-
-                EditProfileFragment fragment = new EditProfileFragment();
+                if (getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE") != null) {
+                    Log.i("SEARCHFRAGMENT", "EDITPROFILE FRAGMENT FOUND");
+                }
+                EditProfileFragment fragment = (EditProfileFragment) getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE");
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favArtist", artist);
                 bundle.putBoolean("newSignUp", newSignUp);
+                getActivity().getSupportFragmentManager().setFragmentResult("favArtist", bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
                 //bundle.putString(EditProfileFragment.SEARCH_TYPE, "TRACK");
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+//                fragment.setArguments(bundle);
+//                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+//                if (!fragment.isAdded()) {
+//                    ft.add(R.id.flContainer, fragment);
+//                }
+//                ft.remove(SearchFragment.this);
+//                ft.replace(R.id.flContainer, fragment).show(fragment);
+//                ft.commit();
+
+//                ft.show(fragment);
+//                ft.hide(SearchFragment.this);
+//                ft.commit();
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
 
             }
 
             @Override
             public void onItemSelectedAlbum(View itemView, AlbumSimple album) {
                 mActionListener.selectAlbum(album);
-
-                EditProfileFragment fragment = new EditProfileFragment();
+                if (getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE") != null) {
+                    Log.i("SEARCHFRAGMENT", "EDITPROFILE FRAGMENT FOUND");
+                }
+                EditProfileFragment fragment = (EditProfileFragment) getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE");
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favAlbum", album);
                 bundle.putBoolean("newSignUp", newSignUp);
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-
+                getActivity().getSupportFragmentManager().setFragmentResult("favAlbum", bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
             }
 
 

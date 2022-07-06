@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("MAINACTIVITY", "onCreate!");
         setContentView(R.layout.activity_main);
 
         //grabs intent from login including token
@@ -83,12 +84,18 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.actionMatch:
                         fragment = new MatchingFragment();
+                        fragment.setArguments(bundle);
+                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
                         break;
                     case R.id.actionMessage:
                         Toast.makeText(MainActivity.this, "Profile", Toast.LENGTH_SHORT).show();
                         Log.d("Menu", "Profile pressed");
                         fragment = new SearchFragment();
                         bundle.putString(SearchFragment.SEARCH_TYPE, "TRACK");
+                        fragment.setArguments(bundle);
+                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
                         //fragment = new MatchFragment(ParseUser.getCurrentUser());
                         break;
                     case R.id.actionProfile:
@@ -103,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
                             String welcomeText = "Edit your profile details below.";
                             bundle.putString("tvWelcomeText", welcomeText);
                         }
+                        fragment.setArguments(bundle);
+                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
+                        break;
                     default:
                         Log.i("DEFAULT", "NEW EDITPROFILEFRAGMENT");
                         fragment = new EditProfileFragment();
@@ -111,10 +121,11 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             bundle.putBoolean("newSignUp", false);
                         }
+                        fragment.setArguments(bundle);
+                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
                         break;
                 }
-                fragment.setArguments(bundle);
-                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
             }
         });
