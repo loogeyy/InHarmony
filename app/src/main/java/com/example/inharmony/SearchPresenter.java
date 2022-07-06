@@ -56,10 +56,8 @@ public class SearchPresenter implements Search.ActionListener {
 
     @Override
     public void init(String accessToken) {
-        logMessage("Api Client created");
+        //logMessage("Api Client created");
         SpotifyApi spotifyApi = new SpotifyApi();
-
-
 
         if (accessToken != null) {
             spotifyApi.setAccessToken(accessToken);
@@ -73,10 +71,11 @@ public class SearchPresenter implements Search.ActionListener {
     }
 
 
+
     @Override
     public void searchTracks(@Nullable String searchQuery) {
         if (searchQuery != null && !searchQuery.isEmpty() && !searchQuery.equals(mCurrentQuery)) {
-            logMessage("query text submit " + searchQuery);
+            //("query text submit " + searchQuery);
             mCurrentQuery = searchQuery;
             mView.reset();
             mSearchListener = new SearchPager.CompleteListener() {
@@ -107,7 +106,7 @@ public class SearchPresenter implements Search.ActionListener {
     @Override
     public void searchArtists(@Nullable String searchQuery) {
         if (searchQuery != null && !searchQuery.isEmpty() && !searchQuery.equals(mCurrentQuery)) {
-            logMessage("query text submit " + searchQuery);
+            //logMessage("query text submit " + searchQuery);
             mCurrentQuery = searchQuery;
             mView.reset();
             mSearchListener = new SearchPager.CompleteListener() {
@@ -138,7 +137,7 @@ public class SearchPresenter implements Search.ActionListener {
     @Override
     public void searchAlbums(@Nullable String searchQuery) {
         if (searchQuery != null && !searchQuery.isEmpty() && !searchQuery.equals(mCurrentQuery)) {
-            logMessage("query text submit " + searchQuery);
+            //logMessage("query text submit " + searchQuery);
             mCurrentQuery = searchQuery;
             mView.reset();
             mSearchListener = new SearchPager.CompleteListener() {

@@ -42,6 +42,8 @@ import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
 import com.bumptech.glide.Glide;
 import com.example.inharmony.MainActivity;
 import com.example.inharmony.R;
+import com.example.inharmony.Search;
+import com.example.inharmony.SearchPresenter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -102,6 +104,8 @@ public class EditProfileFragment extends Fragment {
     private ImageView ivEditFavAlbum;
     private ImageView ivEditFavArtist;
 
+    private Search.ActionListener mActionListener;
+
     private String username;
     private String password;
 
@@ -129,32 +133,12 @@ public class EditProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.i(TAG, "ONCREATEVIEW");
-        //EditProfileFragment.this.setInitialSavedState(savedInstanceState);
-        if (savedInstanceState == null) {
-            Log.i(TAG, "ONCREATEVIEW SAVEDINSTANCESTATE IS NULL");
-        } else {
-            Log.i(TAG, "ONCREATEVIEW SAVEDINSTANCESTATE CONTAINS STUFF");
-        }
         return inflater.inflate(R.layout.fragment_edit_profile, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //Log.i(TAG,  "IS STATE SAVED: " + String.valueOf(getActivity().getSupportFragmentManager().isStateSaved()));
         super.onViewCreated(view, savedInstanceState);
-        Log.i(TAG, "onViewCreated");
-// Inflate the layout for this fragment
-        if (savedInstanceState != null) {
-            favTrack = savedInstanceState.getParcelable(FAV_TRACK);
-            favArtist = savedInstanceState.getParcelable(FAV_ARTIST);
-            favAlbum = savedInstanceState.getParcelable(FAV_ALBUM);
-            token = savedInstanceState.getString(EXTRA_TOKEN);
-            newSignUp = savedInstanceState.getBoolean("newSignUp");
-            Log.i(TAG, "SAVEDINSTANCESTATE IS NOT NULL");
-            // Do something with value if needed
-        } else {
-            Log.i(TAG, "SAVEDINSTANCESTATE IS NULL");
-        }
 
         //Log.i("EDITPROFILE NEWSIGNUP", String.valueOf(newSignUp));
         etAge = view.findViewById(R.id.etAge);
@@ -178,57 +162,33 @@ public class EditProfileFragment extends Fragment {
 
         //etGender = findViewById(R.id.etGender);
 
+        tvEditFavTrack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpotifyApi spotifyApi = new SpotifyApi();
+                spotifyApi.setAccessToken(token);
+                SpotifyService service = spotifyApi.getService();
+
+                //service.
+                //save name and just do a search, retrieve it via search laterfububegidnhvggfkhlurblcukgjrtdhh
+
+                //mActionListener = new SearchPresenter(getContext(), EditProfileFragment.this.getView());
+                //mActionListener.init(token);
+                //mActionListener.selectTrack(favTrack);
+            }
+        });
+
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
             newSignUp = bundle.getBoolean("newSignUp");
-            //Log.i("WELCOME TEXT", bundle.getString("tvWelcomeText").toString());
             tvWelcomeText.setText(bundle.getString("tvWelcomeText"));
-            Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
-
-            if (bundle.getParcelable("favTrack") != null) {
-                favTrack = bundle.getParcelable("favTrack");
-                Log.i(TAG, "GOT BUNDLE FAVTRACK " + favTrack.toString());
-            }
-
-            if (bundle.getParcelable("favArtist") != null) {
-                favArtist = bundle.getParcelable("favArtist");
-                Log.i(TAG, "GOT BUNDLE FAVARTIST " + favArtist.toString());
-            }
-
-            if (bundle.getParcelable("favAlbum") != null) {
-                favAlbum = bundle.getParcelable("favAlbum");
-                Log.i(TAG, "GOT BUNDLE FAVALBUM " + favAlbum.toString());
-            }
+            //Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
         } else {
             Log.i(TAG, "BUNDLE WAS NULL");
         }
 
         //Log.i("EDITPROFILEFRAGMENT NEWSIGNUP", String.valueOf(newSignUp));
-
-        if (favTrack != null) {
-            Log.i("EDITPROFILE FAVTRACK", favTrack.toString());
-        } else {
-            Log.i("EDITPROFILE FAVTRACK", "NULL");
-        }
-
-        if (favArtist != null) {
-            Log.i("EDITPROFILE FAVARTIST", favArtist.toString());
-        } else {
-            Log.i("EDITPROFILE FAVARTIST", "NULL");
-        }
-
-        if (favAlbum != null) {
-            Log.i("EDITPROFILE FAVALBUM", favAlbum.toString());
-        } else {
-            Log.i("EDITPROFILE FAVALBUM", "NULL");
-        }
-
-        if (token != null) {
-            //Log.i("EDITPROFILE TOKEN", token);
-        } else {
-            //Log.i("EDITPROFILE TOKEN", "NULL");
-        }
 
         if (newSignUp) {
             bottomMenu.setVisibility(View.GONE);
@@ -245,11 +205,6 @@ public class EditProfileFragment extends Fragment {
                 }
         }
 
-//        //Intent intent = getIntent();
-//        newSignUp = intent.getExtras().getBoolean("newSignUp");
-//        token = intent.getStringExtra(EXTRA_TOKEN);
-//        tvWelcomeText.setText(intent.getStringExtra("tvWelcomeText"));
-
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
         SpotifyService service = spotifyApi.getService();
@@ -259,7 +214,6 @@ public class EditProfileFragment extends Fragment {
             public void run() {
                 username = service.getMe().email;
                 password = service.getMe().id;
-                //Log.i("Token", token);
                 service.getSeedsGenres(new Callback<SeedsGenres>() {
                     @Override
                     public void success(SeedsGenres seedsGenres, Response response) {
@@ -347,11 +301,12 @@ public class EditProfileFragment extends Fragment {
                 } else {
                     Log.i("EDITPROFILE FAVALBUM", "NULL");
                 }
-                //Log.i("newsignup", String.valueOf(newSignUp));
 
                 String name;
                 Integer age;
                 JSONArray selectedGenres = new JSONArray();
+
+                Log.i("newsignup", String.valueOf(newSignUp));
 
                 // create a new user in the database
                 if (newSignUp) {
@@ -376,6 +331,25 @@ public class EditProfileFragment extends Fragment {
                         return;
                     }
 
+                    if (favTrack == null) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Please select your favorite track", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (favArtist == null) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Please select your favorite artist", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (favAlbum == null) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Please select your favorite album", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+
                     age = Integer.parseInt(etAge.getText().toString());
 
                     //Log.i("LIST OF SELECTED ITEMS", selectedGenres.toString());
@@ -390,10 +364,20 @@ public class EditProfileFragment extends Fragment {
                         photo = new ParseFile(photoFile);
                     }
 
-                    createUser(username, password, name, age, selectedGenres, photo, token);
+                    createUser(username, password, name, age, selectedGenres, photo, favTrack, favArtist, favAlbum, token);
                 }
                 // only update user in the database
                 else {
+                    if (favTrack != null) {
+                        ParseUser.getCurrentUser().put("favTrack", favTrack);
+                    }
+                    if (favArtist != null) {
+                        ParseUser.getCurrentUser().put("favArtist", favArtist);
+                    }
+                    if (favAlbum != null) {
+                        ParseUser.getCurrentUser().put("favAlbum", favAlbum);
+                    }
+
                     if (!TextUtils.isEmpty(etName.getText())) {
                         name = etName.getText().toString();
                         ParseUser.getCurrentUser().put("name", name);
@@ -632,7 +616,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     // add new user to the database
-    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, ParseFile parseFile, String token) {
+    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, String token) {
         Log.i(TAG, "Attempting to create user " + username + "...");
         ParseUser user = new ParseUser();
         user.setUsername(username);
@@ -640,6 +624,10 @@ public class EditProfileFragment extends Fragment {
         user.put("name", name);
         user.put("age", age);
         user.put("favGenres", selectedGenres);
+        user.put("favArtist", artist);
+        user.put("favTrack", track);
+        user.put("favAlbum", album);
+
         if (parseFile != null) {
             parseFile.saveInBackground(new SaveCallback() {
                 @Override

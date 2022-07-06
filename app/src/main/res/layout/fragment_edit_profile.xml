@@ -38,12 +38,12 @@
         android:id="@+id/etChangeBio"
         android:layout_width="350dp"
         android:layout_height="105dp"
-        android:layout_marginTop="92dp"
+        android:layout_marginTop="212dp"
         android:ems="10"
         android:fontFamily="sans-serif"
         android:hint="Bio"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintHorizontal_bias="0.721"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/genres" />
 
@@ -102,33 +102,14 @@
         app:layout_constraintTop_toTopOf="@+id/etChangeBio" />
 
     <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Favorite Artists"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.696"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Favorite Song"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/etChangeBio" />
-
-    <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
         android:text="Favorite Lyrics"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        tools:layout_editor_absoluteY="607dp" />
 
     <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
         android:id="@+id/genres"
@@ -187,6 +168,74 @@
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnFavSong" />
+
+    <ImageView
+        android:id="@+id/ivEditFavArtist"
+        android:layout_width="52dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/btnFavArtist"
+        app:layout_constraintTop_toBottomOf="@+id/ivEditFavTrack"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvEditFavArtist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="36dp"
+        android:fontFamily="@font/anteb_bold"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/ivEditFavArtist"
+        app:layout_constraintTop_toBottomOf="@+id/tvEditFavTrack"
+        android:clickable="true"
+        tools:text="Dayglow" />
+
+    <TextView
+        android:id="@+id/tvEditFavAlbum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="40dp"
+        android:fontFamily="@font/anteb_bold"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/ivEditFavAlbum"
+        app:layout_constraintTop_toBottomOf="@+id/tvEditFavArtist"
+        tools:text="Harmony House" />
+
+    <ImageView
+        android:id="@+id/ivEditFavAlbum"
+        android:layout_width="52dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/btnFavAlbum"
+        app:layout_constraintTop_toBottomOf="@+id/ivEditFavArtist"
+        tools:src="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/ivEditFavTrack"
+        android:layout_width="52dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/btnFavSong"
+        app:layout_constraintTop_toBottomOf="@+id/genres"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvEditFavTrack"
+        android:layout_width="82dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/white"
+        android:fontFamily="@font/anteb_bold"
+        android:textColor="@color/dark_navy"
+        app:layout_constraintStart_toEndOf="@+id/ivEditFavTrack"
+        app:layout_constraintTop_toBottomOf="@+id/genres"
+        tools:text="Close To You" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

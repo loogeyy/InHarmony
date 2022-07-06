@@ -177,7 +177,7 @@ public class SearchFragment extends Fragment implements Search.View {
                 if (getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE") != null) {
                     Log.i("SEARCHFRAGMENT", "EDITPROFILE FRAGMENT FOUND");
                 }
-                EditProfileFragment fragment = new EditProfileFragment();
+                EditProfileFragment fragment = (EditProfileFragment) getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE");
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                 bundle.putParcelable("favAlbum", album);

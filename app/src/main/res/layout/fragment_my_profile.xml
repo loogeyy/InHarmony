@@ -156,7 +156,7 @@
         tools:src="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/tvFavTrack"
+        android:id="@+id/tvEditFavTrack"
         android:layout_width="82dp"
         android:layout_height="53dp"
         android:background="@color/white"
