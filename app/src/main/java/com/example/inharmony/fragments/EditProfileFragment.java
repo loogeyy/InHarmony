@@ -186,30 +186,22 @@ public class EditProfileFragment extends Fragment {
             Log.i(TAG, "BUNDLE WAS NULL");
         }
 
-        //Log.i("EDITPROFILEFRAGMENT NEWSIGNUP", String.valueOf(newSignUp));
-
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
         SpotifyService service = spotifyApi.getService();
 
-        Log.i(TAG, ParseUser.getCurrentUser().toString());
-        String h = ParseUser.getCurrentUser().get("favTrack").toString();
-        Log.i("h:", h);
+
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 if (!newSignUp) {
-                   favTrack = service.getTracks(h).tracks.get(0);
-                    List <Album> albums = service.getAlbums(ParseUser.getCurrentUser().get("favAlbum").toString()).albums;
-                    Log.i(TAG, "favTrack" + favTrack.name.toString());
-
-                    favArtist = service.getArtists(ParseUser.getCurrentUser().get("favArtist").toString()).artists.get(0);
-                    Log.i(TAG, "favArtist" + favArtist.name.toString());
+                   favTrack = service.getTracks(ParseUser.getCurrentUser().get("favTrack").toString()).tracks.get(0);
+                   favArtist = service.getArtists(ParseUser.getCurrentUser().get("favArtist").toString()).artists.get(0);
+                   List <Album> albums = service.getAlbums(ParseUser.getCurrentUser().get("favAlbum").toString()).albums;
                     for (Album a : albums) {
                         if (a.images.size() != 0) {
                             if (a.images.get(0).url.equals(ParseUser.getCurrentUser().get("favAlbumImageUrl"))) {
                                 favAlbum = a;
-                                Log.i(TAG, "favAlbum" + favAlbum.name.toString());
                                 break;
                             }
                         }
@@ -217,7 +209,7 @@ public class EditProfileFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            populateScreen(favTrack, favArtist, favAlbum);
+                            populateProfile(favTrack, favArtist, favAlbum);
                         }
                     });
                 }
@@ -255,17 +247,13 @@ public class EditProfileFragment extends Fragment {
         checkFavArtistButtonClicked();
         checkFavAlbumButtonClicked();
 
-
         if (newSignUp) {
             bottomMenu.setVisibility(View.GONE);
-        } else {
-
-            }
-
+        }
 
     }
 
-    private void populateScreen(Track favTrack, Artist favArtist, AlbumSimple favAlbum) {
+    private void populateProfile(Track favTrack, Artist favArtist, AlbumSimple favAlbum) {
         if (!newSignUp){
             tvEditFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
             tvEditFavArtist.setText(favArtist.name.toString());
@@ -282,7 +270,7 @@ public class EditProfileFragment extends Fragment {
 
             if (favAlbum.images.size() != 0) {
                 Image image = favAlbum.images.get(0);
-                Glide.with(getContext()).load(ParseUser.getCurrentUser().get("favAlbumImageUrl")).into(ivEditFavAlbum);
+                Glide.with(getContext()).load(image.url).into(ivEditFavAlbum);
             }
 
             etAge.setText(ParseUser.getCurrentUser().get("age").toString());
@@ -414,7 +402,11 @@ public class EditProfileFragment extends Fragment {
                         photo = new ParseFile(photoFile);
                     }
 
-                    createUser(username, password, name, age, selectedGenres, photo, favTrack, favArtist, favAlbum, token);
+                    try {
+                        createUser(username, password, name, age, selectedGenres, photo, favTrack, favArtist, favAlbum, token);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
                 // only update user in the database
                 else {
@@ -473,12 +465,20 @@ public class EditProfileFragment extends Fragment {
                     }
                     ParseUser.getCurrentUser().saveInBackground();
                 }
+                Fragment fragment = new MyProfileFragment(true, ParseUser.getCurrentUser());
+                Bundle bundle = new Bundle();
+                bundle.putString(MyProfileFragment.EXTRA_TOKEN, token);
+                bundle.putBoolean("newSignUp", false);
+                String welcomeText = "Edit your profile details below.";
+                bundle.putString("tvWelcomeText", welcomeText);
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
 
-                Intent i = new Intent(getContext(), MainActivity.class);
-                i.putExtra(MainActivity.EXTRA_TOKEN, token);
-                i.putExtra(MainActivity.NEW_SIGN_UP, false);
-                startActivity(i);
-                getActivity().finish();
+//                Intent i = new Intent(getContext(), MainActivity.class);
+//                i.putExtra(MainActivity.EXTRA_TOKEN, token);
+//                i.putExtra(MainActivity.NEW_SIGN_UP, false);
+//                startActivity(i);
+//                getActivity().finish();
             }
         });
     }
@@ -677,7 +677,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     // add new user to the database
-    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, String token) {
+    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, String token) throws ParseException {
         Log.i(TAG, "Attempting to create user " + username + "...");
         ParseUser user = new ParseUser();
         user.setUsername(username);
@@ -719,18 +719,19 @@ public class EditProfileFragment extends Fragment {
             });
         }
         else {
-            user.signUpInBackground(new SignUpCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e != null) {
-                        Log.i("createUser TOKEN: ", token);
-                        Log.i("create user E code:", Integer.toString(e.getCode()));
-                        Log.e(TAG, "Issue with sign up", e);
-                        //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
-                        return;
-                    }
-                }
-            });
+            user.signUp();
+//            user.signUpInBackground(new SignUpCallback() {
+//                @Override
+//                public void done(ParseException e) {
+//                    if (e != null) {
+//                        Log.i("createUser TOKEN: ", token);
+//                        Log.i("create user E code:", Integer.toString(e.getCode()));
+//                        Log.e(TAG, "Issue with sign up", e);
+//                        //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
+//                        return;
+//                    }
+//                }
+//            });
         }
 
     }

@@ -37,12 +37,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         token = CredentialsHandler.getToken(this);
-        ParseUser.logOutInBackground(); // token error if i dont include this, how to remove while preserving access?
+        //ParseUser.logOutInBackground(); // token error if i dont include this, how to remove while preserving access?
         // login page if no token is found
-        if (token == null) {
-            setContentView(R.layout.activity_login);
-        } else {
+        if ((token != null) && (ParseUser.getCurrentUser() != null)) {
             startMainActivity(token, false);
+        } else {
+            setContentView(R.layout.activity_login);
         }
 
     }

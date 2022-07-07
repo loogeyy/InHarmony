@@ -1,5 +1,6 @@
 package com.example.inharmony.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,8 +16,27 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.inharmony.R;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.AlbumSimple;
+import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.Image;
+import kaaes.spotify.webapi.android.models.SeedsGenres;
+import kaaes.spotify.webapi.android.models.Track;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class MyProfileFragment extends Fragment {
     private static final String TAG = "MyProfileFragment";
@@ -35,6 +55,10 @@ public class MyProfileFragment extends Fragment {
 
     private boolean myProfile;
     private ParseUser user;
+
+    private Track favTrack;
+    private Artist favArtist;
+    private AlbumSimple favAlbum;
 
     public static String EXTRA_TOKEN = "EXTRA_TOKEN";
     private String token;
@@ -101,5 +125,79 @@ public class MyProfileFragment extends Fragment {
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
             }
         });
+
+        SpotifyApi spotifyApi = new SpotifyApi();
+        spotifyApi.setAccessToken(token);
+        SpotifyService service = spotifyApi.getService();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!newSignUp) {
+                    favTrack = service.getTracks(user.get("favTrack").toString()).tracks.get(0);
+                    favArtist = service.getArtists(user.get("favArtist").toString()).artists.get(0);
+                    List<Album> albums = service.getAlbums(user.get("favAlbum").toString()).albums;
+                    for (Album a : albums) {
+                        if (a.images.size() != 0) {
+                            if (a.images.get(0).url.equals(ParseUser.getCurrentUser().get("favAlbumImageUrl"))) {
+                                favAlbum = a;
+                                break;
+                            }
+                        }
+                    }
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            populateProfile(favTrack, favArtist, favAlbum);
+                        }
+                    });
+                }
+            }
+        });
+
     }
+
+    private void populateProfile(Track favTrack, Artist favArtist, AlbumSimple favAlbum) {
+        ArrayList<String> genres = (ArrayList<String>) ParseUser.getCurrentUser().get("favGenres");
+        String favGenres = "";
+        for (int i = 0; i < genres.size(); i++) {
+            if (i == 0) {
+                favGenres = genres.get(i);
+            } else {
+                favGenres = favGenres + ", " + genres.get(i);
+            }
+
+        }
+        //favGenres = favGenres.substring(0, favGenres.length() - 3);
+        tvFavGenres.setText(favGenres);
+        tvFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
+        tvFavArtist.setText(favArtist.name.toString());
+        tvFavAlbum.setText(favAlbum.name.toString());
+        if (favTrack.album.images.size() != 0) {
+            Image image = favTrack.album.images.get(0);
+            Glide.with(getContext()).load(image.url).into(ivFavTrack);
+        }
+
+        if (favArtist.images.size() != 0) {
+            Image image = favArtist.images.get(0);
+            Glide.with(getContext()).load(image.url).into(ivFavArtist);
+        }
+
+        if (favAlbum.images.size() != 0) {
+            Image image = favAlbum.images.get(0);
+            Glide.with(getContext()).load(image.url).into(ivFavAlbum);
+        }
+
+        tvAge.setText(user.get("age").toString());
+        tvName.setText(user.get("name").toString());
+
+        ParseFile profilePic = (ParseFile) user.get("profilePic");
+        if (profilePic != null) {
+            Glide.with(getContext()).load(profilePic.getUrl()).into(ivProfilePic);
+        } else {
+            ivProfilePic.setImageResource(R.drawable.nopfp);
+        }
     }
+
+
+}
