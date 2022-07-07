@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
@@ -140,6 +141,7 @@ public class EditProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //Log.i("EDITPROFILE NEWSIGNUP", String.valueOf(newSignUp));
+
         etAge = view.findViewById(R.id.etAge);
         etName = view.findViewById(R.id.etName);
         genres = view.findViewById(R.id.genres);
@@ -233,6 +235,7 @@ public class EditProfileFragment extends Fragment {
 
         if (newSignUp) {
             bottomMenu.setVisibility(View.GONE);
+            ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
         }
 
     }
@@ -332,7 +335,6 @@ public class EditProfileFragment extends Fragment {
 
                 // create a new user in the database
                 if (newSignUp) {
-                    //Log.i("NEW SIGN UP", "OPENED UP EDIT PROFILE FRAGMENT");
                     // all fields must be filled out
                     if (TextUtils.isEmpty(etName.getText())) {
                         etName.setError("First name is required!");
@@ -371,10 +373,8 @@ public class EditProfileFragment extends Fragment {
                         return;
                     }
 
-
                     age = Integer.parseInt(etAge.getText().toString());
 
-                    //Log.i("LIST OF SELECTED ITEMS", selectedGenres.toString());
                     selectedGenres = getSelectedGenres();
                     if (selectedGenres.length() == 0) {
                         ((TextView)genres.getSelectedView()).setError("Please select up to 3 genres.");
@@ -448,18 +448,23 @@ public class EditProfileFragment extends Fragment {
                         ParseUser.getCurrentUser().put("profilePic", photo);
                     }
                     ParseUser.getCurrentUser().saveInBackground();
+                    toProfileFragment();
                 }
-                Fragment fragment = new MyProfileFragment(true, ParseUser.getCurrentUser());
-                Bundle bundle = new Bundle();
-                bundle.putString(MyProfileFragment.EXTRA_TOKEN, token);
-                bundle.putBoolean("newSignUp", false);
-                String welcomeText = "Edit your profile details below.";
-                bundle.putString("tvWelcomeText", welcomeText);
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
 
             }
         });
+    }
+
+    private void toProfileFragment() {
+        bottomMenu.setVisibility(View.VISIBLE);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        Fragment fragment = new MyProfileFragment(true, ParseUser.getCurrentUser());
+        Bundle bundle = new Bundle();
+        bundle.putString(MyProfileFragment.EXTRA_TOKEN, token);
+        bundle.putBoolean("newSignUp", false);
+        fragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
     }
 
     private void checkFavSongButtonClicked() {
@@ -664,9 +669,6 @@ public class EditProfileFragment extends Fragment {
         user.put("name", name);
         user.put("age", age);
         user.put("favGenres", selectedGenres);
-//        user.put("favArtist", artist.name);
-//        user.put("favTrack", track.name + " - " + track.artists.get(0).name);
-//        user.put("favAlbum", album.name);
         user.put("favArtist", artist.id);
         user.put("favTrack", track.id);
         user.put("favAlbum", album.id);
@@ -698,19 +700,22 @@ public class EditProfileFragment extends Fragment {
             });
         }
         else {
-            user.signUp();
-//            user.signUpInBackground(new SignUpCallback() {
-//                @Override
-//                public void done(ParseException e) {
-//                    if (e != null) {
-//                        Log.i("createUser TOKEN: ", token);
-//                        Log.i("create user E code:", Integer.toString(e.getCode()));
-//                        Log.e(TAG, "Issue with sign up", e);
-//                        //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
-//                        return;
-//                    }
-//                }
-//            });
+
+            user.signUpInBackground(new SignUpCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        Log.i("createUser TOKEN: ", token);
+                        Log.i("create user E code:", Integer.toString(e.getCode()));
+                        Log.e(TAG, "Issue with sign up", e);
+                        //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
+                        return;
+                    } else {
+                        Log.i(TAG, "SIGN UP SUCCESSFUL");
+                        toProfileFragment();
+                    }
+                }
+            });
         }
 
     }

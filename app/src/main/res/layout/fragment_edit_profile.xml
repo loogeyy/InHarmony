@@ -108,7 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_marginTop="16dp"
-        android:background="#A34646"
+        android:background="#000000"
         android:backgroundTint="#FFFEFE"
         android:dropDownWidth="wrap_content"
         android:forceDarkAllowed="false"
@@ -118,7 +118,7 @@
         app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivChangeProfilePic"
-        app:textColor="@color/white" />
+        app:textColor="@color/dark_navy" />
 
     <Button
         android:id="@+id/btnUpdateProfile"

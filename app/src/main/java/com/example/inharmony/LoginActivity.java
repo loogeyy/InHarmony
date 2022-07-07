@@ -42,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         if ((token != null) && (ParseUser.getCurrentUser() != null)) {
             startMainActivity(token, false);
         } else {
+            ParseUser.logOutInBackground();
             setContentView(R.layout.activity_login);
         }
 
@@ -157,24 +158,6 @@ public class LoginActivity extends AppCompatActivity {
         }
         startActivity(intent);
         finish();
-    }
-
-    private void startSignUpFragment(String token) {
-////        Fragment fragment = new EditProfileFragment();
-////        Bundle bundle = new Bundle();
-////        bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
-////        bundle.putBoolean("newSignUp", true);
-//       String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
-////        bundle.putString("tvWelcomeText", welcomeText);
-////
-////        fragment.setArguments(bundle);
-////        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-//        Intent intent = SignUpActivity.createIntent(this);
-//        intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
-//        intent.putExtra("tvWelcomeText", welcomeText);
-//        intent.putExtra("newSignUp", true); //put this as false for edit profile intent
-//        startActivity(intent);
-//        finish();
     }
 
     private void logError(String msg) {

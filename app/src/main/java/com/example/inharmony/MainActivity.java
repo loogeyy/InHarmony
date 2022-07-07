@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setLogo(R.drawable.logo);
 
 
 
@@ -96,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.actionMessage:
                         Toast.makeText(MainActivity.this, "Profile", Toast.LENGTH_SHORT).show();
                         Log.d("Menu", "Profile pressed");
-                        fragment = new SearchFragment();
-                        bundle.putString(SearchFragment.SEARCH_TYPE, "TRACK");
+                        fragment = new MatchingFragment();
+                        //bundle.putString(SearchFragment.SEARCH_TYPE, "TRACK");
                         fragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
 
@@ -105,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.actionProfile:
                         Log.i("MAINACTIVITY ACTIONPROFILE", "SWITCHING TO EDIT");
-
-                        if (newSignUp) {
+                        Log.i("MainActivity", "newSignUp: " + newSignUp);
+                        if (ParseUser.getCurrentUser() == null) {
                             fragment = new EditProfileFragment();
                             bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                             bundle.putBoolean("newSignUp", true);
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                     default:
                         Log.i("DEFAULT", "NEW EDITPROFILEFRAGMENT");
                         fragment = new EditProfileFragment();
-                        if (newSignUp) {
+                        if (ParseUser.getCurrentUser() == null) {
                             bundle.putBoolean("newSignUp", true);
                         } else {
                             bundle.putBoolean("newSignUp", false);
@@ -143,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (newSignUp) {
+        if (ParseUser.getCurrentUser() == null) {
             bottomMenu.setSelectedItemId(R.id.actionProfile);
         } else {
             bottomMenu.setSelectedItemId(R.id.actionMatch);
