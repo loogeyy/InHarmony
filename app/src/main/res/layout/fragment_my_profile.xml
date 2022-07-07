@@ -212,4 +212,15 @@
         app:layout_constraintTop_toBottomOf="@+id/tvName"
         tools:text="Hi! My name is Lucy and I like using spotify." />
 
+    <ImageView
+        android:id="@+id/ivPlayButton"
+        android:clickable="true"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/play"
+        app:layout_constraintBottom_toBottomOf="@+id/ivFavTrack"
+        app:layout_constraintEnd_toEndOf="@+id/ivFavTrack"
+        app:layout_constraintStart_toStartOf="@+id/ivFavTrack"
+        app:layout_constraintTop_toTopOf="@+id/ivFavTrack" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

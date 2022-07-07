@@ -63,7 +63,7 @@ public class SearchFragment extends Fragment implements Search.View {
 
 
     public SearchFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -76,14 +76,12 @@ public class SearchFragment extends Fragment implements Search.View {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.i("SEARCH FRAGMENT", "FRAGMENT CREATED");
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             token = bundle.getString(SearchFragment.EXTRA_TOKEN);
             Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
             searchType = bundle.getString(SearchFragment.SEARCH_TYPE);
             newSignUp = bundle.getBoolean("newSignUp");
-            //Log.i("SEARCH FRAGMENT SEARCHTYPE", searchType);
         }
 
         mActionListener = new SearchPresenter(getContext(), this);
@@ -133,20 +131,10 @@ public class SearchFragment extends Fragment implements Search.View {
                 bundle.putBoolean("newSignUp", newSignUp);
                 getActivity().getSupportFragmentManager().setFragmentResult("favTrack", bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
-//                fragment.setArguments(bundle);
-//                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//                ft.replace(R.id.flContainer, fragment).show(fragment);
-//                ft.commit();
-                //ft.commit();
-                //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-            }
+}
 
             @Override
             public void onItemSelectedArtist(View itemView, Artist artist) {
-                mActionListener.selectArtist(artist); // in searchpresenter, doesn't need to do anything
-                if (getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE") != null) {
-                    Log.i("SEARCHFRAGMENT", "EDITPROFILE FRAGMENT FOUND");
-                }
                 EditProfileFragment fragment = (EditProfileFragment) getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE");
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
@@ -154,29 +142,11 @@ public class SearchFragment extends Fragment implements Search.View {
                 bundle.putBoolean("newSignUp", newSignUp);
                 getActivity().getSupportFragmentManager().setFragmentResult("favArtist", bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
-                //bundle.putString(EditProfileFragment.SEARCH_TYPE, "TRACK");
-//                fragment.setArguments(bundle);
-//                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//                if (!fragment.isAdded()) {
-//                    ft.add(R.id.flContainer, fragment);
-//                }
-//                ft.remove(SearchFragment.this);
-//                ft.replace(R.id.flContainer, fragment).show(fragment);
-//                ft.commit();
-
-//                ft.show(fragment);
-//                ft.hide(SearchFragment.this);
-//                ft.commit();
-//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-
             }
 
             @Override
             public void onItemSelectedAlbum(View itemView, AlbumSimple album) {
                 mActionListener.selectAlbum(album);
-                if (getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE") != null) {
-                    Log.i("SEARCHFRAGMENT", "EDITPROFILE FRAGMENT FOUND");
-                }
                 EditProfileFragment fragment = (EditProfileFragment) getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE");
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
@@ -195,7 +165,7 @@ public class SearchFragment extends Fragment implements Search.View {
         resultsList.setAdapter(mAdapter);
         resultsList.addOnScrollListener(mScrollListener);
 
-        // If Activity was recreated wit active search restore it
+        // If Activity was recreated with active search restore it
         if (savedInstanceState != null) {
             String currentQuery = savedInstanceState.getString(KEY_CURRENT_QUERY);
             if (searchType.equals("TRACK")) {
@@ -207,7 +177,6 @@ public class SearchFragment extends Fragment implements Search.View {
             if (searchType.equals("ALBUM")) {
                 mActionListener.searchAlbums(currentQuery);
             }
-            //mActionListener.searchTracks(currentQuery);
         }
 
     }

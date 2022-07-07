@@ -1,5 +1,8 @@
 package com.example.inharmony.fragments;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -7,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.inharmony.Player;
+import com.example.inharmony.PlayerService;
 import com.example.inharmony.R;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -45,13 +51,15 @@ public class MyProfileFragment extends Fragment {
     private TextView tvName;
     private TextView tvAge;
     private TextView tvBio;
-    private TextView tvFavGenres;
-    private ImageView ivFavArtist;
+
+    private TextView tvFavAlbum;
+    private TextView tvFavTrack;
     private TextView tvFavArtist;
     private ImageView ivFavAlbum;
-    private TextView tvFavAlbum;
+    private TextView tvFavGenres;
     private ImageView ivFavTrack;
-    private TextView tvFavTrack;
+    private ImageView ivFavArtist;
+    private ImageView ivPlayButton;
 
     private boolean myProfile;
     private ParseUser user;
@@ -64,6 +72,19 @@ public class MyProfileFragment extends Fragment {
     private String token;
     private boolean newSignUp;
 
+    private Player mPlayer;
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mPlayer = ((PlayerService.PlayerBinder) service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mPlayer = null;
+        }
+    };
+
 
 
     public MyProfileFragment() {
@@ -73,6 +94,13 @@ public class MyProfileFragment extends Fragment {
     public MyProfileFragment(boolean myProfile, ParseUser user) {
         this.myProfile = myProfile;
         this.user = user;
+    }
+
+    @Override
+    public void onDestroyView() {
+        mPlayer.release();
+        super.onDestroyView();
+
     }
 
 
@@ -97,6 +125,7 @@ public class MyProfileFragment extends Fragment {
         ivFavArtist = view.findViewById(R.id.ivFavArtist);
         ivFavAlbum = view.findViewById(R.id.ivFavAlbum);
         ivFavTrack = view.findViewById(R.id.ivFavTrack);
+        ivPlayButton = view.findViewById(R.id.ivPlayButton);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -112,9 +141,22 @@ public class MyProfileFragment extends Fragment {
             btnEditProfile.setVisibility(View.VISIBLE);
         }
 
+        getContext().bindService(PlayerService.getIntent(getContext()), mServiceConnection, Activity.BIND_AUTO_CREATE);
+        ivPlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "Clicked: " + favTrack.name.toString());
+                SpotifyApi spotifyApi = new SpotifyApi();
+                spotifyApi.setAccessToken(token);
+                SpotifyService service = spotifyApi.getService();
+                selectTrack(favTrack);
+            }
+        });
+
         btnEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mPlayer.release();
                 Fragment fragment = new EditProfileFragment();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("newSignUp", false);
@@ -196,6 +238,38 @@ public class MyProfileFragment extends Fragment {
             Glide.with(getContext()).load(profilePic.getUrl()).into(ivProfilePic);
         } else {
             ivProfilePic.setImageResource(R.drawable.nopfp);
+        }
+
+        if (favTrack.preview_url == null) {
+            ivPlayButton.setVisibility(View.GONE);
+        }
+    }
+
+    public void selectTrack(Track track) {
+
+        String previewUrl = track.preview_url;
+
+        if (mPlayer == null) {
+            Log.i(TAG, "mPlayer is Null");
+            return;
+        }
+
+        String currentTrackUrl = mPlayer.getCurrentTrack();
+
+        if (currentTrackUrl == null || !currentTrackUrl.equals(previewUrl)) {
+            Log.i(TAG, "Play");
+            mPlayer.play(previewUrl);
+            ivPlayButton.setImageResource(R.drawable.pause);
+
+        }
+        else if (mPlayer.isPlaying()) {
+            Log.i(TAG, "Pause");
+            mPlayer.pause();
+            ivPlayButton.setImageResource(R.drawable.play);
+        } else {
+            Log.i(TAG, "Resume");
+            ivPlayButton.setImageResource(R.drawable.pause);
+            mPlayer.resume();
         }
     }
 

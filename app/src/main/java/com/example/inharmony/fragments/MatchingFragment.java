@@ -15,8 +15,13 @@ import android.widget.Toast;
 
 import com.example.inharmony.R;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MatchingFragment extends Fragment {
@@ -40,6 +45,18 @@ public class MatchingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         al = new ArrayList<>();
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.findInBackground(new FindCallback<ParseUser>() {
+           @Override
+           public void done(List<ParseUser> objects, ParseException e) {
+               if (e == null) {
+                   for (int i = 0; i < objects.size(); i++) {
+
+                   }
+               }
+           }
+        });
+                Log.i("Matching", query.toString());
         al.add("php");
         al.add("c");
         al.add("python");

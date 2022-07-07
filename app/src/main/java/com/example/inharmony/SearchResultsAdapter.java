@@ -48,7 +48,6 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             itemView.setOnClickListener(this);
         }
 
-        // HOW TO DO THIS HERE
         @Override
         public void onClick(View v) {
             notifyItemChanged(getLayoutPosition());
@@ -90,13 +89,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     public void addDataArtists(List<Artist> artists) {
         mArtists.addAll(artists);
-        //Log.i("ADDING ARTISTS", "...");
         notifyDataSetChanged();
     }
 
     public void addDataAlbums(List<AlbumSimple> albums) {
         mAlbums.addAll(albums);
-        //Log.i("ADDING ALBUMS", "...");
         notifyDataSetChanged();
     }
 
@@ -108,8 +105,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        // binding for tracks
         if (mSearchType.equals("TRACK")) {
-            //Log.i("BINDVIEW" , "TRACK");
             if (mTracks.size() == 0) {
                 Toast.makeText(mContext, "No Results Found", Toast.LENGTH_LONG).show();
                 return;
@@ -131,8 +128,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             }
 
         }
+        // binding for artist
         else if (mSearchType.equals("ARTIST")) {
-            //Log.i("BINDVIEW" , "ARTIST");
             if (mArtists.size() == 0) {
                 Toast.makeText(mContext, "No Results Found", Toast.LENGTH_LONG).show();
                 return;
@@ -145,9 +142,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                 Picasso.with(mContext).load(image.url).into(holder.image);
             }
         }
-
+        //binding for albums
         else if (mSearchType.equals("ALBUM")) {
-            //Log.i("BINDVIEW" , "ALBUM");
             if (mAlbums.size() == 0) {
                 Toast.makeText(mContext, "No Results Found", Toast.LENGTH_LONG).show();
                 return;

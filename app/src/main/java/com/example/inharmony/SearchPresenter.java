@@ -229,7 +229,7 @@ public class SearchPresenter implements Search.ActionListener {
 
     @Override
     public void selectArtist(Artist artist) {
-        //do i need anything here? figure out how to populate adapter screen
+
     }
 
     @Override

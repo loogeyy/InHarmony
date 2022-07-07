@@ -160,22 +160,6 @@ public class EditProfileFragment extends Fragment {
         ivEditFavAlbum = view.findViewById(R.id.ivEditFavAlbum);
         ivEditFavArtist = view.findViewById(R.id.ivEditFavArtist);
 
-        tvEditFavTrack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                SpotifyApi spotifyApi = new SpotifyApi();
-//                spotifyApi.setAccessToken(token);
-//                SpotifyService service = spotifyApi.getService();
-
-                //service.
-                //save name and just do a search, retrieve it via search laterfububegidnhvggfkhlurblcukgjrtdhh
-
-                //mActionListener = new SearchPresenter(getContext(), EditProfileFragment.this.getView());
-                //mActionListener.init(token);
-                //mActionListener.selectTrack(favTrack);
-            }
-        });
-
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
@@ -474,11 +458,6 @@ public class EditProfileFragment extends Fragment {
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
 
-//                Intent i = new Intent(getContext(), MainActivity.class);
-//                i.putExtra(MainActivity.EXTRA_TOKEN, token);
-//                i.putExtra(MainActivity.NEW_SIGN_UP, false);
-//                startActivity(i);
-//                getActivity().finish();
             }
         });
     }
