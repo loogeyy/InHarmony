@@ -90,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.actionMatch:
                         fragment = new MatchingFragment();
+                        bundle.putString(MatchingFragment.EXTRA_TOKEN, token);
+                        bundle.putBoolean("newSignUp", false);
                         fragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
 

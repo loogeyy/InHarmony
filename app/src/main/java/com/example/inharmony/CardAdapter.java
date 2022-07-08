@@ -1,33 +1,31 @@
-package com.example.inharmony.fragments;
+package com.example.inharmony;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainer;
+import androidx.fragment.app.FragmentContainerView;
+
 import com.bumptech.glide.Glide;
-import com.example.inharmony.Player;
-import com.example.inharmony.PlayerService;
-import com.example.inharmony.R;
+import com.example.inharmony.fragments.EditProfileFragment;
+import com.example.inharmony.fragments.MyProfileFragment;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +36,13 @@ import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
-import kaaes.spotify.webapi.android.models.SeedsGenres;
 import kaaes.spotify.webapi.android.models.Track;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
-public class MyProfileFragment extends Fragment {
-    private static final String TAG = "MyProfileFragment";
+public class CardAdapter extends ArrayAdapter<Card> {
+
+    private static final String TAG = "CardAdapter";
+    Context context;
+    String token;
     private ImageView btnEditProfile;
     private ImageView ivProfilePic;
     private TextView tvName;
@@ -69,7 +66,6 @@ public class MyProfileFragment extends Fragment {
     private AlbumSimple favAlbum;
 
     public static String EXTRA_TOKEN = "EXTRA_TOKEN";
-    private String token;
     private boolean newSignUp;
 
     private Player mPlayer;
@@ -85,83 +81,46 @@ public class MyProfileFragment extends Fragment {
         }
     };
 
-    public MyProfileFragment() {
-        // Required empty public constructor
-    }
 
-    public MyProfileFragment(boolean myProfile, ParseUser user) {
-        this.myProfile = myProfile;
-        this.user = user;
-    }
-
-    @Override
-    public void onDestroyView() {
-        mPlayer.release();
-        super.onDestroyView();
-
+    public CardAdapter(Context context, int resourceId, List<Card> cards, String token, boolean newSignUp) {
+        super(context, resourceId, cards);
+        this.token = token;
+        this.newSignUp = newSignUp;
+        //this.fragment = fragment;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_profile, container, false);
-    }
+    public View getView(int position, View view, ViewGroup parent){
+        Log.i(TAG, String.valueOf(position));
+        Card card_item = getItem(position);
+        user = card_item.getUser();
+        Log.i(TAG, user.getUsername());
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        btnEditProfile = view.findViewById(R.id.btnEditProfile);
-        ivProfilePic = view.findViewById(R.id.ivProfilePic);
-        tvName = view.findViewById(R.id.tvName);
-        tvAge = view.findViewById(R.id.tvAge);
-        tvFavGenres = view.findViewById(R.id.tvFavGenres);
-        tvFavAlbum = view.findViewById(R.id.tvFavAlbum);
-        tvFavArtist = view.findViewById(R.id.tvFavArtist);
-        tvFavTrack = view.findViewById(R.id.tvFavTrack);
-        ivFavArtist = view.findViewById(R.id.ivFavArtist);
-        ivFavAlbum = view.findViewById(R.id.ivFavAlbum);
-        ivFavTrack = view.findViewById(R.id.ivFavTrack);
-        ivPlayButton = view.findViewById(R.id.ivPlayButton);
-
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
-            newSignUp = bundle.getBoolean("newSignUp");
-        } else {
-            Log.i(TAG, "BUNDLE WAS NULL");
+        if (view == null){
+            view = LayoutInflater.from(getContext()).inflate(R.layout.item, parent, false);
         }
 
-        if (!myProfile) {
-            btnEditProfile.setVisibility(View.GONE);
-        } else {
-            btnEditProfile.setVisibility(View.VISIBLE);
-        }
+        ivProfilePic = view.findViewById(R.id.ivProfilePicCard);
+        tvName = view.findViewById(R.id.tvNameCard);
+        tvAge = view.findViewById(R.id.tvAgeCard);
+        tvFavGenres = view.findViewById(R.id.tvFavGenresCard);
+        tvFavAlbum = view.findViewById(R.id.tvFavAlbumCard);
+        tvFavArtist = view.findViewById(R.id.tvFavArtistCard);
+        tvFavTrack = view.findViewById(R.id.tvFavTrackCard);
+        ivFavArtist = view.findViewById(R.id.ivFavArtistCard);
+        ivFavAlbum = view.findViewById(R.id.ivFavAlbumCard);
+        ivFavTrack = view.findViewById(R.id.ivFavTrackCard);
+        ivPlayButton = view.findViewById(R.id.ivPlayButtonCard);
 
         getContext().bindService(PlayerService.getIntent(getContext()), mServiceConnection, Activity.BIND_AUTO_CREATE);
         ivPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "Clicked: " + favTrack.name.toString());
+                Log.i("CardAdapter", "Clicked: " + favTrack.name.toString());
                 SpotifyApi spotifyApi = new SpotifyApi();
                 spotifyApi.setAccessToken(token);
                 SpotifyService service = spotifyApi.getService();
                 selectTrack(favTrack);
-            }
-        });
-
-        btnEditProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPlayer.release();
-                Fragment fragment = new EditProfileFragment();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("newSignUp", false);
-                String welcomeText = "Edit your profile details below.";
-                bundle.putString("tvWelcomeText", welcomeText);
-                bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
             }
         });
 
@@ -184,7 +143,8 @@ public class MyProfileFragment extends Fragment {
                             }
                         }
                     }
-                    getActivity().runOnUiThread(new Runnable() {
+
+                    ((MainActivity)getContext()).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             populateProfile(favTrack, favArtist, favAlbum);
@@ -193,8 +153,46 @@ public class MyProfileFragment extends Fragment {
                 }
             }
         });
+        Log.i(TAG, favTrack.name);
+        Log.i(TAG, favArtist.name);
+        Log.i(TAG, favAlbum.name);
+
+        return view;
+//
+//        Card card = getItem(position);
+//
+//        if (view == null){
+//            Log.i("CardAdapter", "convertView was null");
+//            view = LayoutInflater.from(getContext()).inflate(R.layout.item, parent, false);
+//        }
+//
+//        //FragmentContainer
+//        Fragment fragment = new MyProfileFragment(false, card.getUser());
+//        //CardView cards =
+////        FragmentContainerView layout = view.findViewById(R.id.card_container);
+////        LayoutInflater inflater;
+//        Bundle bundle = new Bundle();
+//        bundle.putBoolean("newSignUp", false);
+//        bundle.putString(MyProfileFragment.EXTRA_TOKEN, token);
+//        fragment.setArguments(bundle);
+//
+//        //layout.addView(fragment.getView());
+//        fragment.getParentFragmentManager().beginTransaction().replace(R.id.card_container).commit();
+//        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.flingContainer, fragment).commit();
+//        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().show(fragment);
+//        //getContext().getApplicationContext().
+//        //layout.addView(fragment);
+//        return view;
 
     }
+
+    //    @Override
+//    public void onDestroyView() {
+//        mPlayer.release();
+//        super.onDestroyView();
+//
+//    }
+
 
     private void populateProfile(Track favTrack, Artist favArtist, AlbumSimple favAlbum) {
         ArrayList<String> genres = (ArrayList<String>) user.get("favGenres");
@@ -207,7 +205,6 @@ public class MyProfileFragment extends Fragment {
             }
 
         }
-        //favGenres = favGenres.substring(0, favGenres.length() - 3);
         tvFavGenres.setText(favGenres);
         tvFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
         tvFavArtist.setText(favArtist.name.toString());
@@ -269,6 +266,4 @@ public class MyProfileFragment extends Fragment {
             mPlayer.resume();
         }
     }
-
-
 }

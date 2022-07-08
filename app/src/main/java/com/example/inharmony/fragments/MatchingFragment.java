@@ -10,12 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.inharmony.CardAdapter;
 import com.example.inharmony.R;
+import com.example.inharmony.Card;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -25,9 +26,15 @@ import java.util.List;
 
 
 public class MatchingFragment extends Fragment {
-    private ArrayList<String> al;
-    private ArrayAdapter<String> arrayAdapter;
+    private CardAdapter arrayAdapter;
     private int i;
+
+    public static String EXTRA_TOKEN = "EXTRA_TOKEN";
+    private String token;
+    private boolean newSignUp;
+
+    ListView listView;
+    ArrayList<Card> rowItems;
 
     public MatchingFragment() {
         // Required empty public constructor
@@ -44,31 +51,60 @@ public class MatchingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        al = new ArrayList<>();
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
+            newSignUp = bundle.getBoolean("newSignUp");
+        } else {
+            Log.i("MatchingFragment", "BUNDLE WAS NULL");
+        }
+
+        rowItems = new ArrayList<Card>();
+        List<ParseUser> users = new ArrayList<>();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.findInBackground(new FindCallback<ParseUser>() {
-           @Override
-           public void done(List<ParseUser> objects, ParseException e) {
-               if (e == null) {
-                   for (int i = 0; i < objects.size(); i++) {
+        try {
+            users = query.find();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+//        query.findInBackground(new FindCallback<ParseUser>() {
+//           @Override
+//           public void done(List<ParseUser> objects, ParseException e) {
+//               if (e != null) {
+//                Log.e("MatchingFragment", e.toString());
+//                return;
+//               }
+//               else {
+//                   for (int i = 0; i < objects.size(); i++) {
+//                       Log.i("USER:", objects.get(i).getUsername());
+//                        Card card = new Card(objects.get(i));
+//                        rowItems.add(card);
+//                        Log.i("Row item", "added");
+//                   }
+//               }
+//           }
+//        });
+        for (int i = 0; i < users.size(); i++) {
+            Log.i("USER:", users.get(i).getUsername());
+            Card card = new Card(users.get(i));
+            //Card card = new Card(users.get(i).getObjectId(), users.get(i).getUsername());
+            rowItems.add(card);
+            Log.i("Row item", "added");
+        }
 
-                   }
-               }
-           }
-        });
-                Log.i("Matching", query.toString());
-        al.add("php");
-        al.add("c");
-        al.add("python");
-        al.add("java");
-        al.add("html");
-        al.add("c++");
-        al.add("css");
-        al.add("javascript");
+            if (rowItems.size() == 0) {
+                Log.i("Row items", "Cards are empty");
+            }
+                    Log.i("Matching", query.toString());
 
-        arrayAdapter = new ArrayAdapter<>(getContext(), R.layout.item, R.id.helloText, al);
 
-        SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) view.findViewById(R.id.frame);
+            for (Card c : rowItems) {
+                Log.i("card:", c.getUser().toString());
+            }
+
+        arrayAdapter = new CardAdapter(getContext(), R.layout.item, rowItems, token, newSignUp);
+
+        SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) view.findViewById(R.id.flingContainer);
 
         flingContainer.setAdapter(arrayAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
@@ -76,7 +112,7 @@ public class MatchingFragment extends Fragment {
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
-                al.remove(0);
+                rowItems.remove(0);
                 arrayAdapter.notifyDataSetChanged();
             }
 
@@ -95,11 +131,11 @@ public class MatchingFragment extends Fragment {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                // Ask for more data here
-                al.add("XML ".concat(String.valueOf(i)));
-                arrayAdapter.notifyDataSetChanged();
-                Log.d("LIST", "notified");
-                i++;
+//                // Ask for more data here
+//                rowItems.add("XML ".concat(String.valueOf(i)));
+//                arrayAdapter.notifyDataSetChanged();
+//                Log.d("LIST", "notified");
+//                i++;
             }
 
             @Override
