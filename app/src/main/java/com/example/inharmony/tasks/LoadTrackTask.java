@@ -28,7 +28,6 @@ public class LoadTrackTask extends AsyncTask<ParseUser, Void, Track> {
 
     private static final String TAG = "LoadTrackTask";
     SpotifyService service;
-    Track favTrack;
     View view;
     String token;
     ImageView ivPlayButton;
@@ -50,30 +49,29 @@ public class LoadTrackTask extends AsyncTask<ParseUser, Void, Track> {
         }
     };
 
-    public LoadTrackTask(View view, String token) {
+    public LoadTrackTask(View view, String token, SpotifyService service) {
         this.view = view;
         this.token = token;
+        this.service = service;
     }
 
     @Override
     protected void onPreExecute() {
-        SpotifyApi spotifyApi = new SpotifyApi();
-        spotifyApi.setAccessToken(token);
-        service = spotifyApi.getService();
+        tvFavTrack = view.findViewById(R.id.tvFavTrackCard);
+        ivPlayButton = view.findViewById(R.id.ivPlayButtonCard);
+        ivFavTrack = view.findViewById(R.id.ivFavTrackCard);
+
     }
 
     @Override
     protected Track doInBackground(ParseUser... parseUsers) {
-        favTrack = service.getTracks(parseUsers[0].get("favTrack").toString()).tracks.get(0);
+        Track favTrack = service.getTracks(parseUsers[0].get("favTrack").toString()).tracks.get(0);
         Log.i("LoadTrackTask", String.valueOf(parseUsers[0].getUsername()));
         return favTrack;
     }
 
     @Override
-    protected void onPostExecute(Track track) {
-        tvFavTrack = (TextView) view.findViewById(R.id.tvFavTrackCard);
-        ivPlayButton = view.findViewById(R.id.ivPlayButtonCard);
-        ivFavTrack = view.findViewById(R.id.ivFavTrackCard);
+    protected void onPostExecute(Track favTrack) {
 
         tvFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
 

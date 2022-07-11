@@ -22,9 +22,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    xmlns:tools="http://schemas.android.com/tools"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center">
@@ -60,24 +58,9 @@
                             tools:text="Name" />
 
                         <TextView
-                            android:id="@+id/tvAgeCard"
-                            android:layout_width="wrap_content"
-                            android:layout_height="28dp"
-                            android:ems="10"
-                            android:fontFamily="@font/anteb_bold"
-                            android:inputType="number"
-                            android:textAlignment="viewStart"
-                            android:textColor="@color/light_blue"
-                            android:textColorHint="@color/light_blue"
-                            android:textSize="20sp"
-                            app:layout_constraintStart_toEndOf="@+id/tvNameCard"
-                            tools:layout_editor_absoluteY="178dp"
-                            tools:text="19" />
-
-                        <TextView
                             android:id="@+id/tvFavGenresCard"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="188dp"
+                            android:layout_height="27dp"
                             android:layout_marginTop="20dp"
                             android:fontFamily="@font/anteb_bold"
                             android:textColor="@color/white"
@@ -99,6 +82,18 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tvBioCard" />
 
+                        <TextView
+                            android:id="@+id/tvFavArtistCard"
+                            android:layout_width="119dp"
+                            android:layout_height="25dp"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="28dp"
+                            android:fontFamily="@font/anteb_bold"
+                            android:textColor="@color/white"
+                            app:layout_constraintStart_toEndOf="@+id/ivFavArtistCard"
+                            app:layout_constraintTop_toBottomOf="@+id/artistTextCard"
+                            tools:text="Dayglow" />
+
                         <ImageView
                             android:id="@+id/ivFavArtistCard"
                             android:layout_width="52dp"
@@ -108,18 +103,6 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/artistTextCard"
                             tools:src="@tools:sample/avatars" />
-
-                        <TextView
-                            android:id="@+id/tvFavArtistCard"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="28dp"
-                            android:fontFamily="@font/anteb_bold"
-                            android:textColor="@color/white"
-                            app:layout_constraintStart_toEndOf="@+id/ivFavArtistCard"
-                            app:layout_constraintTop_toBottomOf="@+id/artistTextCard"
-                            tools:text="Dayglow" />
 
                         <TextView
                             android:id="@+id/artistTextCard"
@@ -136,8 +119,8 @@
 
                         <TextView
                             android:id="@+id/tvFavAlbumCard"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="166dp"
+                            android:layout_height="28dp"
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="24dp"
                             android:fontFamily="@font/anteb_bold"

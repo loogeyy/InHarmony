@@ -14,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.inharmony.tasks.LoadAlbumTask;
+import com.example.inharmony.tasks.LoadArtistTask;
+import com.example.inharmony.tasks.LoadBasicTask;
 import com.example.inharmony.tasks.LoadTrackTask;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -35,7 +38,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
     String token;
     private ImageView btnEditProfile;
     private ImageView ivProfilePic;
-    private TextView tvName;
+    private TextView txvName;
     private TextView tvAge;
     private TextView tvBio;
 
@@ -87,17 +90,16 @@ public class CardAdapter extends ArrayAdapter<Card> {
             view = LayoutInflater.from(getContext()).inflate(R.layout.item, parent, false);
 //        }
 
-        ivProfilePic = view.findViewById(R.id.ivProfilePicCard);
-        tvName = view.findViewById(R.id.tvNameCard);
-        tvAge = view.findViewById(R.id.tvAgeCard);
-        tvFavGenres = view.findViewById(R.id.tvFavGenresCard);
-        tvFavAlbum = view.findViewById(R.id.tvFavAlbumCard);
-        tvFavArtist = view.findViewById(R.id.tvFavArtistCard);
-        tvFavTrack = view.findViewById(R.id.tvFavTrackCard);
-        ivFavArtist = view.findViewById(R.id.ivFavArtistCard);
-        ivFavAlbum = view.findViewById(R.id.ivFavAlbumCard);
-        ivFavTrack = view.findViewById(R.id.ivFavTrackCard);
-        ivPlayButton = view.findViewById(R.id.ivPlayButtonCard);
+//        ivProfilePic = view.findViewById(R.id.ivProfilePicCard);
+//        tvName = view.findViewById(R.id.tvNameCard);
+//        tvFavGenres = view.findViewById(R.id.tvFavGenresCard);
+//        tvFavAlbum = view.findViewById(R.id.tvFavAlbumCard);
+//        tvFavArtist = view.findViewById(R.id.tvFavArtistCard);
+//        tvFavTrack = view.findViewById(R.id.tvFavTrackCard);
+//        ivFavArtist = view.findViewById(R.id.ivFavArtistCard);
+//        ivFavAlbum = view.findViewById(R.id.ivFavAlbumCard);
+//        ivFavTrack = view.findViewById(R.id.ivFavTrackCard);
+//        ivPlayButton = view.findViewById(R.id.ivPlayButtonCard);
 
         getContext().bindService(PlayerService.getIntent(getContext()), mServiceConnection, Activity.BIND_AUTO_CREATE);
 
@@ -107,7 +109,10 @@ public class CardAdapter extends ArrayAdapter<Card> {
         Card card_item = getItem(position);
         user = card_item.getUser();
 
-        new LoadTrackTask(view, token).execute(user);
+        new LoadTrackTask(view, token, service).execute(user);
+        new LoadArtistTask(view, token, service).execute(user);
+        new LoadAlbumTask(view, token, service).execute(user);
+        new LoadBasicTask(view, token, service).execute(user);
 
 //        AsyncTask.execute(new Runnable() {
 //            @Override
@@ -201,7 +206,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
         }
 
         tvAge.setText(user.get("age").toString());
-        tvName.setText(user.get("name").toString());
+//        tvName.setText(user.get("name").toString());
 
         ParseFile profilePic = (ParseFile) user.get("profilePic");
         if (profilePic != null) {
