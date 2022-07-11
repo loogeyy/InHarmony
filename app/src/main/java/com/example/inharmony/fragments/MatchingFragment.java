@@ -1,10 +1,12 @@
 package com.example.inharmony.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.loader.content.AsyncTaskLoader;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,11 +28,12 @@ import java.util.List;
 
 
 public class MatchingFragment extends Fragment {
+    private static final String TAG = "MatchingFragment";
     private CardAdapter arrayAdapter;
     private int i;
 
     public static String EXTRA_TOKEN = "EXTRA_TOKEN";
-    private String token;
+    public static String token;
     private boolean newSignUp;
 
     ListView listView;
@@ -101,8 +104,9 @@ public class MatchingFragment extends Fragment {
             for (Card c : rowItems) {
                 Log.i("card:", c.getUser().toString());
             }
-
         arrayAdapter = new CardAdapter(getContext(), R.layout.item, rowItems, token, newSignUp);
+
+
 
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) view.findViewById(R.id.flingContainer);
 
@@ -112,21 +116,25 @@ public class MatchingFragment extends Fragment {
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
                 Log.d("LIST", "removed object!");
-                rowItems.remove(0);
-                arrayAdapter.notifyDataSetChanged();
+                Log.i(TAG, "before removing: " + rowItems.get(0).getUser().getUsername());
+                if (rowItems.size() != 0) {
+                    rowItems.remove(0);
+                    Log.i(TAG, "after removing: " + rowItems.get(0).getUser().getUsername());
+                    arrayAdapter.notifyDataSetChanged();
+                }
             }
 
             @Override
             public void onLeftCardExit(Object dataObject) {
                 //Do something on the left!
-                //You also have access to the original object.
-                //If you want to use it just cast it (String) dataObject
+                //remove from list
                 Toast.makeText(getContext(), "Swiped left!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
                 Toast.makeText(getContext(), "Swiped right!", Toast.LENGTH_SHORT).show();
+                // check if it's a mutual match in the database
             }
 
             @Override

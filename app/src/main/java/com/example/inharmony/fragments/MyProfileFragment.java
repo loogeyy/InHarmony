@@ -49,7 +49,6 @@ public class MyProfileFragment extends Fragment {
     private ImageView btnEditProfile;
     private ImageView ivProfilePic;
     private TextView tvName;
-    private TextView tvAge;
     private TextView tvBio;
 
     private TextView tvFavAlbum;
@@ -114,7 +113,6 @@ public class MyProfileFragment extends Fragment {
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         ivProfilePic = view.findViewById(R.id.ivProfilePic);
         tvName = view.findViewById(R.id.tvName);
-        tvAge = view.findViewById(R.id.tvAge);
         tvFavGenres = view.findViewById(R.id.tvFavGenres);
         tvFavAlbum = view.findViewById(R.id.tvFavAlbum);
         tvFavArtist = view.findViewById(R.id.tvFavArtist);
@@ -227,8 +225,7 @@ public class MyProfileFragment extends Fragment {
             Glide.with(getContext()).load(image.url).into(ivFavAlbum);
         }
 
-        tvAge.setText(user.get("age").toString());
-        tvName.setText(user.get("name").toString());
+        tvName.setText(user.get("name").toString() + ", " + user.get("age").toString());
 
         ParseFile profilePic = (ParseFile) user.get("profilePic");
         if (profilePic != null) {

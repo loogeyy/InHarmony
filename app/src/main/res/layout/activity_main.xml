@@ -13,7 +13,7 @@
         android:id="@+id/toolbar"
         android:layout_width="411dp"
         android:layout_height="54dp"
-        android:background="?attr/colorPrimary"
+        android:background="@color/background"
         android:fitsSystemWindows="true"
         android:minHeight="?attr/actionBarSize"
         android:paddingBottom="5dp"
@@ -28,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@id/bottomMenu"
+        android:background="@color/dark_navy"
         app:layout_constraintBottom_toTopOf="@+id/bottomMenu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,9 +39,10 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomMenu"
-        android:layout_width="377dp"
+        android:layout_width="0dp"
         android:layout_height="47dp"
         android:layout_alignParentBottom="true"
+        android:background="@color/background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

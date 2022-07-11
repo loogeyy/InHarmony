@@ -28,10 +28,13 @@
             android:layout_height="4dp"
             android:layout_weight="1"
             android:ellipsize="marquee"
+            android:fontFamily="@font/anteb_bold"
             android:gravity="bottom"
             android:maxLines="1"
             android:scrollHorizontally="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#9FB6C8"
+            android:textSize="17sp"
             tools:text="SONG TITLE" />
 
         <TextView
@@ -40,10 +43,13 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:ellipsize="marquee"
+            android:fontFamily="@font/anteb_bold"
             android:gravity="top"
             android:maxLines="1"
             android:scrollHorizontally="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#CCCCCC"
+            android:textSize="14sp"
             tools:text="SONG ARTIST" />
 
     </LinearLayout>

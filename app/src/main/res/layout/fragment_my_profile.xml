@@ -18,40 +18,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-         />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
-        android:fontFamily="@font/anteb_bold"
+        android:fontFamily="@font/grand_hotel"
         android:textAlignment="center"
         android:textColor="@color/light_blue"
         android:textColorHint="@color/light_blue"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.421"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivProfilePic"
-        tools:text="Name" />
-
-    <TextView
-        android:id="@+id/tvAge"
-        android:layout_width="wrap_content"
-        android:layout_height="28dp"
-        android:ems="10"
-        android:fontFamily="@font/anteb_bold"
-        android:inputType="number"
-        android:textAlignment="viewStart"
-        android:textColor="@color/light_blue"
-        android:textColorHint="@color/light_blue"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/tvName"
-        tools:layout_editor_absoluteY="178dp"
-        tools:text="19" />
+        tools:text="Name, 19" />
 
     <ImageView
         android:id="@+id/btnEditProfile"
@@ -69,45 +52,73 @@
     <TextView
         android:id="@+id/tvFavGenres"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_height="17dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="56dp"
         android:fontFamily="@font/anteb_bold"
         android:text="TextView"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.145"
-        app:layout_constraintStart_toEndOf="@+id/genresText"
-        app:layout_constraintTop_toBottomOf="@+id/tvBio"
+        app:layout_constraintTop_toBottomOf="@+id/genresText"
         tools:text="Indie Pop, Pop, Electro" />
 
     <TextView
         android:id="@+id/genresText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="224dp"
+        android:layout_marginTop="44dp"
         android:fontFamily="@font/anteb_bold"
         android:text="Favorite Genres:"
         android:textColor="@color/light_blue"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvBio" />
 
     <ImageView
-        android:id="@+id/ivFavArtist"
+        android:id="@+id/ivFavAlbum"
         android:layout_width="52dp"
         android:layout_height="53dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/artistText"
+        app:layout_constraintTop_toBottomOf="@+id/albumText"
         tools:src="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/tvFavArtist"
+        android:id="@+id/artistText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/anteb_bold"
+        android:text="Favorite Artist:"
+        android:textColor="@color/light_blue"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.194"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvBio" />
+
+    <TextView
+        android:id="@+id/albumText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="@font/anteb_bold"
+        android:text="Favorite Album:"
+        android:textColor="@color/light_blue"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.186"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvFavArtist" />
+
+    <TextView
+        android:id="@+id/tvFavArtist"
+        android:layout_width="51dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/anteb_bold"
         android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@+id/ivFavArtist"
@@ -115,59 +126,11 @@
         tools:text="Dayglow" />
 
     <TextView
-        android:id="@+id/artistText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:fontFamily="@font/anteb_bold"
-        android:text="Favorite Artist:"
-        android:textColor="@color/light_blue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvFavGenres" />
-
-    <TextView
-        android:id="@+id/tvFavAlbum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/anteb_bold"
-        android:textColor="@color/white"
-        app:layout_constraintStart_toEndOf="@+id/ivFavAlbum"
-        app:layout_constraintTop_toBottomOf="@+id/albumText"
-        tools:text="Harmony House" />
-
-    <TextView
-        android:id="@+id/albumText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:fontFamily="@font/anteb_bold"
-        android:text="Favorite Album:"
-        android:textColor="@color/light_blue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.509"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvFavArtist" />
-
-    <ImageView
-        android:id="@+id/ivFavTrack"
-        android:layout_width="52dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="92dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trackText"
-        tools:src="@tools:sample/avatars" />
-
-    <TextView
         android:id="@+id/tvFavTrack"
         android:layout_width="82dp"
         android:layout_height="53dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="28dp"
         android:background="@color/white"
         android:fontFamily="@font/anteb_bold"
         android:textColor="@color/dark_navy"
@@ -179,30 +142,66 @@
         android:id="@+id/trackText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="56dp"
         android:fontFamily="@font/anteb_bold"
         android:text="Favorite Track:"
         android:textColor="@color/light_blue"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintHorizontal_bias="0.181"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvFavAlbum" />
 
     <ImageView
-        android:id="@+id/ivFavAlbum"
+        android:id="@+id/ivFavTrack"
         android:layout_width="52dp"
         android:layout_height="53dp"
-        android:layout_marginStart="92dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="28dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/albumText"
+        app:layout_constraintTop_toBottomOf="@+id/trackText"
+        tools:src="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/ivPlayButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:src="@drawable/play"
+        app:layout_constraintBottom_toBottomOf="@+id/ivFavTrack"
+        app:layout_constraintEnd_toEndOf="@+id/ivFavTrack"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ivFavTrack"
+        app:layout_constraintTop_toTopOf="@+id/ivFavTrack"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/ivFavArtist"
+        android:layout_width="52dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/artistText"
         tools:src="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/tvBio"
+        android:id="@+id/tvFavAlbum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/anteb_bold"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/ivFavAlbum"
+        app:layout_constraintTop_toBottomOf="@+id/albumText"
+        tools:text="Harmony House" />
+
+    <TextView
+        android:id="@+id/tvBio"
+        android:layout_width="348dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="4dp"
         android:fontFamily="@font/anteb_bold"
         android:textColor="@color/white"
         android:textStyle="italic"
@@ -210,17 +209,6 @@
         app:layout_constraintHorizontal_bias="0.525"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvName"
-        tools:text="Hi! My name is Lucy and I like using spotify." />
-
-    <ImageView
-        android:id="@+id/ivPlayButton"
-        android:clickable="true"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/play"
-        app:layout_constraintBottom_toBottomOf="@+id/ivFavTrack"
-        app:layout_constraintEnd_toEndOf="@+id/ivFavTrack"
-        app:layout_constraintStart_toStartOf="@+id/ivFavTrack"
-        app:layout_constraintTop_toTopOf="@+id/ivFavTrack" />
+        tools:text="Hi! My name is Lucy and I like usingHi! My name is Lucy and I like using spotify.Hi! My name is Lucy and I like using spotify.Hi! My name is Lucy and I like using spotify.Hi! My name is Lucy and I like using spotify.Hi! My name is Lucy and I like using spotify.Hi! My name is Lucy and I like using spotify. spotify." />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

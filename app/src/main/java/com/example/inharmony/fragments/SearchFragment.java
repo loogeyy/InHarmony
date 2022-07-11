@@ -89,12 +89,22 @@ public class SearchFragment extends Fragment implements Search.View {
 
         // Setup search field
         searchView = (SearchView) view.findViewById(R.id.search_view);
+        if (searchType.equals("TRACK")) {
+            searchView.setQueryHint("Search Tracks");
+        }
+        else if (searchType.equals("ARTIST")) {
+            searchView.setQueryHint("Search Artists");
+        }
+        else {
+            searchView.setQueryHint("Search Albums");
+        }
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i("SEARCH TYPE IS", SEARCH_TYPE);
                 if (searchType.equals("TRACK")) {
+
                     mActionListener.searchTracks(query);
                     searchView.clearFocus();
                 }
