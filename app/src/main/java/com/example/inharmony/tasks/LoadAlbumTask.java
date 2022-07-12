@@ -53,6 +53,8 @@ public class LoadAlbumTask extends AsyncTask<ParseUser, Void, Album> {
                         if (a.images.size() != 0) {
                             if (a.images.get(0).url.equals(user.get("favAlbumImageUrl"))) {
                                 album = a;
+                                Log.i(TAG, album.name);
+                                Log.i(TAG, album.images.get(0).url);
                             }
                         }
                     }
@@ -61,7 +63,6 @@ public class LoadAlbumTask extends AsyncTask<ParseUser, Void, Album> {
 
     @Override
     protected void onPostExecute(Album favAlbum) {
-
         tvFavAlbumCard.setText(favAlbum.name.toString());
         if (favAlbum.images.size() != 0) {
             Image image = favAlbum.images.get(0);

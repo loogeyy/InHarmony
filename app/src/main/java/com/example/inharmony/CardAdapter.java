@@ -43,19 +43,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
     public static String EXTRA_TOKEN = "EXTRA_TOKEN";
     private boolean newSignUp;
 
-    private Player mPlayer;
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mPlayer = ((PlayerService.PlayerBinder) service).getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mPlayer = null;
-        }
-    };
-
+    public Player mPlayer;
 
     public CardAdapter(Context context, int resourceId, List<Card> cards, String token, boolean newSignUp) {
         super(context, resourceId, cards);
@@ -71,25 +59,20 @@ public class CardAdapter extends ArrayAdapter<Card> {
             view = LayoutInflater.from(getContext()).inflate(R.layout.item, parent, false);
         }
 
-        getContext().bindService(PlayerService.getIntent(getContext()), mServiceConnection, Activity.BIND_AUTO_CREATE);
-
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
         SpotifyService service = spotifyApi.getService();
         Card card_item = getItem(position);
         user = card_item.getUser();
 
-        new LoadProfileTask(view, token, service).execute(user);
+        LoadProfileTask loadProfileTask = new LoadProfileTask(view, token, service);
+        loadProfileTask.execute(user);
 
+//        LoadAlbumTask loadAlbumTask = new LoadAlbumTask(view, token, service);
+//        loadAlbumTask.execute(user);
         return view;
 
     }
 
-    //    @Override
-//    public void onDestroyView() {
-//        mPlayer.release();
-//        super.onDestroyView();
-//
-//    }
 
 }

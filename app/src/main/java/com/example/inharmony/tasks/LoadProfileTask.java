@@ -1,5 +1,6 @@
 package com.example.inharmony.tasks;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
@@ -28,30 +29,35 @@ import kaaes.spotify.webapi.android.models.Track;
 
 public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
     private static final String TAG = "LoadProfileTask";
-    SpotifyService service;
+
     View view;
     String token;
-    ParseFile profilePic;
-    String favGenres;
+    SpotifyService service;
+
+    String basic;
     Album favAlbum;
     Track favTrack;
     Artist favArtist;
-    String basic;
+    String favGenres;
+    ParseFile profilePic;
+
+
     TextView tvNameCard;
-    TextView tvFavGenresCard;
-    ImageView ivProfilePicCard;
-    ImageView ivFavAlbumCard;
-    TextView tvFavAlbumCard;
-    ImageView ivPlayButton;
-    ImageView ivFavTrack;
     TextView tvFavTrack;
-    ImageView ivFavArtistCard;
+    ImageView ivFavTrack;
+    ImageView ivPlayButton;
+    TextView tvFavAlbumCard;
+    ImageView ivFavAlbumCard;
+    TextView tvFavGenresCard;
     TextView tvFavArtistCard;
+    ImageView ivFavArtistCard;
+    ImageView ivProfilePicCard;
 
     private Player mPlayer;
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i(TAG, "player is connected");
             mPlayer = ((PlayerService.PlayerBinder) service).getService();
         }
 
@@ -70,20 +76,29 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
     @Override
     protected void onPreExecute() {
         tvNameCard = view.findViewById(R.id.tvNameCard);
-        tvFavGenresCard = view.findViewById(R.id.tvFavGenresCard);
+        tvFavTrack = view.findViewById(R.id.tvFavTrackCard);
+        ivFavTrack = view.findViewById(R.id.ivFavTrackCard);
         ivFavAlbumCard = view.findViewById(R.id.ivFavAlbumCard);
         tvFavAlbumCard = view.findViewById(R.id.tvFavAlbumCard);
-        tvFavTrack = view.findViewById(R.id.tvFavTrackCard);
         ivPlayButton = view.findViewById(R.id.ivPlayButtonCard);
-        ivFavTrack = view.findViewById(R.id.ivFavTrackCard);
+        tvFavGenresCard = view.findViewById(R.id.tvFavGenresCard);
         ivFavArtistCard = view.findViewById(R.id.ivFavArtistCard);
         tvFavArtistCard = view.findViewById(R.id.tvFavArtistCard);
+        ivProfilePicCard = view.findViewById(R.id.ivProfilePicCard);
+
+        view.getContext().bindService(PlayerService.getIntent(view.getContext()), mServiceConnection, Activity.BIND_AUTO_CREATE);
+
     }
 
     @Override
     protected Void doInBackground(ParseUser... parseUsers) {
         ParseUser user = parseUsers[0];
 
+        // basic info
+        basic = user.get("name")+ ", " + user.get("age");
+        profilePic = (ParseFile) user.get("profilePic");
+
+        // favorite genres
         ArrayList<String> genres = (ArrayList<String>) user.get("favGenres");
         favGenres = "";
         for (int i = 0; i < genres.size(); i++) {
@@ -96,48 +111,48 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
 
         }
 
-        basic = user.get("name")+ ", " + user.get("age");
-        profilePic = (ParseFile) user.get("profilePic");
+        // favorite track
+        favTrack = service.getTracks(parseUsers[0].get("favTrack").toString()).tracks.get(0);
 
+        // favorite artist
+        favArtist = service.getArtists(parseUsers[0].get("favArtist").toString()).artists.get(0);
 
+        // favorite album
         List<Album> albums = service.getAlbums(user.get("favAlbum").toString()).albums;
+        favAlbum = albums.get(0);
         for (Album a : albums) {
             if (a.images.size() != 0) {
                 if (a.images.get(0).url.equals(user.get("favAlbumImageUrl"))) {
                     favAlbum = a;
+                    Log.i(TAG, favAlbum.name);
+                    Log.i(TAG, favArtist.images.get(0).url);
                 }
             }
         }
-        favTrack = service.getTracks(parseUsers[0].get("favTrack").toString()).tracks.get(0);
-        favArtist = service.getArtists(parseUsers[0].get("favArtist").toString()).artists.get(0);
 
         return null;
     }
 
     @Override
     protected void onPostExecute(Void unused) {
+        // basic info
         tvNameCard.setText(basic);
-        tvFavGenresCard.setText(favGenres);
         if (profilePic != null) {
-            //Glide.with(view.getContext()).load(profilePic.getUrl()).into(ivProfilePicCard);
-        }
-        tvFavAlbumCard.setText(favAlbum.name.toString());
-        if (favAlbum.images.size() != 0) {
-            Image image = favAlbum.images.get(0);
-            Glide.with(view.getContext()).load(image.url).into(ivFavAlbumCard);
+            Glide.with(view.getContext()).load(profilePic.getUrl()).into(ivProfilePicCard);
         }
 
+        // favorite genres
+        tvFavGenresCard.setText(favGenres);
+
+        // favorite track
         tvFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
-
         if (favTrack.preview_url == null) {
             ivPlayButton.setVisibility(View.GONE);
         }
-
         if (favTrack.album.images.size() != 0) {
             Image image = favTrack.album.images.get(0);
             Glide.with(view.getContext()).load(image.url).into(ivFavTrack);
         }
-
         ivPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,11 +162,26 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
                 selectTrack(favTrack);
             }
         });
+
+        // favorite album
+        Log.i(TAG, favAlbum.toString());
+        Log.i(TAG, favAlbum.name.toString());
+        Log.i(TAG, favAlbum.images.get(0).url);
+        tvFavAlbumCard.setText(favAlbum.name.toString());
+        if (favAlbum.images.size() != 0) {
+            Image image = favAlbum.images.get(0);
+            Glide.with(view.getContext()).load(image.url).into(ivFavAlbumCard);
+        }
+
+        // favorite artist
         if (favArtist.images.size() != 0) {
             Image image = favArtist.images.get(0);
             Glide.with(view.getContext()).load(image.url).into(ivFavArtistCard);
         }
         tvFavArtistCard.setText(favArtist.name.toString());
+
+
+
     }
 
     public void selectTrack(Track track) {
@@ -183,4 +213,5 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
             mPlayer.resume();
         }
     }
+
 }
