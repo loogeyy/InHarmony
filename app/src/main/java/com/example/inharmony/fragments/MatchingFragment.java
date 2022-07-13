@@ -24,18 +24,22 @@ import com.example.inharmony.Card;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.Track;
 
 
 public class MatchingFragment extends Fragment {
@@ -71,8 +75,6 @@ public class MatchingFragment extends Fragment {
         if (bundle != null) {
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
             newSignUp = bundle.getBoolean("newSignUp");
-        } else {
-            Log.i("MatchingFragment", "BUNDLE WAS NULL");
         }
 
         SpotifyApi spotifyApi = new SpotifyApi();
@@ -80,37 +82,29 @@ public class MatchingFragment extends Fragment {
         service = spotifyApi.getService();
 
         rowItems = new ArrayList<Card>();
-        List<ParseUser> users = new ArrayList<>();
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
+
+
+
+//        for (int i = 0; i < users.size(); i++) {
+//            Card card = new Card(users.get(i));
+//            if (!(card.getUser().getUsername().equals(ParseUser.getCurrentUser().getUsername()))) {
+//                Log.i(TAG, "user added as match");
+//                rowItems.add(card);
+//                Log.i("Row item", "added");
+//            }
+//        }
+
+
+//            for (Card c : rowItems) {
+//                Log.i("card:", c.getUser().toString());
+//            }
+
+        arrayAdapter = new CardAdapter(getContext(), R.layout.item, rowItems, token, newSignUp);
         try {
-            users = query.find();
+            updatePotentialMatches();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        // updatePotentialMatches(users);
-
-        for (int i = 0; i < users.size(); i++) {
-            Card card = new Card(users.get(i));
-            if (!(card.getUser().getUsername().equals(ParseUser.getCurrentUser().getUsername()))) {
-                Log.i(TAG, "user added as match");
-                rowItems.add(card);
-                Log.i("Row item", "added");
-            }
-        }
-
-            if (rowItems.size() == 0) {
-                Log.i("Row items", "Cards are empty");
-            }
-                    Log.i("Matching", query.toString());
-
-
-            for (Card c : rowItems) {
-                Log.i("card:", c.getUser().toString());
-            }
-        arrayAdapter = new CardAdapter(getContext(), R.layout.item, rowItems, token, newSignUp);
-
-
-
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) view.findViewById(R.id.flingContainer);
 
         flingContainer.setAdapter(arrayAdapter);
@@ -144,31 +138,25 @@ public class MatchingFragment extends Fragment {
                     @Override
                     public void done(List<Match> objects, ParseException e) {
                         if (objects.size() != 0) {
-                            Log.i(TAG, "Existing object found!");
                             try {
                                 objects.get(0).delete();
                             } catch (ParseException ex) {
                                 ex.printStackTrace();
                             }
                         }
-                        else {
-                            Match match = new Match();
-                            match.setUserOne(ParseUser.getCurrentUser());
-                            match.setUserTwo(rejectedUser);
-                            match.setStatus("rejected");
-                            try {
-                                match.save();
-                            } catch (ParseException ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-
-                        //find it and update
-                        //.put(STATUS, "rejected");
                     }
                 });
 
-                Toast.makeText(getContext(), "Swiped left!", Toast.LENGTH_SHORT).show();
+                // update match transaction as rejection
+                Match match = new Match();
+                match.setUserOne(ParseUser.getCurrentUser());
+                match.setUserTwo(rejectedUser);
+                match.setStatus("rejected");
+                try {
+                    match.save();
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
             }
 
             @Override
@@ -184,12 +172,14 @@ public class MatchingFragment extends Fragment {
                 matches.findInBackground(new FindCallback<Match>() {
                     @Override
                     public void done(List<Match> objects, ParseException e) {
-                        // if other user swiped right
+                        // if other user has swiped
                         if (objects.size() != 0) {
                             Log.i(TAG, "Existing object found!");
                             try {
                                 // if not rejected status, update match in database
+                                Log.i(TAG, "status: " + objects.get(0).getString("status"));
                                 if (objects.get(0).getString("status").equals("pending")) {
+
                                     objects.get(0).delete();
                                     Match match = new Match();
                                     match.setUserOne(ParseUser.getCurrentUser());
@@ -205,7 +195,6 @@ public class MatchingFragment extends Fragment {
                         }
                         // if new match transaction
                         else {
-                            Log.i(TAG, "Existing object not found!");
                             Match match = new Match();
                             match.setUserOne(ParseUser.getCurrentUser());
                             match.setUserTwo(matchedUser);
@@ -218,13 +207,20 @@ public class MatchingFragment extends Fragment {
                         }
                     }
                 });
-                Toast.makeText(getContext(), "Swiped right!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-//                // Ask for more data here
-                //updatePotentialMatches(users);
+                Log.i(TAG, "onAdapterAboutToEmpty triggered");
+                Log.i("itemsInAdapter", String.valueOf(itemsInAdapter));
+                // Ask for more data here
+                try {
+                    if (itemsInAdapter == 0) {
+                        updatePotentialMatches();
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 TextView tvNoMatches = view.findViewById(R.id.tvNoMatches);
                 if (rowItems.size() == 0) {
                     tvNoMatches.setVisibility(View.VISIBLE);
@@ -243,68 +239,96 @@ public class MatchingFragment extends Fragment {
 
             }
         });
-
-//
-//        // Optionally add an OnItemClickListener
-//        flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClicked(int itemPosition, Object dataObject) {
-//                Toast.makeText(getContext(), "Clicked!", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
     }
     //array -> unmatched users
     //array -> rejected users
     //array -> want matches
 
     //pending -> match
-    //trinary boolean -> matched, rejected, potential
-    //rejection -> delete it from teh match database
+
     //query matches to display messaging
 
+
+    //THE ALGORITHM
     private int similarityScore(ParseUser currentUser, ParseUser user) {
-        //service.getTracksAudioFeatures();
-        return 0;
-    }
+//        service.getTracksAudioFeatures();
+//        service.getTopTracks()
 
-    private void updatePotentialMatches(List<ParseUser> users) {
-        JSONArray potentialMatchesList;
 
-        if (ParseUser.getCurrentUser().get("potentialMatches") == null) {
-            potentialMatchesList = new JSONArray();
-        } else {
-            potentialMatchesList = (JSONArray) ParseUser.getCurrentUser().get("potentialMatches");
-        }
-
-        for (int i = 0; i < users.size(); i++) {
-            ParseUser user = users.get(i);
-            Log.i("USER:", users.get(i).getUsername());
-            Card card = new Card(user);
-            //Card card = new Card(users.get(i).getObjectId(), users.get(i).getUsername());
-            rowItems.add(card);
-            Log.i("Row item", "added");
-            int score = similarityScore(ParseUser.getCurrentUser(), user);
-            if (score > 10) {
-                potentialMatchesList.put(user);
-                rowItems.add(card);
-                return;
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Pager<Track> songId = service.getTopTracks();
+                for (Track track : songId.items) {
+                    Log.i(TAG, "SIMILARITY: " + track.name);
+                }
             }
-
-        }
-
-
-        if (true) {
-           // potentialMatchesList.put()
-        }
+        });
 
         //grab top five songs for user and compare gettracksaudiofeatures
         //including popularity
         //top songs similarity
 
-        //THE ALGORITHM
+        return 1;
+    }
+
+    //refresh list of potential matches and prevent repeats
+    private void updatePotentialMatches() throws ParseException {
+        List<ParseUser> users = new ArrayList<>();
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        try {
+            users = query.find();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        JSONArray potentialMatchesList = new JSONArray();
+
+        // iterates through all users query
+        for (int i = 0; i < users.size(); i++) {
+            ParseUser user = users.get(i);
+            if (!(user.getUsername().equals(ParseUser.getCurrentUser().getUsername()))) {
+                Log.i("USER:", users.get(i).getUsername());
+                Log.i(TAG, "potential match, not current user");
+
+                ParseQuery<Match> matches = ParseQuery.getQuery(Match.class);
+                // to prevent repeats
+                matches.whereEqualTo(Match.USER_ONE, ParseUser.getCurrentUser());
+                matches.whereEqualTo(Match.USER_TWO, user);
+                List<Match> objects = (List<Match>) matches.find();
+
+                matches.whereEqualTo(Match.USER_ONE, user);
+
+                if (objects.size() == 0)  {
+                    int score = similarityScore(ParseUser.getCurrentUser(), user);
+                    int threshold = 0;
+                    if (score > threshold) {
+                        potentialMatchesList.put(user);
+                        Card card = new Card(user);
+                        rowItems.add(card);
+                        arrayAdapter.notifyDataSetChanged();
+                        Log.i("Row item", "added");
+                    }
+                }
+            }
+        }
+        Log.i(TAG,"NEW CURRENT LIST OF POTENTIAL MATCHES");
+        for (int i = 0; i < potentialMatchesList.length(); i++) {
+            try {
+                ParseUser user = (ParseUser) potentialMatchesList.get(i);
+                Log.i("Match ", user.getUsername());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        ParseUser.getCurrentUser().put("potentialMatches", potentialMatchesList);
+        ParseUser.getCurrentUser().save();
+        Log.i("updatePotentialMatches", "done");
+
+
+
         /*
-        if user has less than 5 people in its potential matches list -> refreshes
+
         run the algorithm -> store potential matches into potential matches array (of parse users), arrayUser -> check:
             query.whereequalsto(userMatchOne, arrayUser) {
             for each match in qeury:
