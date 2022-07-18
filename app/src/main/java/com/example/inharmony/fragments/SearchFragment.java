@@ -39,6 +39,7 @@ public class SearchFragment extends Fragment implements Search.View {
     private boolean newSignUp;
     private String searchType;
     private String token;
+    private Bundle bundle;
 
     private RecyclerView resultsList;
     private SearchView searchView;
@@ -76,7 +77,7 @@ public class SearchFragment extends Fragment implements Search.View {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Bundle bundle = this.getArguments();
+        bundle = this.getArguments();
         if (bundle != null) {
             token = bundle.getString(SearchFragment.EXTRA_TOKEN);
             Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
@@ -130,17 +131,24 @@ public class SearchFragment extends Fragment implements Search.View {
         mAdapter = new SearchResultsAdapter(searchType, getContext(), new SearchResultsAdapter.ItemSelectedListener()  {
             @Override
             public void onItemSelectedTrack(View itemView, Track track) {
-                //mActionListener.selectTrack(track); // this makes it play, use this code for later
-                if (getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE") != null) {
-                    Log.i("SEARCHFRAGMENT", "EDITPROFILE FRAGMENT FOUND");
+                if (bundle.getString("TYPE").equals("profile")) {
+                    EditProfileFragment fragment = (EditProfileFragment) getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE");
+                    Bundle bundle = new Bundle();
+                    bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+                    bundle.putParcelable("favTrack", track);
+                    bundle.putBoolean("newSignUp", newSignUp);
+                    getActivity().getSupportFragmentManager().setFragmentResult("favTrack", bundle);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
                 }
-                EditProfileFragment fragment = (EditProfileFragment) getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE");
-                Bundle bundle = new Bundle();
-                bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
-                bundle.putParcelable("favTrack", track);
-                bundle.putBoolean("newSignUp", newSignUp);
-                getActivity().getSupportFragmentManager().setFragmentResult("favTrack", bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
+                if (bundle.getString("TYPE").equals("message")) {
+                    ChatFragment fragment = (ChatFragment) getActivity().getSupportFragmentManager().findFragmentByTag("CHATFRAGMENT");
+                    Bundle bundle = new Bundle();
+                    bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+                    bundle.putParcelable("selectedTrack", track);
+                    getActivity().getSupportFragmentManager().setFragmentResult("selectedTrack", bundle);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
+                }
+
 }
 
             @Override

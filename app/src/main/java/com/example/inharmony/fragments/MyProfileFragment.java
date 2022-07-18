@@ -15,8 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,8 +25,6 @@ import com.example.inharmony.R;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +34,7 @@ import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
-import kaaes.spotify.webapi.android.models.SeedsGenres;
 import kaaes.spotify.webapi.android.models.Track;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class MyProfileFragment extends Fragment {
     private static final String TAG = "MyProfileFragment";
@@ -111,7 +103,7 @@ public class MyProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
-        ivProfilePic = view.findViewById(R.id.ivProfilePic);
+        ivProfilePic = view.findViewById(R.id.ivChatProfilePic);
         tvName = view.findViewById(R.id.tvName);
         tvFavGenres = view.findViewById(R.id.tvFavGenres);
         tvFavAlbum = view.findViewById(R.id.tvFavAlbum);
@@ -121,6 +113,7 @@ public class MyProfileFragment extends Fragment {
         ivFavAlbum = view.findViewById(R.id.ivFavAlbum);
         ivFavTrack = view.findViewById(R.id.ivFavTrack);
         ivPlayButton = view.findViewById(R.id.ivPlayButton);
+        tvBio = view.findViewById(R.id.tvBio);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -226,6 +219,10 @@ public class MyProfileFragment extends Fragment {
         }
 
         tvName.setText(user.get("name").toString() + ", " + user.get("age").toString());
+
+        if (user.get("bio") != null) {
+            tvBio.setText(user.get("bio").toString());
+        }
 
         ParseFile profilePic = (ParseFile) user.get("profilePic");
         if (profilePic != null) {

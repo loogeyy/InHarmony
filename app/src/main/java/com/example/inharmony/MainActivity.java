@@ -22,6 +22,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.inharmony.fragments.ChatFragment;
+import com.example.inharmony.fragments.ChatListFragment;
 import com.example.inharmony.fragments.EditProfileFragment;
 import com.example.inharmony.fragments.MatchingFragment;
 import com.example.inharmony.fragments.MyProfileFragment;
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setLogo(R.drawable.logo);
+        //getSupportActionBar().setIcon(R.drawable.logo);
 
 
 
@@ -94,18 +97,15 @@ public class MainActivity extends AppCompatActivity {
                         bundle.putBoolean("newSignUp", false);
                         fragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-
                         break;
+
                     case R.id.actionMessage:
-                        Toast.makeText(MainActivity.this, "Profile", Toast.LENGTH_SHORT).show();
                         Log.d("Menu", "Profile pressed");
-                        fragment = new MatchingFragment();
-                        //bundle.putString(SearchFragment.SEARCH_TYPE, "TRACK");
+                        fragment = new ChatListFragment();
                         fragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-
-                        //fragment = new MatchFragment(ParseUser.getCurrentUser());
                         break;
+
                     case R.id.actionProfile:
                         Log.i("MAINACTIVITY ACTIONPROFILE", "SWITCHING TO EDIT");
                         Log.i("MainActivity", "newSignUp: " + newSignUp);

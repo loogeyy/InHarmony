@@ -12,4 +12,6 @@
     <string name="back4app_client_key">wMstVXcWjICq7G8i13nkrPQWqorx1Yy0viT0IGYI</string>
     <string name="message_hint">Say anything</string>
     <string name="send">Send</string>
+    <string name="profile_me">My Profile Pic</string>
+    <string name="profile_other">Other profile pic</string>
 </resources>

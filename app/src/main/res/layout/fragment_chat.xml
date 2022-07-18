@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/etMessage"
+        android:layout_width="263dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/varelaround"
+        android:hint="@string/message_hint"
+        android:imeOptions="actionSend"
+        android:inputType="textShortMessage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ibSend"
+        app:layout_constraintStart_toEndOf="@+id/btnSendTrack"
+        app:layout_constraintTop_toBottomOf="@+id/rvChat" />
+
+    <ImageButton
+        android:id="@+id/ibSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="32dp"
+        android:backgroundTint="@color/baby_blue"
+        android:contentDescription="@string/send"
+        android:gravity="center"
+        android:paddingRight="10dp"
+        android:src="@drawable/ic_baseline_send_24"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/etMessage"
+        app:layout_constraintTop_toTopOf="@+id/etMessage"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvChat"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/dark_navy"
+        app:layout_constraintBottom_toTopOf="@+id/etMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnSendTrack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:clickable="true"
+        android:foregroundTint="#FDFDFD"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/add_music"
+        tools:layout_editor_absoluteY="613dp" />
+
+    <ImageView
+        android:id="@+id/ivTrack"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        tools:layout_editor_absoluteX="51dp"
+        tools:layout_editor_absoluteY="552dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="208dp"
+        android:layout_height="51dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="102dp"
+        tools:layout_editor_absoluteY="551dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

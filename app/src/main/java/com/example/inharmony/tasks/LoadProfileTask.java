@@ -34,6 +34,7 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
     String token;
     SpotifyService service;
 
+    String bio;
     String basic;
     Album favAlbum;
     Track favTrack;
@@ -41,7 +42,7 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
     String favGenres;
     ParseFile profilePic;
 
-
+    TextView tvBioCard;
     TextView tvNameCard;
     TextView tvFavTrack;
     ImageView ivFavTrack;
@@ -75,6 +76,7 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
 
     @Override
     protected void onPreExecute() {
+        tvBioCard = view.findViewById(R.id.tvBioCard);
         tvNameCard = view.findViewById(R.id.tvNameCard);
         tvFavTrack = view.findViewById(R.id.tvFavTrackCard);
         ivFavTrack = view.findViewById(R.id.ivFavTrackCard);
@@ -87,7 +89,6 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
         ivProfilePicCard = view.findViewById(R.id.ivProfilePicCard);
 
         view.getContext().bindService(PlayerService.getIntent(view.getContext()), mServiceConnection, Activity.BIND_AUTO_CREATE);
-
     }
 
     @Override
@@ -97,6 +98,9 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
         // basic info
         basic = user.get("name")+ ", " + user.get("age");
         profilePic = (ParseFile) user.get("profilePic");
+        if (user.get("bio") != null) {
+            bio = user.get("bio").toString();
+        }
 
         // favorite genres
         ArrayList<String> genres = (ArrayList<String>) user.get("favGenres");
@@ -124,8 +128,6 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
             if (a.images.size() != 0) {
                 if (a.images.get(0).url.equals(user.get("favAlbumImageUrl"))) {
                     favAlbum = a;
-                    Log.i(TAG, favAlbum.name);
-                    Log.i(TAG, favArtist.images.get(0).url);
                 }
             }
         }
@@ -139,6 +141,9 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
         tvNameCard.setText(basic);
         if (profilePic != null) {
             Glide.with(view.getContext()).load(profilePic.getUrl()).into(ivProfilePicCard);
+        }
+        if (bio != null) {
+            tvBioCard.setText(bio);
         }
 
         // favorite genres
@@ -156,17 +161,11 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
         ivPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("CardAdapter", "Clicked: " + favTrack.name.toString());
                 SpotifyApi spotifyApi = new SpotifyApi();
                 spotifyApi.setAccessToken(token);
                 selectTrack(favTrack);
             }
         });
-
-        // favorite album
-        Log.i(TAG, favAlbum.toString());
-        Log.i(TAG, favAlbum.name.toString());
-        Log.i(TAG, favAlbum.images.get(0).url);
         tvFavAlbumCard.setText(favAlbum.name.toString());
         if (favAlbum.images.size() != 0) {
             Image image = favAlbum.images.get(0);
@@ -187,8 +186,6 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
     public void selectTrack(Track track) {
 
         String previewUrl = track.preview_url;
-        Log.i(TAG, "previewUrl:" + track.preview_url);
-
         if (mPlayer == null) {
             Log.i(TAG, "mPlayer is Null");
             return;

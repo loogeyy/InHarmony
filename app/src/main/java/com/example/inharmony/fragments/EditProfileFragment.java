@@ -90,12 +90,14 @@ public class EditProfileFragment extends Fragment {
     private Button btnFavSong;
     private Button btnFavAlbum;
     private Button btnFavArtist;
+    private EditText etChangeBio;
     private TextView tvWelcomeText;
     private Button btnUpdateProfile;
     private ImageButton btnChangePic;
     private MultiSpinnerSearch genres;
     private ImageView ivChangeProfilePic;
     private BottomNavigationView bottomMenu;
+
 
     private TextView tvEditFavTrack;
     private TextView tvEditFavAlbum;
@@ -144,6 +146,7 @@ public class EditProfileFragment extends Fragment {
         genres = view.findViewById(R.id.genres);
         btnFavSong = view.findViewById(R.id.btnFavSong);
         btnFavAlbum = view.findViewById(R.id.btnFavAlbum);
+        etChangeBio = view.findViewById(R.id.etChangeBio);
         btnChangePic = view.findViewById(R.id.btnChangePic);
         btnFavArtist = view.findViewById(R.id.btnFavArtist);
         tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
@@ -164,7 +167,6 @@ public class EditProfileFragment extends Fragment {
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
             newSignUp = bundle.getBoolean("newSignUp");
             tvWelcomeText.setText(bundle.getString("tvWelcomeText"));
-            //Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
         } else {
             Log.i(TAG, "BUNDLE WAS NULL");
         }
@@ -172,7 +174,6 @@ public class EditProfileFragment extends Fragment {
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
         SpotifyService service = spotifyApi.getService();
-
 
         AsyncTask.execute(new Runnable() {
             @Override
@@ -264,6 +265,10 @@ public class EditProfileFragment extends Fragment {
                 Glide.with(getContext()).load(profilePic.getUrl()).into(ivChangeProfilePic);
             } else {
                 ivChangeProfilePic.setImageResource(R.drawable.nopfp);
+            }
+
+            if (ParseUser.getCurrentUser().get("bio") != null) {
+                etChangeBio.setText(ParseUser.getCurrentUser().get("bio").toString());
             }
         }
     }
@@ -362,8 +367,13 @@ public class EditProfileFragment extends Fragment {
                         photo = new ParseFile(photoFile);
                     }
 
+                    String bio = null;
+                    if (etChangeBio.getText() != null) {
+                        bio = etChangeBio.getText().toString();
+                    }
+
                     try {
-                        createUser(username, password, name, age, selectedGenres, photo, favTrack, favArtist, favAlbum, token);
+                        createUser(username, password, name, age, bio, selectedGenres, photo, favTrack, favArtist, favAlbum, token);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -409,6 +419,11 @@ public class EditProfileFragment extends Fragment {
                         ParseUser.getCurrentUser().put("age", age);
                     }
 
+                    if (!TextUtils.isEmpty(etChangeBio.getText())) {
+                        String bio = etChangeBio.getText().toString();
+                        ParseUser.getCurrentUser().put("bio", bio);
+                    }
+
                     selectedGenres = getSelectedGenres();
                     if (selectedGenres.length() == 0) {
                         ((TextView) genres.getSelectedView()).setError("Please select up to 3 genres.");
@@ -449,6 +464,7 @@ public class EditProfileFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString(SearchFragment.EXTRA_TOKEN, token);
                 bundle.putString(SearchFragment.SEARCH_TYPE, "TRACK");
+                bundle.putString("TYPE", "profile");
                 if (newSignUp) {
                     bundle.putBoolean("newSignUp", true);
                 } else {
@@ -470,7 +486,6 @@ public class EditProfileFragment extends Fragment {
                     }
                 });
                 fragment.setArguments(bundle);
-                //getActivity().getSupportFragmentManager().saveFragmentInstanceState(EditProfileFragment.this);
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 if (!fragment.isAdded()) {
                     ft.add(R.id.flContainer, fragment);
@@ -614,7 +629,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     // add new user to the database
-    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, String token) throws ParseException {
+    private void createUser(String username, String password, String name, Integer age, String bio, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, String token) throws ParseException {
         ParseUser user = new ParseUser();
         user.setUsername(username);
         user.setPassword(password);
@@ -624,6 +639,11 @@ public class EditProfileFragment extends Fragment {
         user.put("favArtist", artist.id);
         user.put("favTrack", track.id);
         user.put("favAlbum", album.id);
+
+        if (bio != null) {
+            user.put("bio", bio);
+        }
+
         if (favAlbum.images.size() != 0) {
             user.put("favAlbumImageUrl", favAlbum.images.get(0).url);
         }
@@ -654,6 +674,17 @@ public class EditProfileFragment extends Fragment {
                     if (e != null) {
                         return;
                     } else {
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                ParseUser.getCurrentUser().put("score", 1);
+                                try {
+                                    ParseUser.getCurrentUser().save();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
                         toProfileFragment();
                     }
                 }

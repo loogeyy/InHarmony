@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.loader.content.AsyncTaskLoader;
 
 import android.util.Log;
@@ -38,6 +39,8 @@ import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.AudioFeaturesTrack;
+import kaaes.spotify.webapi.android.models.AudioFeaturesTracks;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Track;
 
@@ -45,16 +48,13 @@ import kaaes.spotify.webapi.android.models.Track;
 public class MatchingFragment extends Fragment {
     private static final String TAG = "MatchingFragment";
     private CardAdapter arrayAdapter;
-    private int i;
 
     public static String EXTRA_TOKEN = "EXTRA_TOKEN";
     public static String token;
     private boolean newSignUp;
     private SpotifyService service;
 
-    ListView listView;
     ArrayList<Card> rowItems;
-    private String objectId;
 
     public MatchingFragment() {
         // Required empty public constructor
@@ -83,28 +83,13 @@ public class MatchingFragment extends Fragment {
 
         rowItems = new ArrayList<Card>();
 
-
-
-//        for (int i = 0; i < users.size(); i++) {
-//            Card card = new Card(users.get(i));
-//            if (!(card.getUser().getUsername().equals(ParseUser.getCurrentUser().getUsername()))) {
-//                Log.i(TAG, "user added as match");
-//                rowItems.add(card);
-//                Log.i("Row item", "added");
-//            }
-//        }
-
-
-//            for (Card c : rowItems) {
-//                Log.i("card:", c.getUser().toString());
-//            }
-
         arrayAdapter = new CardAdapter(getContext(), R.layout.item, rowItems, token, newSignUp);
         try {
             updatePotentialMatches();
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) view.findViewById(R.id.flingContainer);
 
         flingContainer.setAdapter(arrayAdapter);
@@ -186,6 +171,7 @@ public class MatchingFragment extends Fragment {
                                     match.setUserTwo(matchedUser);
                                     match.setStatus("matched");
                                     match.save();
+                                    showMatchDialog(matchedUser);
                                     //display "You Matched!" screen here
                                 }
 
@@ -211,9 +197,6 @@ public class MatchingFragment extends Fragment {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                Log.i(TAG, "onAdapterAboutToEmpty triggered");
-                Log.i("itemsInAdapter", String.valueOf(itemsInAdapter));
-                // Ask for more data here
                 try {
                     if (itemsInAdapter == 0) {
                         updatePotentialMatches();
@@ -228,10 +211,6 @@ public class MatchingFragment extends Fragment {
                 } else {
                     tvNoMatches.setVisibility(View.INVISIBLE);
                 }
-//                rowItems.add("XML ".concat(String.valueOf(i)));
-//                arrayAdapter.notifyDataSetChanged();
-//                Log.d("LIST", "notified");
-//                i++;
             }
 
             @Override
@@ -240,27 +219,48 @@ public class MatchingFragment extends Fragment {
             }
         });
     }
-    //array -> unmatched users
-    //array -> rejected users
-    //array -> want matches
 
-    //pending -> match
+    private void showMatchDialog(ParseUser matchedUser) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        MatchPopupFragment matchPopupFragment = new MatchPopupFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("newSignUp", false);
+        bundle.putString(MatchPopupFragment.EXTRA_TOKEN, token);
+        bundle.putParcelable("user", matchedUser);
+        bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+        matchPopupFragment.setArguments(bundle);
+
+        matchPopupFragment.show(fm, "matchpopup");
+    }
 
     //query matches to display messaging
 
-
     //THE ALGORITHM
     private int similarityScore(ParseUser currentUser, ParseUser user) {
-//        service.getTracksAudioFeatures();
-//        service.getTopTracks()
+        Log.i(TAG, "similarityScore");
+        //service.getTracksAudioFeatures();
+        //service.getTopTracks()
+        //cosine similarity
+        //djikstras
 
 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
+
                 Pager<Track> songId = service.getTopTracks();
+//                if (songId.items.size() == 0) {
+//                    Log.i("song id", "no size");
+//                }
+                int i = 1;
                 for (Track track : songId.items) {
-                    Log.i(TAG, "SIMILARITY: " + track.name);
+                   // Log.i(TAG, i + ". " + track.name + " " + track.artists.get(0).name);
+                    i++;
+                    AudioFeaturesTracks audioFeaturesTracks = service.getTracksAudioFeatures(track.id);
+                    List<AudioFeaturesTrack> list = audioFeaturesTracks.audio_features;
+//                    for (AudioFeaturesTrack feature : list) {
+//
+//                    }
                 }
             }
         });
@@ -287,18 +287,23 @@ public class MatchingFragment extends Fragment {
         for (int i = 0; i < users.size(); i++) {
             ParseUser user = users.get(i);
             if (!(user.getUsername().equals(ParseUser.getCurrentUser().getUsername()))) {
-                Log.i("USER:", users.get(i).getUsername());
-                Log.i(TAG, "potential match, not current user");
 
-                ParseQuery<Match> matches = ParseQuery.getQuery(Match.class);
+                ParseQuery<Match> matchesA = ParseQuery.getQuery(Match.class);
                 // to prevent repeats
-                matches.whereEqualTo(Match.USER_ONE, ParseUser.getCurrentUser());
-                matches.whereEqualTo(Match.USER_TWO, user);
-                List<Match> objects = (List<Match>) matches.find();
+                matchesA.whereEqualTo(Match.USER_ONE, ParseUser.getCurrentUser());
+                matchesA.whereEqualTo(Match.USER_TWO, user);
 
-                matches.whereEqualTo(Match.USER_ONE, user);
+                ParseQuery<Match> existingMatch = ParseQuery.getQuery(Match.class);
+                existingMatch.whereEqualTo(Match.USER_ONE, user);
+                existingMatch.whereEqualTo(Match.USER_TWO, ParseUser.getCurrentUser());
+                existingMatch.whereEqualTo(Match.STATUS, "matched");
 
-                if (objects.size() == 0)  {
+
+                List<Match> objects = (List<Match>) matchesA.find();
+                List<Match> existing = (List<Match>) existingMatch.find();
+
+
+                if (objects.size() == 0 && existing.size() == 0)  {
                     int score = similarityScore(ParseUser.getCurrentUser(), user);
                     int threshold = 0;
                     if (score > threshold) {
@@ -311,38 +316,9 @@ public class MatchingFragment extends Fragment {
                 }
             }
         }
-        Log.i(TAG,"NEW CURRENT LIST OF POTENTIAL MATCHES");
-        for (int i = 0; i < potentialMatchesList.length(); i++) {
-            try {
-                ParseUser user = (ParseUser) potentialMatchesList.get(i);
-                Log.i("Match ", user.getUsername());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
-        }
         ParseUser.getCurrentUser().put("potentialMatches", potentialMatchesList);
         ParseUser.getCurrentUser().save();
         Log.i("updatePotentialMatches", "done");
-
-
-
-        /*
-
-        run the algorithm -> store potential matches into potential matches array (of parse users), arrayUser -> check:
-            query.whereequalsto(userMatchOne, arrayUser) {
-            for each match in qeury:
-                if match.
-                if (already seen (enter logic here) ) {
-                    remvoe from potential matches list
-            }   if (not already seen (enter logic here)) {
-
-            }
-        display the matches on the matching profile
-
-         */
-
-
     }
-
 }

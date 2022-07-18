@@ -53,7 +53,6 @@ public class CardAdapter extends ArrayAdapter<Card> {
 
     @Override
     public View getView(int position, View view, ViewGroup parent){
-        Log.i(TAG, "position: " + String.valueOf(position));
 
         if (view == null){
             view = LayoutInflater.from(getContext()).inflate(R.layout.item, parent, false);
@@ -68,8 +67,6 @@ public class CardAdapter extends ArrayAdapter<Card> {
         LoadProfileTask loadProfileTask = new LoadProfileTask(view, token, service);
         loadProfileTask.execute(user);
 
-//        LoadAlbumTask loadAlbumTask = new LoadAlbumTask(view, token, service);
-//        loadAlbumTask.execute(user);
         return view;
 
     }

@@ -12,11 +12,11 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_gravity="center"
-            android:elevation="2dp"
-            app:cardBackgroundColor="@color/background"
-            app:cardCornerRadius="4dp"
+            android:elevation="18dp"
+            app:cardBackgroundColor="@color/dark_navy"
+            app:cardCornerRadius="50dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -25,47 +25,48 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center">
+                    android:layout_gravity="center"
+                    android:background="@color/background">
 
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/ivProfilePicCard"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
+                            android:layout_width="125dp"
+                            android:layout_height="125dp"
                             android:layout_alignParentTop="true"
-                            android:layout_marginTop="24dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
                             android:background="@drawable/nopfp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.49"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/tvNameCard"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_width="222dp"
+                            android:layout_height="43dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="20dp"
                             android:ems="10"
-                            android:fontFamily="@font/anteb_bold"
-                            android:textAlignment="center"
+                            android:fontFamily="@font/fredoka"
+                            android:textAlignment="viewStart"
                             android:textColor="@color/light_blue"
                             android:textColorHint="@color/light_blue"
                             android:textSize="34sp"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.421"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/ivProfilePicCard"
+                            app:layout_constraintStart_toEndOf="@+id/ivProfilePicCard"
+                            app:layout_constraintTop_toTopOf="parent"
                             tools:text="Name" />
 
                         <TextView
                             android:id="@+id/tvFavGenresCard"
-                            android:layout_width="188dp"
-                            android:layout_height="27dp"
-                            android:layout_marginTop="20dp"
-                            android:fontFamily="@font/anteb_bold"
+                            android:layout_width="195dp"
+                            android:layout_height="28dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="25dp"
+                            android:fontFamily="@font/varelaround"
                             android:textColor="@color/white"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.145"
+                            app:layout_constraintHorizontal_bias="0.096"
                             app:layout_constraintStart_toEndOf="@+id/genresTextCard"
                             app:layout_constraintTop_toBottomOf="@+id/tvBioCard"
                             tools:text="Indie Pop, Pop, Electro" />
@@ -74,56 +75,56 @@
                             android:id="@+id/genresTextCard"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="80dp"
-                            android:layout_marginTop="20dp"
-                            android:fontFamily="@font/anteb_bold"
+                            android:layout_marginStart="36dp"
+                            android:layout_marginTop="25dp"
+                            android:fontFamily="@font/fredoka"
                             android:text="Favorite Genres:"
                             android:textColor="@color/light_blue"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tvBioCard" />
 
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/ivFavArtistCard"
+                            android:layout_width="52dp"
+                            android:layout_height="53dp"
+                            android:layout_marginStart="88dp"
+                            android:layout_marginTop="4dp"
+                            app:circularflow_defaultRadius="30dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/artistTextCard"
+                            app:shapeAppearanceOverlay="@style/roundedcorners"
+                            tools:src="@tools:sample/avatars" />
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/ivFavAlbumCard"
+                            android:layout_width="52dp"
+                            android:layout_height="53dp"
+                            android:layout_marginStart="88dp"
+                            android:layout_marginTop="8dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/albumTextCard"
+                            app:shapeAppearanceOverlay="@style/roundedcorners"
+                            tools:src="@tools:sample/avatars" />
+
                         <TextView
                             android:id="@+id/tvFavArtistCard"
-                            android:layout_width="119dp"
-                            android:layout_height="25dp"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="28dp"
-                            android:fontFamily="@font/anteb_bold"
+                            android:layout_width="121dp"
+                            android:layout_height="37dp"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="@font/varelaround"
                             android:textColor="@color/white"
                             app:layout_constraintStart_toEndOf="@+id/ivFavArtistCard"
                             app:layout_constraintTop_toBottomOf="@+id/artistTextCard"
                             tools:text="Dayglow" />
 
-                        <ImageView
-                            android:id="@+id/ivFavArtistCard"
-                            android:layout_width="52dp"
-                            android:layout_height="53dp"
-                            android:layout_marginStart="84dp"
-                            android:layout_marginTop="12dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/artistTextCard"
-                            tools:src="@tools:sample/avatars" />
-
-                        <TextView
-                            android:id="@+id/artistTextCard"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="36dp"
-                            android:fontFamily="@font/anteb_bold"
-                            android:text="Favorite Artist:"
-                            android:textColor="@color/light_blue"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.498"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/tvFavGenresCard" />
-
                         <TextView
                             android:id="@+id/tvFavAlbumCard"
-                            android:layout_width="166dp"
-                            android:layout_height="28dp"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="24dp"
-                            android:fontFamily="@font/anteb_bold"
+                            android:layout_width="134dp"
+                            android:layout_height="36dp"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/varelaround"
                             android:textColor="@color/white"
                             app:layout_constraintStart_toEndOf="@+id/ivFavAlbumCard"
                             app:layout_constraintTop_toBottomOf="@+id/albumTextCard"
@@ -133,34 +134,50 @@
                             android:id="@+id/albumTextCard"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="60dp"
-                            android:fontFamily="@font/anteb_bold"
+                            android:layout_marginTop="28dp"
+                            android:fontFamily="@font/fredoka"
                             android:text="Favorite Album:"
                             android:textColor="@color/light_blue"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.509"
+                            app:layout_constraintHorizontal_bias="0.3"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tvFavArtistCard" />
 
-                        <ImageView
+                        <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/ivFavTrackCard"
                             android:layout_width="52dp"
                             android:layout_height="53dp"
-                            android:layout_marginStart="92dp"
+                            android:layout_marginStart="88dp"
                             android:layout_marginTop="16dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/trackTextCard"
+                            app:layout_constraintVertical_bias="0.0"
+                            app:shapeAppearanceOverlay="@style/roundedcorners"
                             tools:src="@tools:sample/avatars" />
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/ivPlayButtonCard"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:clickable="true"
+                            android:src="@drawable/play"
+                            app:layout_constraintBottom_toBottomOf="@+id/ivFavTrackCard"
+                            app:layout_constraintEnd_toEndOf="@+id/ivFavTrackCard"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="@+id/ivFavTrackCard"
+                            app:layout_constraintTop_toTopOf="@+id/ivFavTrackCard"
+                            app:layout_constraintVertical_bias="0.0"
+                            app:shapeAppearanceOverlay="@style/roundedcorners" />
 
                         <TextView
                             android:id="@+id/tvFavTrackCard"
-                            android:layout_width="82dp"
-                            android:layout_height="53dp"
-                            android:layout_marginStart="4dp"
-                            android:layout_marginTop="16dp"
-                            android:background="@color/white"
-                            android:fontFamily="@font/anteb_bold"
-                            android:textColor="@color/dark_navy"
+                            android:layout_width="110dp"
+                            android:layout_height="34dp"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="28dp"
+                            android:fontFamily="@font/varelaround"
+                            android:textColor="@color/white"
                             app:layout_constraintStart_toEndOf="@+id/ivFavTrackCard"
                             app:layout_constraintTop_toBottomOf="@+id/trackTextCard"
                             tools:text="Close To You" />
@@ -169,49 +186,42 @@
                             android:id="@+id/trackTextCard"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="40dp"
-                            android:fontFamily="@font/anteb_bold"
+                            android:layout_marginTop="28dp"
+                            android:fontFamily="@font/fredoka"
                             android:text="Favorite Track:"
                             android:textColor="@color/light_blue"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.501"
+                            app:layout_constraintHorizontal_bias="0.284"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tvFavAlbumCard" />
 
-                        <ImageView
-                            android:id="@+id/ivFavAlbumCard"
-                            android:layout_width="52dp"
-                            android:layout_height="53dp"
-                            android:layout_marginStart="92dp"
-                            android:layout_marginTop="12dp"
+                        <TextView
+                            android:id="@+id/artistTextCard"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="24dp"
+                            android:fontFamily="@font/fredoka"
+                            android:text="Favorite Artist:"
+                            android:textColor="@color/light_blue"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.296"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/albumTextCard"
-                            tools:src="@tools:sample/avatars" />
+                            app:layout_constraintTop_toBottomOf="@+id/tvFavGenresCard" />
 
                         <TextView
                             android:id="@+id/tvBioCard"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="220dp"
+                            android:layout_height="55dp"
+                            android:layout_marginStart="10dp"
                             android:layout_marginTop="20dp"
-                            android:fontFamily="@font/anteb_bold"
+                            android:fontFamily="@font/varelaround"
+                            android:text="No Bio Yet."
                             android:textColor="@color/white"
                             android:textStyle="italic"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.525"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/tvNameCard"
-                            tools:text="Hi! My name is Lucy and I like using spotify." />
-
-                        <ImageView
-                            android:id="@+id/ivPlayButtonCard"
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:clickable="true"
-                            android:src="@drawable/play"
-                            app:layout_constraintBottom_toBottomOf="@+id/ivFavTrackCard"
-                            app:layout_constraintEnd_toEndOf="@+id/ivFavTrackCard"
-                            app:layout_constraintStart_toStartOf="@+id/ivFavTrackCard"
-                            app:layout_constraintTop_toTopOf="@+id/ivFavTrackCard" />
+                            app:layout_constraintHorizontal_bias="0.52"
+                            app:layout_constraintStart_toEndOf="@+id/ivProfilePicCard"
+                            app:layout_constraintTop_toBottomOf="@+id/tvNameCard" />
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

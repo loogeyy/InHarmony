@@ -4,21 +4,32 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="../../.gradle/caches/transforms-3/bfec8dfcaf6c34e166a516bbd7a3f400/transformed/material-1.6.1/res/layout/design_bottom_navigation_item.xml" value="0.1388888888888889" />
         <entry key="app/src/main/res/drawable/ic_baseline_logout_24.xml" value="0.176" />
+        <entry key="app/src/main/res/drawable/ic_baseline_send_24.xml" value="0.279" />
+        <entry key="app/src/main/res/drawable/message_incoming.xml" value="0.1995" />
+        <entry key="app/src/main/res/drawable/message_outgoing.xml" value="0.1995" />
         <entry key="app/src/main/res/drawable/person.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/rounded_corners.xml" value="0.194" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.266839599609375" />
         <entry key="app/src/main/res/layout/activity_login_temp.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25467071533203123" />
         <entry key="app/src/main/res/layout/activity_matching.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_matching_temp.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.38457014416460467" />
-        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_edit_profile.xml" value="0.24575816187365307" />
-        <entry key="app/src/main/res/layout/fragment_matching.xml" value="0.23546683052989925" />
-        <entry key="app/src/main/res/layout/fragment_my_profile.xml" value="0.25812835693359376" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.36870574951171886" />
+        <entry key="app/src/main/res/layout/fragment_chatlist.xml" value="0.23267059326171874" />
+        <entry key="app/src/main/res/layout/fragment_edit_profile.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_match_popup.xml" value="0.24297180175781252" />
+        <entry key="app/src/main/res/layout/fragment_matching.xml" value="0.18303571428571427" />
+        <entry key="app/src/main/res/layout/fragment_my_profile.xml" value="0.26313018798828136" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.2102752685546875" />
-        <entry key="app/src/main/res/layout/item.xml" value="0.3815789473684211" />
+        <entry key="app/src/main/res/layout/item.xml" value="0.3470498480951743" />
+        <entry key="app/src/main/res/layout/item_chatlist.xml" value="0.26920283220816343" />
         <entry key="app/src/main/res/layout/list_item.xml" value="0.3058475633249549" />
+        <entry key="app/src/main/res/layout/match_popup.xml" value="0.38005218505859373" />
+        <entry key="app/src/main/res/layout/message_incoming.xml" value="0.3414642333984375" />
+        <entry key="app/src/main/res/layout/message_outgoing.xml" value="0.4802458168803782" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.1" />
         <entry key="app/src/main/res/menu/edit_profile_pic_menu.xml" value="0.19918060302734375" />
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.2408625284830729" />
@@ -29,4 +40,11 @@
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.11594202898550725" />
+      </ProjectState>
+    </option>
+  </component>
 </project>
