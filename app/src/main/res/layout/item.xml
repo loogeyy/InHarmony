@@ -172,8 +172,8 @@
 
                         <TextView
                             android:id="@+id/tvFavTrackCard"
-                            android:layout_width="110dp"
-                            android:layout_height="34dp"
+                            android:layout_width="147dp"
+                            android:layout_height="40dp"
                             android:layout_marginStart="12dp"
                             android:layout_marginTop="28dp"
                             android:fontFamily="@font/varelaround"

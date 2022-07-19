@@ -10,13 +10,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.inharmony.MainActivity;
 import com.example.inharmony.R;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 public class MatchPopupFragment extends DialogFragment {
@@ -26,6 +32,10 @@ public class MatchPopupFragment extends DialogFragment {
 
     public MatchPopupFragment() {
         // Required empty public constructor
+    }
+
+    public MatchPopupFragment(ParseUser user) {
+        matchedUser = user;
     }
 
     @Override
@@ -42,20 +52,47 @@ public class MatchPopupFragment extends DialogFragment {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            matchedUser = bundle.getParcelable("user");
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
-
         }
 
     }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder.setTitle("You matched with a new user!");
-        alertDialogBuilder.setMessage("Start a new chat with them?");
-        alertDialogBuilder.setPositiveButton("OK!",  new DialogInterface.OnClickListener() {
+        LayoutInflater dialog = LayoutInflater.from(getActivity());
+        View view = dialog.inflate(R.layout.fragment_match_popup, null);
+        TextView tvMatchDisplay = view.findViewById(R.id.tvMatchDisplay);
+        ImageView userOne = view.findViewById(R.id.userOne);
+        ImageView userTwo = view.findViewById(R.id.userTwo);
+        Button btnKeepMatching = view.findViewById(R.id.btnKeepMatching);
+        Button btnNewChat = view.findViewById(R.id.btnNewChat);
+
+        Log.i("user", String.valueOf(matchedUser));
+
+        tvMatchDisplay.setText("You Matched a Beat with " + matchedUser.get("name").toString());
+
+        ParseFile profilePicOne = (ParseFile) matchedUser.get("profilePic");
+        ParseFile profilePicTwo = (ParseFile) ParseUser.getCurrentUser().get("profilePic");
+        if (profilePicOne != null) {
+            Glide.with(getContext()).load(profilePicOne.getUrl()).into(userOne);
+        }
+        if (profilePicTwo != null) {
+            Glide.with(getContext()).load(profilePicTwo.getUrl()).into(userTwo);
+        }
+
+        alertDialogBuilder.setView(view);
+        AlertDialog alert = alertDialogBuilder.create();
+
+        btnKeepMatching.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
+              alert.dismiss();
+            }
+        });
+
+        btnNewChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 ChatFragment fragment = new ChatFragment();
 
                 Bundle bundle = new Bundle();
@@ -65,18 +102,12 @@ public class MatchPopupFragment extends DialogFragment {
 
                 fragment.setArguments(bundle);
                 ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+
             }
         });
-        alertDialogBuilder.setNegativeButton("Keep Matching", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null && ((Dialog)dialog).isShowing()) {
-                    dialog.dismiss();
-                }
-            }
 
-        });
-
-        return alertDialogBuilder.create();
+        return alert;
     }
+
+
 }

@@ -96,17 +96,10 @@ public class MatchingFragment extends Fragment {
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                // this is the simplest way to delete an object from the Adapter (/AdapterView)
-                Log.d("LIST", "removed object!");
-                Log.i(TAG, "before removing: " + rowItems.get(0).getUser().getUsername());
-                Log.i(TAG, "size: " + rowItems.size());
-                if (rowItems.size() != 0) {
+                 if (rowItems.size() != 0) {
                     rowItems.remove(0);
-                    //Log.i(TAG, "after removing: " + rowItems.get(0).getUser().getUsername());
-                    Log.i(TAG, "size: " + rowItems.size());
                     arrayAdapter.notifyDataSetChanged();
                 }
-
             }
 
             @Override
@@ -159,12 +152,9 @@ public class MatchingFragment extends Fragment {
                     public void done(List<Match> objects, ParseException e) {
                         // if other user has swiped
                         if (objects.size() != 0) {
-                            Log.i(TAG, "Existing object found!");
                             try {
                                 // if not rejected status, update match in database
-                                Log.i(TAG, "status: " + objects.get(0).getString("status"));
                                 if (objects.get(0).getString("status").equals("pending")) {
-
                                     objects.get(0).delete();
                                     Match match = new Match();
                                     match.setUserOne(ParseUser.getCurrentUser());
@@ -172,7 +162,6 @@ public class MatchingFragment extends Fragment {
                                     match.setStatus("matched");
                                     match.save();
                                     showMatchDialog(matchedUser);
-                                    //display "You Matched!" screen here
                                 }
 
                             } catch (ParseException ex) {
@@ -222,39 +211,39 @@ public class MatchingFragment extends Fragment {
 
     private void showMatchDialog(ParseUser matchedUser) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        MatchPopupFragment matchPopupFragment = new MatchPopupFragment();
+        MatchPopupFragment matchPopupFragment = new MatchPopupFragment(matchedUser);
         Bundle bundle = new Bundle();
         bundle.putBoolean("newSignUp", false);
         bundle.putString(MatchPopupFragment.EXTRA_TOKEN, token);
-        bundle.putParcelable("user", matchedUser);
-        bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+        Log.i(TAG, "matched user: " + matchedUser.toString());
         matchPopupFragment.setArguments(bundle);
-
         matchPopupFragment.show(fm, "matchpopup");
     }
-
-    //query matches to display messaging
 
     //THE ALGORITHM
     private int similarityScore(ParseUser currentUser, ParseUser user) {
         Log.i(TAG, "similarityScore");
-        //service.getTracksAudioFeatures();
-        //service.getTopTracks()
-        //cosine similarity
-        //djikstras
+
+        int avgAcousticness;
+        int avgDanceability;
+        int avgEnergy;
+        int avgInstrumentalness;
+        int avgSpeechiness;
+        int avgValence;
 
 
         AsyncTask.execute(new Runnable() {
+
             @Override
             public void run() {
-
+                //Log.i(TAG, "is this working?");
                 Pager<Track> songId = service.getTopTracks();
-//                if (songId.items.size() == 0) {
-//                    Log.i("song id", "no size");
-//                }
+                if (songId.items.size() == 0) {
+                    Log.i("song id", "no size");
+                }
                 int i = 1;
                 for (Track track : songId.items) {
-                   // Log.i(TAG, i + ". " + track.name + " " + track.artists.get(0).name);
+                    Log.i(TAG, currentUser.getUsername() + "'s #" + i + " song: " + track.name + " " + track.artists.get(0).name);
                     i++;
                     AudioFeaturesTracks audioFeaturesTracks = service.getTracksAudioFeatures(track.id);
                     List<AudioFeaturesTrack> list = audioFeaturesTracks.audio_features;
@@ -311,7 +300,6 @@ public class MatchingFragment extends Fragment {
                         Card card = new Card(user);
                         rowItems.add(card);
                         arrayAdapter.notifyDataSetChanged();
-                        Log.i("Row item", "added");
                     }
                 }
             }
@@ -319,6 +307,5 @@ public class MatchingFragment extends Fragment {
 
         ParseUser.getCurrentUser().put("potentialMatches", potentialMatchesList);
         ParseUser.getCurrentUser().save();
-        Log.i("updatePotentialMatches", "done");
     }
 }

@@ -104,20 +104,36 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
                 }
                 else if ((sentMessages.size() == 0) && (receivedMessages.size() > 0)) {
                     Message message = receivedMessages.get(0);
-                    tvChatPreview.setText(user.get("name") + ": " + message.getBody());
+                    if (message.getBody() != null) {
+                        tvChatPreview.setText(user.get("name") + ": " + message.getBody());
+                    } else {
+                        tvChatPreview.setText(user.get("name") + " shared a track!");
+                    }
                 }
                 else if ((receivedMessages.size() == 0) && (sentMessages.size() > 0)) {
                     Message message = sentMessages.get(0);
-                    tvChatPreview.setText("You: " + message.getBody());
+                    if (message.getBody() != null) {
+                        tvChatPreview.setText("You: " + message.getBody());
+                    } else {
+                        tvChatPreview.setText("You shared a track.");
+                    }
                 }
                 else if ((receivedMessages.size() > 0) && (sentMessages.size() > 0)) {
                     Date sentLatest = (Date) sentMessages.get(0).fetchIfNeeded().getCreatedAt();
                     Log.i("date sent", sentLatest.toString());
                     Date receivedLatest = (Date) receivedMessages.get(0).fetchIfNeeded().getCreatedAt();
                     if (sentLatest.after(receivedLatest)) {
-                        tvChatPreview.setText("You: " + sentMessages.get(0).getBody());
+                        if (sentMessages.get(0).getBody() != null) {
+                            tvChatPreview.setText("You: " + sentMessages.get(0).getBody());
+                        } else {
+                            tvChatPreview.setText("You shared a track");
+                        }
                     } else {
-                        tvChatPreview.setText(user.get("name") + ": " + receivedMessages.get(0).getBody());
+                        if (receivedMessages.get(0).getBody() != null) {
+                            tvChatPreview.setText(user.get("name") + ": " + receivedMessages.get(0).getBody());
+                        } else {
+                            tvChatPreview.setText(user.get("name") + " shared a track!");
+                        }
                     }
                 }
                 }

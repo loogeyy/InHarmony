@@ -154,15 +154,15 @@ public class ChatFragment extends Fragment {
         });
     }
 
-    static final long POLL_INTERVAL = TimeUnit.SECONDS.toMillis(3);
-    Handler myHandler = new android.os.Handler();
-    Runnable mRefreshMessagesRunnable = new Runnable() {
-        @Override
-        public void run() {
-            refreshMessages();
-            //myHandler.postDelayed(this, POLL_INTERVAL);
-        }
-    };
+   // static final long POLL_INTERVAL = TimeUnit.SECONDS.toMillis(3);
+    //Handler myHandler = new android.os.Handler();
+//    Runnable mRefreshMessagesRunnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            refreshMessages();
+//            //myHandler.postDelayed(this, POLL_INTERVAL);
+//        }
+//    };
 
     @Override
     public void onResume() {
@@ -175,7 +175,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onPause() {
         // Stop background task from refreshing messages, to avoid unnecessary traffic & battery drain
-        myHandler.removeCallbacksAndMessages(null);
+        //myHandler.removeCallbacksAndMessages(null);
         super.onPause();
     }
 
@@ -244,7 +244,6 @@ public class ChatFragment extends Fragment {
                 }
                 message.setSender(ParseUser.getCurrentUser());
                 message.setReceiver(user);
-
 
                 message.saveInBackground(new SaveCallback() {
                     @Override
