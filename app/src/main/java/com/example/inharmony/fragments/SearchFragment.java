@@ -79,12 +79,11 @@ public class SearchFragment extends Fragment implements Search.View {
         super.onViewCreated(view, savedInstanceState);
         bundle = this.getArguments();
         if (bundle != null) {
+            Log.i("bundle is", "not null");
             token = bundle.getString(SearchFragment.EXTRA_TOKEN);
-            Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
             searchType = bundle.getString(SearchFragment.SEARCH_TYPE);
             newSignUp = bundle.getBoolean("newSignUp");
         }
-
         mActionListener = new SearchPresenter(getContext(), this);
         mActionListener.init(token);
 
@@ -141,6 +140,7 @@ public class SearchFragment extends Fragment implements Search.View {
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
                 }
                 if (bundle.getString("TYPE").equals("message")) {
+                    Log.i("TYPE", "message");
                     ChatFragment fragment = (ChatFragment) getActivity().getSupportFragmentManager().findFragmentByTag("CHATFRAGMENT");
                     Bundle bundle = new Bundle();
                     bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);

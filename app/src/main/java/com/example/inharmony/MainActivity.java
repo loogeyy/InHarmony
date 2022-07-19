@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("Menu", "Profile pressed");
                         fragment = new ChatListFragment();
                         fragment.setArguments(bundle);
+                        bundle.putString(ChatListFragment.EXTRA_TOKEN, token);
                         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
                         break;
 

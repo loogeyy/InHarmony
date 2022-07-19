@@ -13,25 +13,31 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.inharmony.tasks.LoadChatTrackTask;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 import java.util.List;
 
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHolder> {
     private static final String TAG = "ChatAdapter";
     private List<Message> mMessages;
     private Context mContext;
+    private String token;
     private ParseUser mUser;
 
     private static final int MESSAGE_OUTGOING = 0;
     private static final int MESSAGE_INCOMING = 1;
 
-    public ChatAdapter(Context context, ParseUser user, List<Message> messages) {
+    public ChatAdapter(Context context, ParseUser user, List<Message> messages, String token) {
         mUser = user;
         mMessages = messages;
         mContext = context;
+        this.token = token;
     }
 
     @Override
@@ -49,10 +55,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     @Override
     public int getItemViewType(int position) {
         if (isMe(position)) {
-            Log.i("MESSAGE", "OUTGOING");
             return MESSAGE_OUTGOING;
         } else {
-            Log.i("MESSAGE", "INCOMING");
             return MESSAGE_INCOMING;
         }
     }
@@ -73,14 +77,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        Log.i("mMessages size", String.valueOf(mMessages.size()));
 
         if (viewType == MESSAGE_INCOMING) {
-            Log.i(TAG, "message incoming display");
             View contactView = inflater.inflate(R.layout.message_incoming, parent, false);
             return new IncomingMessageViewHolder(contactView);
         } else if (viewType == MESSAGE_OUTGOING) {
-            Log.i(TAG, "message outgoing display");
             View contactView = inflater.inflate(R.layout.message_outgoing, parent, false);
             return new OutgoingMessageViewHolder(contactView);
         } else {
@@ -100,12 +101,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         ImageView imageOther;
         TextView body;
         TextView name;
+        TextView tvIncomingTrack;
+        ImageView ivIncomingTrack;
+        ImageView ivPlayIncoming;
 
           public IncomingMessageViewHolder(View itemView) {
             super(itemView);
             imageOther = itemView.findViewById(R.id.ivProfileOther);
             body = itemView.findViewById(R.id.tvOtherBody);
             name = itemView.findViewById(R.id.tvSender);
+            tvIncomingTrack = itemView.findViewById(R.id.tvIncomingTrack);
+            ivIncomingTrack = itemView.findViewById(R.id.ivIncomingTrack);
+            ivPlayIncoming = itemView.findViewById(R.id.ivPlayIncoming);
         }
 
         @Override
@@ -120,8 +127,30 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            body.setText(message.getBody());
 
+            if (message.getBody() == null) {
+                body.setVisibility(View.GONE);
+            } else {
+                body.setVisibility(View.VISIBLE);
+                body.setText(message.getBody());
+            }
+
+            if (message.getTrackId() == null) {
+                tvIncomingTrack.setVisibility(View.GONE);
+                ivPlayIncoming.setVisibility(View.GONE);
+                ivIncomingTrack.setVisibility(View.GONE);
+            } else {
+                tvIncomingTrack.setVisibility(View.VISIBLE);
+                ivPlayIncoming.setVisibility(View.VISIBLE);
+                ivIncomingTrack.setVisibility(View.VISIBLE);
+                SpotifyApi spotifyApi = new SpotifyApi();
+                spotifyApi.setAccessToken(token);
+                SpotifyService service = spotifyApi.getService();
+                LoadChatTrackTask loadChatTrackTask = new LoadChatTrackTask(itemView, token, service, false);
+                loadChatTrackTask.execute(message);
+
+
+            }
         }
 
     }
@@ -129,11 +158,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     public class OutgoingMessageViewHolder extends MessageViewHolder {
         ImageView imageMe;
         TextView body;
+        TextView tvOutgoingTrack;
+        ImageView ivOutgoingTrack;
+        ImageView ivPlayOutgoing;
 
         public OutgoingMessageViewHolder(View itemView) {
             super(itemView);
             imageMe = itemView.findViewById(R.id.ivProfileMe);
             body = itemView.findViewById(R.id.tvBody);
+            tvOutgoingTrack = itemView.findViewById(R.id.tvOutgoingTrack);
+            ivOutgoingTrack = itemView.findViewById(R.id.ivOutgoingTrack);
+            ivPlayOutgoing = itemView.findViewById(R.id.ivPlayOutgoing);
         }
 
         @Override
@@ -143,8 +178,27 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
                     ParseFile image = (ParseFile) user.get("profilePic");
                     Glide.with(mContext).load(image.getUrl()).into(imageMe);
                   }
+            if (message.getBody() == null) {
+                body.setVisibility(View.GONE);
+            } else {
+                body.setVisibility(View.VISIBLE);
+                body.setText(message.getBody());
+            }
 
-            body.setText(message.getBody());
+            if (message.getTrackId() == null) {
+                tvOutgoingTrack.setVisibility(View.GONE);
+                ivOutgoingTrack.setVisibility(View.GONE);
+                ivPlayOutgoing.setVisibility(View.GONE);
+            } else {
+                tvOutgoingTrack.setVisibility(View.VISIBLE);
+                ivOutgoingTrack.setVisibility(View.VISIBLE);
+                ivPlayOutgoing.setVisibility(View.VISIBLE);
+                SpotifyApi spotifyApi = new SpotifyApi();
+                spotifyApi.setAccessToken(token);
+                SpotifyService service = spotifyApi.getService();
+                LoadChatTrackTask loadChatTrackTask = new LoadChatTrackTask(itemView, token, service, true);
+                loadChatTrackTask.execute(message);
+            }
         }
     }
 }

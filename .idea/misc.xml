@@ -9,7 +9,10 @@
         <entry key="app/src/main/res/drawable/ic_baseline_send_24.xml" value="0.279" />
         <entry key="app/src/main/res/drawable/message_incoming.xml" value="0.1995" />
         <entry key="app/src/main/res/drawable/message_outgoing.xml" value="0.1995" />
+        <entry key="app/src/main/res/drawable/partialrounded.xml" value="0.178" />
+        <entry key="app/src/main/res/drawable/partialrounded2.xml" value="0.178" />
         <entry key="app/src/main/res/drawable/person.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/rounded.xml" value="0.178" />
         <entry key="app/src/main/res/drawable/rounded_corners.xml" value="0.194" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.266839599609375" />
         <entry key="app/src/main/res/layout/activity_login_temp.xml" value="0.1" />
@@ -17,7 +20,7 @@
         <entry key="app/src/main/res/layout/activity_matching.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_matching_temp.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.38457014416460467" />
-        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.36870574951171886" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.33572895277207393" />
         <entry key="app/src/main/res/layout/fragment_chatlist.xml" value="0.23267059326171874" />
         <entry key="app/src/main/res/layout/fragment_edit_profile.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_match_popup.xml" value="0.24297180175781252" />
@@ -28,8 +31,8 @@
         <entry key="app/src/main/res/layout/item_chatlist.xml" value="0.26920283220816343" />
         <entry key="app/src/main/res/layout/list_item.xml" value="0.3058475633249549" />
         <entry key="app/src/main/res/layout/match_popup.xml" value="0.38005218505859373" />
-        <entry key="app/src/main/res/layout/message_incoming.xml" value="0.3414642333984375" />
-        <entry key="app/src/main/res/layout/message_outgoing.xml" value="0.4802458168803782" />
+        <entry key="app/src/main/res/layout/message_incoming.xml" value="0.2493368700265252" />
+        <entry key="app/src/main/res/layout/message_outgoing.xml" value="0.7320494057475657" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.1" />
         <entry key="app/src/main/res/menu/edit_profile_pic_menu.xml" value="0.19918060302734375" />
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.2408625284830729" />

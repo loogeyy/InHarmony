@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import kaaes.spotify.webapi.android.SpotifyService;
 
-public class LoadBasicTask extends AsyncTask<ParseUser, Void, Void> {
+public class /**/LoadBasicTask extends AsyncTask<ParseUser, Void, Void> {
     private static final String TAG = "LoadBasicTask";
     SpotifyService service;
     View view;

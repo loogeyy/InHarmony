@@ -59,7 +59,7 @@ public class ChatListFragment extends Fragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
+            token = bundle.getString(ChatListFragment.EXTRA_TOKEN);
             newSignUp = bundle.getBoolean("newSignUp");
         }
         users = new ArrayList<>();

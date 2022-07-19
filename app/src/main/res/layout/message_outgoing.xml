@@ -1,60 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:clipToPadding="false"-->
-<!--    android:paddingVertical="10dp"-->
-<!--    android:paddingLeft="60dp"-->
-<!--    android:paddingRight="15dp">-->
 
-<!--    <TextView-->
-<!--        android:id="@+id/tvBody"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        android:layout_toLeftOf="@+id/ivProfileMe"-->
-<!--        android:background="@drawable/message_outgoing"-->
-<!--        android:elevation="2dp"-->
-<!--        android:padding="8dp"-->
-<!--        android:text="Your outgoing message here"-->
-<!--        android:textColor="@android:color/white"-->
-<!--        android:textSize="18dp"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/ivProfileMe"-->
-<!--        app:layout_constraintHorizontal_bias="0.984"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <de.hdodenhof.circleimageview.CircleImageView-->
-<!--        android:id="@+id/ivProfileMe"-->
-<!--        android:layout_width="64dp"-->
-<!--        android:layout_height="64dp"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:contentDescription="@string/profile_me"-->
-<!--        android:src="@drawable/nopfp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:clipToPadding="false"
-android:paddingVertical="10dp"
-android:paddingLeft="60dp"
-android:paddingRight="15dp">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:paddingVertical="10dp"
+    android:paddingLeft="60dp"
+    android:paddingRight="15dp">
 
     <TextView
         android:id="@+id/tvBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="8dp"
+        android:layout_below="@+id/tvOutgoingTrack"
         android:layout_toLeftOf="@+id/ivProfileMe"
         android:background="@drawable/message_outgoing"
         android:elevation="2dp"
@@ -62,7 +22,9 @@ android:paddingRight="15dp">
         android:padding="8dp"
         android:text="Your outgoing message here"
         android:textColor="@color/black"
-        android:textSize="18dp" />
+        android:textSize="18dp"
+        app:layout_constraintEnd_toStartOf="@+id/ivProfileMe"
+        app:layout_constraintTop_toBottomOf="@+id/tvOutgoingTrack" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivProfileMe"
@@ -70,6 +32,43 @@ android:paddingRight="15dp">
         android:layout_height="64dp"
         android:layout_alignParentRight="true"
         android:contentDescription="@string/profile_me"
-        android:src="@drawable/nopfp" />
+        android:src="@drawable/nopfp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</RelativeLayout>
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivOutgoingTrack"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvBody"
+        app:layout_constraintEnd_toStartOf="@+id/tvOutgoingTrack"
+        app:shapeAppearanceOverlay="@style/partialrounded"
+        app:srcCompat="@drawable/ic_launcher_background"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/ivPlayOutgoing"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/tvBody"
+        app:layout_constraintEnd_toStartOf="@+id/tvOutgoingTrack"
+        app:srcCompat="@drawable/play" />
+
+    <TextView
+        android:id="@+id/tvOutgoingTrack"
+        android:layout_width="195dp"
+        android:layout_height="50dp"
+        android:layout_toStartOf="@+id/ivProfileMe"
+        android:background="@drawable/partialrounded"
+        android:fontFamily="@font/varelaround"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:text="Song Title"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/ivProfileMe"
+        tools:layout_editor_absoluteY="0dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

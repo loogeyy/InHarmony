@@ -10,6 +10,7 @@ public class Message extends ParseObject {
     public static final String SENDER = "sender";
     public static final String RECEIVER = "receiver";
     public static final String BODY = "body";
+    public static final String TRACK_ID = "trackId";
 
     public ParseUser getSender() {
         return getParseUser(SENDER);
@@ -34,5 +35,9 @@ public class Message extends ParseObject {
     public void setBody(String body) {
         put(BODY, body);
     }
+
+    public String getTrackId() { return getString(TRACK_ID); }
+
+    public void setTrackId(String trackId) {put(TRACK_ID, trackId); }
 
 }

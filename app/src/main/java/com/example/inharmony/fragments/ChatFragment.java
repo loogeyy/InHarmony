@@ -16,15 +16,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.inharmony.ChatAdapter;
 import com.example.inharmony.Message;
 import com.example.inharmony.R;
+import com.example.inharmony.Search;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -34,6 +37,8 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.livequery.ParseLiveQueryClient;
 import com.parse.livequery.SubscriptionHandling;
+
+import org.w3c.dom.Text;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,7 +59,10 @@ public class ChatFragment extends Fragment {
     private EditText etMessage;
     private ImageButton ibSend;
     private RecyclerView rvChat;
-    private ImageView btnSendTrack;
+    private ImageView btnAddTrack;
+    private ImageView ivTrack;
+    private TextView tvTrack;
+    private Button btnCancel;
     private List<Message> messages;
 
     private Track track;
@@ -80,16 +88,23 @@ public class ChatFragment extends Fragment {
         etMessage = view.findViewById(R.id.etMessage);
         ibSend = view.findViewById(R.id.ibSend);
         rvChat = view.findViewById(R.id.rvChat);
-        btnSendTrack = view.findViewById(R.id.btnSendTrack);
+        btnAddTrack = view.findViewById(R.id.btnAddTrack);
+        btnCancel = view.findViewById(R.id.btnCancel);
+        tvTrack = view.findViewById(R.id.tvTrack);
+        ivTrack = view.findViewById(R.id.ivTrack);
         messages = new ArrayList<>();
         firstLoad = true;
+
+        btnCancel.setVisibility(View.GONE);
+        tvTrack.setVisibility(View.GONE);
+        ivTrack.setVisibility(View.GONE);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
             user = bundle.getParcelable("user");
-            token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
+            token = bundle.getString(ChatFragment.EXTRA_TOKEN);
         }
-        chatAdapter = new ChatAdapter(getContext(), user, messages);
+        chatAdapter = new ChatAdapter(getContext(), user, messages, token);
         rvChat.setAdapter(chatAdapter);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -100,6 +115,7 @@ public class ChatFragment extends Fragment {
 
         checkSendMessageBtnClicked();
         checkAttachTrackBtnClicked();
+        checkCancelTrackBtnClicked();
 
     }
 
@@ -164,31 +180,34 @@ public class ChatFragment extends Fragment {
     }
 
     private void checkAttachTrackBtnClicked() {
-        btnSendTrack.setOnClickListener(new View.OnClickListener() {
+        btnAddTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SearchFragment fragment = new SearchFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString(SearchFragment.EXTRA_TOKEN, token);
-                bundle.putString(SearchFragment.SEARCH_TYPE, "TRACK");
+                bundle.putString(fragment.EXTRA_TOKEN, token);
+                bundle.putString(fragment.SEARCH_TYPE, "TRACK");
                 bundle.putString("TYPE", "message");
-
                 fragment.setArguments(bundle);
+
                 getActivity().getSupportFragmentManager().setFragmentResultListener("selectedTrack", ChatFragment.this, new FragmentResultListener() {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                         if (result != null) {
                             track = result.getParcelable("selectedTrack");
-                            //tvEditFavTrack.setText(track.);
+                            Log.i(TAG, "track id: " + track.id);
+                            tvTrack.setVisibility(View.VISIBLE);
+                            ivTrack.setVisibility(View.VISIBLE);
+                            btnCancel.setVisibility(View.VISIBLE);
+                            tvTrack.setText(track.name + " - " + track.artists.get(0).name);
                             Image image = track.album.images.get(0);
                             if (image != null) {
-                               // Glide.with(getContext()).load(image.url).into(ivEditFavTrack);
+                               Glide.with(getContext()).load(image.url).into(ivTrack);
                             }
                         }
 
                     }
                 });
-                fragment.setArguments(bundle);
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 if (!fragment.isAdded()) {
                     ft.add(R.id.flContainer, fragment);
@@ -204,18 +223,45 @@ public class ChatFragment extends Fragment {
         ibSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String body = etMessage.getText().toString();
                 Message message = new Message();
+                String body = etMessage.getText().toString();
+                if (body.isEmpty()) {
+                    Log.i(TAG, "no body detected");
+                    if (track != null) {
+                        Log.i(TAG, "track detected with no body");
+                        message.setTrackId(track.id);
+                    } else {
+                        etMessage.setError("Message cannot be empty.");
+                        return;
+                    }
+                } else {
+                    message.setBody(body);
+                    Log.i(TAG, "body found");
+                    if (track != null) {
+                        Log.i(TAG, "track found");
+                        message.setTrackId(track.id);
+                    }
+                }
                 message.setSender(ParseUser.getCurrentUser());
                 message.setReceiver(user);
-                message.setBody(body);
+
+
                 message.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         refreshMessages();
+                        if (e != null) {
+                            Log.i(TAG, e.toString());
+                        }
                     }
                 });
+
                 etMessage.setText(null);
+                btnCancel.setVisibility(View.GONE);
+                tvTrack.setVisibility(View.GONE);
+                ivTrack.setVisibility(View.GONE);
+                track = null;
+
                 String websocketUrl = "wss://inharmony.b4a.io";
                 ParseLiveQueryClient parseLiveQueryClient = null;
                 try {
@@ -238,6 +284,18 @@ public class ChatFragment extends Fragment {
                         }
                     });
                 }));
+            }
+        });
+    }
+
+    private void checkCancelTrackBtnClicked() {
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                track = null;
+                tvTrack.setVisibility(View.GONE);
+                ivTrack.setVisibility(View.GONE);
+                btnCancel.setVisibility(View.GONE);
             }
         });
     }

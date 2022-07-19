@@ -17,4 +17,11 @@
     <style name="roundedcorners" parent="">
         <item name="cornerSize">10%</item>
     </style>
+
+    <style name="partialrounded" parent="">
+        <item name = "cornerSizeTopLeft">10%</item>
+        <item name = "cornerSizeBottomLeft">10%</item>
+    </style>
+
+
 </resources>

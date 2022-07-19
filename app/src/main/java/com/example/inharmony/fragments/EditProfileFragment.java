@@ -732,6 +732,7 @@ public class EditProfileFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            Log.i(TAG, "correct");
             // picture taken
             if (resultCode == RESULT_OK) {
                 // by this point we have the camera photo on disk
@@ -740,7 +741,7 @@ public class EditProfileFragment extends Fragment {
                 // Load the taken image into a preview
                 ivChangeProfilePic.setImageBitmap(takenImage);
             } else { // Result was a failure
-                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Picture wasn't taken!" + resultCode, Toast.LENGTH_SHORT).show();
             }
         }
         if ((data != null) && requestCode == PICK_PHOTO_CODE && (resultCode == RESULT_OK)) {
