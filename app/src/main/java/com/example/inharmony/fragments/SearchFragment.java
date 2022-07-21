@@ -148,7 +148,6 @@ public class SearchFragment extends Fragment implements Search.View {
                     getActivity().getSupportFragmentManager().setFragmentResult("selectedTrack", bundle);
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
                 }
-
 }
 
             @Override
@@ -164,7 +163,6 @@ public class SearchFragment extends Fragment implements Search.View {
 
             @Override
             public void onItemSelectedAlbum(View itemView, AlbumSimple album) {
-                mActionListener.selectAlbum(album);
                 EditProfileFragment fragment = (EditProfileFragment) getActivity().getSupportFragmentManager().findFragmentByTag("EDITPROFILE");
                 Bundle bundle = new Bundle();
                 bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);

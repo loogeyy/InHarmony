@@ -27,6 +27,7 @@
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/ivChatProfilePic"
         app:layout_constraintTop_toTopOf="parent"
+        android:clickable="true"
         tools:text="User Name" />
 
     <TextView

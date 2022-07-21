@@ -36,7 +36,7 @@ import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
-public class MyProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment {
     private static final String TAG = "MyProfileFragment";
     private ImageView btnEditProfile;
     private ImageView ivProfilePic;
@@ -76,11 +76,11 @@ public class MyProfileFragment extends Fragment {
         }
     };
 
-    public MyProfileFragment() {
+    public ProfileFragment() {
         // Required empty public constructor
     }
 
-    public MyProfileFragment(boolean myProfile, ParseUser user) {
+    public ProfileFragment(boolean myProfile, ParseUser user) {
         this.myProfile = myProfile;
         this.user = user;
     }
@@ -196,9 +196,7 @@ public class MyProfileFragment extends Fragment {
             } else {
                 favGenres = favGenres + ", " + genres.get(i);
             }
-
         }
-        //favGenres = favGenres.substring(0, favGenres.length() - 3);
         tvFavGenres.setText(favGenres);
         tvFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
         tvFavArtist.setText(favArtist.name.toString());

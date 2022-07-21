@@ -15,11 +15,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.inharmony.fragments.ChatFragment;
 import com.example.inharmony.fragments.EditProfileFragment;
+import com.example.inharmony.fragments.ProfileFragment;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -79,6 +81,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
                 e.printStackTrace();
             }
 
+            checkNameClicked(user);
+
             List<Message> sentMessages;
             List<Message> receivedMessages;
 
@@ -99,26 +103,36 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
                 Log.i("received messages", String.valueOf(receivedMessages.size()));
 
 
+                // new chat preview
                 if ((sentMessages.size() == 0) && receivedMessages.size() == 0) {
                     tvChatPreview.setText("Start a new chat with your match!");
+                    return;
                 }
-                else if ((sentMessages.size() == 0) && (receivedMessages.size() > 0)) {
+
+                // incoming track preview
+                if ((sentMessages.size() == 0) && (receivedMessages.size() > 0)) {
                     Message message = receivedMessages.get(0);
                     if (message.getBody() != null) {
                         tvChatPreview.setText(user.get("name") + ": " + message.getBody());
                     } else {
                         tvChatPreview.setText(user.get("name") + " shared a track!");
                     }
+                    return;
                 }
-                else if ((receivedMessages.size() == 0) && (sentMessages.size() > 0)) {
+
+                // outgoing track preview
+                if ((receivedMessages.size() == 0) && (sentMessages.size() > 0)) {
                     Message message = sentMessages.get(0);
                     if (message.getBody() != null) {
                         tvChatPreview.setText("You: " + message.getBody());
                     } else {
                         tvChatPreview.setText("You shared a track.");
                     }
+                    return;
                 }
-                else if ((receivedMessages.size() > 0) && (sentMessages.size() > 0)) {
+
+                // most recent chat preview
+                if ((receivedMessages.size() > 0) && (sentMessages.size() > 0)) {
                     Date sentLatest = (Date) sentMessages.get(0).fetchIfNeeded().getCreatedAt();
                     Log.i("date sent", sentLatest.toString());
                     Date receivedLatest = (Date) receivedMessages.get(0).fetchIfNeeded().getCreatedAt();
@@ -140,6 +154,20 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
             catch (ParseException e) {
                 e.printStackTrace();
             }
+        }
+
+        private void checkNameClicked(ParseUser user) {
+            tvChatName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ProfileFragment fragment = new ProfileFragment(false, user);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
+                    bundle.putBoolean("newSignUp", false);
+                    fragment.setArguments(bundle);
+                    ((MainActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+                }
+            });
         }
 
         @Override

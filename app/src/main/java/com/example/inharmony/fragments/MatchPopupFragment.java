@@ -69,7 +69,7 @@ public class MatchPopupFragment extends DialogFragment {
 
         Log.i("user", String.valueOf(matchedUser));
 
-        tvMatchDisplay.setText("You Matched a Beat with " + matchedUser.get("name").toString());
+        tvMatchDisplay.setText("You Matched a Beat with " + matchedUser.get("name").toString() + "!");
 
         ParseFile profilePicOne = (ParseFile) matchedUser.get("profilePic");
         ParseFile profilePicTwo = (ParseFile) ParseUser.getCurrentUser().get("profilePic");

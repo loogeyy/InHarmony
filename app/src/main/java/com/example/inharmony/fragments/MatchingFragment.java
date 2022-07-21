@@ -54,6 +54,8 @@ public class MatchingFragment extends Fragment {
     private boolean newSignUp;
     private SpotifyService service;
 
+    TextView tvNoMatches;
+
     ArrayList<Card> rowItems;
 
     public MatchingFragment() {
@@ -70,6 +72,8 @@ public class MatchingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        tvNoMatches = view.findViewById(R.id.tvNoMatches);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -99,6 +103,13 @@ public class MatchingFragment extends Fragment {
                  if (rowItems.size() != 0) {
                     rowItems.remove(0);
                     arrayAdapter.notifyDataSetChanged();
+                }
+                 if (rowItems.size() == 0) {
+                     Log.i(TAG, "empty");
+                     tvNoMatches.setText("Uh Oh! There are no more users to match with.");
+                     tvNoMatches.setVisibility(View.VISIBLE);
+                } else {
+                    //tvNoMatches.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -193,12 +204,11 @@ public class MatchingFragment extends Fragment {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                TextView tvNoMatches = view.findViewById(R.id.tvNoMatches);
                 if (rowItems.size() == 0) {
                     tvNoMatches.setVisibility(View.VISIBLE);
                     tvNoMatches.setText("Uh Oh! There are no more users to match with.");
                 } else {
-                    tvNoMatches.setVisibility(View.INVISIBLE);
+                    //tvNoMatches.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -222,41 +232,13 @@ public class MatchingFragment extends Fragment {
 
     //THE ALGORITHM
     private int similarityScore(ParseUser currentUser, ParseUser user) {
-        Log.i(TAG, "similarityScore");
+        ArrayList<Float> myFeatureAvgs = (ArrayList<Float>) currentUser.get("featureAvgs");
+        ArrayList<Float> myFeatureWeights = (ArrayList<Float>) currentUser.get("featureWeights");
 
-        int avgAcousticness;
-        int avgDanceability;
-        int avgEnergy;
-        int avgInstrumentalness;
-        int avgSpeechiness;
-        int avgValence;
+        ArrayList<Float> otherFeatureAvgs = (ArrayList<Float>) user.get("featureAvgs");
+        ArrayList<Float> otherFeatureWeights = (ArrayList<Float>) user.get("featureWeights");
 
 
-        AsyncTask.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                //Log.i(TAG, "is this working?");
-                Pager<Track> songId = service.getTopTracks();
-                if (songId.items.size() == 0) {
-                    Log.i("song id", "no size");
-                }
-                int i = 1;
-                for (Track track : songId.items) {
-                    Log.i(TAG, currentUser.getUsername() + "'s #" + i + " song: " + track.name + " " + track.artists.get(0).name);
-                    i++;
-                    AudioFeaturesTracks audioFeaturesTracks = service.getTracksAudioFeatures(track.id);
-                    List<AudioFeaturesTrack> list = audioFeaturesTracks.audio_features;
-//                    for (AudioFeaturesTrack feature : list) {
-//
-//                    }
-                }
-            }
-        });
-
-        //grab top five songs for user and compare gettracksaudiofeatures
-        //including popularity
-        //top songs similarity
 
         return 1;
     }

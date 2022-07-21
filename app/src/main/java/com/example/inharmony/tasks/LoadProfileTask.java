@@ -179,8 +179,6 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
         }
         tvFavArtistCard.setText(favArtist.name.toString());
 
-
-
     }
 
     public void selectTrack(Track track) {

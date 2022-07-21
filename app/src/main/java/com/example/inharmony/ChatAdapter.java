@@ -29,6 +29,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     private Context mContext;
     private String token;
     private ParseUser mUser;
+    private SpotifyService service;
 
     private static final int MESSAGE_OUTGOING = 0;
     private static final int MESSAGE_INCOMING = 1;
@@ -136,20 +137,24 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
             }
 
             if (message.getTrackId() == null) {
-                tvIncomingTrack.setVisibility(View.GONE);
-                ivPlayIncoming.setVisibility(View.GONE);
-                ivIncomingTrack.setVisibility(View.GONE);
+                toggleTrackVisibility(false);
             } else {
+                toggleTrackVisibility(true);
+                startSpotifyService();
+                LoadChatTrackTask loadChatTrackTask = new LoadChatTrackTask(itemView, token, service, false);
+                loadChatTrackTask.execute(message);
+            }
+        }
+
+        private void toggleTrackVisibility(Boolean enabled) {
+            if (enabled) {
                 tvIncomingTrack.setVisibility(View.VISIBLE);
                 ivPlayIncoming.setVisibility(View.VISIBLE);
                 ivIncomingTrack.setVisibility(View.VISIBLE);
-                SpotifyApi spotifyApi = new SpotifyApi();
-                spotifyApi.setAccessToken(token);
-                SpotifyService service = spotifyApi.getService();
-                LoadChatTrackTask loadChatTrackTask = new LoadChatTrackTask(itemView, token, service, false);
-                loadChatTrackTask.execute(message);
-
-
+            } else {
+                tvIncomingTrack.setVisibility(View.GONE);
+                ivPlayIncoming.setVisibility(View.GONE);
+                ivIncomingTrack.setVisibility(View.GONE);
             }
         }
 
@@ -186,19 +191,32 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
             }
 
             if (message.getTrackId() == null) {
-                tvOutgoingTrack.setVisibility(View.GONE);
-                ivOutgoingTrack.setVisibility(View.GONE);
-                ivPlayOutgoing.setVisibility(View.GONE);
+                toggleTrackVisibility(false);
             } else {
-                tvOutgoingTrack.setVisibility(View.VISIBLE);
-                ivOutgoingTrack.setVisibility(View.VISIBLE);
-                ivPlayOutgoing.setVisibility(View.VISIBLE);
-                SpotifyApi spotifyApi = new SpotifyApi();
-                spotifyApi.setAccessToken(token);
-                SpotifyService service = spotifyApi.getService();
+                toggleTrackVisibility(true);
+                startSpotifyService();
                 LoadChatTrackTask loadChatTrackTask = new LoadChatTrackTask(itemView, token, service, true);
                 loadChatTrackTask.execute(message);
             }
         }
+
+        private void toggleTrackVisibility(Boolean enabled) {
+            if (enabled) {
+                tvOutgoingTrack.setVisibility(View.VISIBLE);
+                ivOutgoingTrack.setVisibility(View.VISIBLE);
+                ivPlayOutgoing.setVisibility(View.VISIBLE);
+            } else {
+                tvOutgoingTrack.setVisibility(View.GONE);
+                ivOutgoingTrack.setVisibility(View.GONE);
+                ivPlayOutgoing.setVisibility(View.GONE);
+            }
+        }
+
+    }
+
+    private void startSpotifyService() {
+        SpotifyApi spotifyApi = new SpotifyApi();
+        spotifyApi.setAccessToken(token);
+        service = spotifyApi.getService();
     }
 }

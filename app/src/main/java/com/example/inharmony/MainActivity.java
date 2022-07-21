@@ -6,48 +6,33 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.inharmony.fragments.ChatFragment;
 import com.example.inharmony.fragments.ChatListFragment;
 import com.example.inharmony.fragments.EditProfileFragment;
 import com.example.inharmony.fragments.MatchingFragment;
-import com.example.inharmony.fragments.MyProfileFragment;
-import com.example.inharmony.fragments.SearchFragment;
+import com.example.inharmony.fragments.ProfileFragment;
+import com.example.inharmony.tasks.AlgorithmTask;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
+
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
-    /*
-    SENDING:
-    Fragment fragment = new PostDetailsFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable("post", posts.get(getAdapterPosition()));
-                    fragment.setArguments(bundle);
-                    fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
 
-    RECEIVING:
-     Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            user = bundle.getParcelable("user");
-        }
-     */
+public class MainActivity extends AppCompatActivity implements AsyncResponse {
+    private static final String TAG = "MainActivity";
+
     private BottomNavigationView bottomMenu;
 
     public static String NEW_SIGN_UP = "NEW_SIGN_UP";
@@ -60,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
     private SearchResultsAdapter mAdapter;
 
+    private AlgorithmTask asyncTask;
+    private JSONArray featureAvgs = new JSONArray();
+    private JSONArray featureWeights = new JSONArray();
+
     public static Intent createIntent(Context context) {
         return new Intent(context, MainActivity.class);
     }
@@ -69,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.i("MAINACTIVITY", "onCreate!");
         setContentView(R.layout.activity_main);
+//        asyncTask.delegate = this;
 
         //grabs intent from login including token
         Intent intent = getIntent();
@@ -76,12 +66,12 @@ public class MainActivity extends AppCompatActivity {
         Boolean newSignUp = intent.getExtras().getBoolean(NEW_SIGN_UP);
         Log.i("MAINACTIVITY NEWSIGNUP", String.valueOf(newSignUp));
 
+        calculateTrackFeatures();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setLogo(R.drawable.logo);
         //getSupportActionBar().setIcon(R.drawable.logo);
-
-
 
         bottomMenu = findViewById(R.id.bottomMenu);
 
@@ -110,24 +100,26 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.actionProfile:
                         Log.i("MAINACTIVITY ACTIONPROFILE", "SWITCHING TO EDIT");
                         Log.i("MainActivity", "newSignUp: " + newSignUp);
+                        Log.i(TAG, "featureWeights: " + featureWeights);
                         if (ParseUser.getCurrentUser() == null) {
                             fragment = new EditProfileFragment();
                             bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                             bundle.putBoolean("newSignUp", true);
+                            bundle.putString("featureAvgs", featureAvgs.toString());
+                            bundle.putString("featureWeights", featureWeights.toString());
                             String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
                             bundle.putString("tvWelcomeText", welcomeText);
                             fragment.setArguments(bundle);
                             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
 
                         } else {
-                            fragment = new MyProfileFragment(true, ParseUser.getCurrentUser());
-                            bundle.putString(MyProfileFragment.EXTRA_TOKEN, token);
+                            fragment = new ProfileFragment(true, ParseUser.getCurrentUser());
+                            bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
                             bundle.putBoolean("newSignUp", false);
                             String welcomeText = "Edit your profile details below.";
                             bundle.putString("tvWelcomeText", welcomeText);
                             fragment.setArguments(bundle);
                             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-
                         }
                         break;
                     default:
@@ -156,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onLogout(MenuItem mi) {
-        //AuthenticationClient.clearCookies(getApplicationContext());
         CredentialsHandler.setToken(MainActivity.this, null, 0, TimeUnit.SECONDS);
         Intent i = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(i);
@@ -169,4 +160,36 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private void calculateTrackFeatures() {
+
+        Log.i(TAG, "similarityScore");
+
+        SpotifyApi spotifyApi = new SpotifyApi();
+        spotifyApi.setAccessToken(token);
+        SpotifyService service = spotifyApi.getService();
+        asyncTask = new AlgorithmTask(service);
+        asyncTask.delegate = this;
+        asyncTask.execute();
+
+//        AsyncTask.execute(new Runnable() {
+//
+//
+//            @Override
+//            public void run() {a
+
+            //}
+//        });
+    }
+
+    @Override
+    public void processFinishAvg(JSONArray featureAvgs) {
+        Log.i("ProcessFinishAvg", featureAvgs.toString());
+        this.featureAvgs = featureAvgs;
+    }
+
+    @Override
+    public void processFinishWeight(JSONArray featureWeights) {
+        Log.i("ProcessFinishWeight", featureWeights.toString());
+        this.featureWeights = featureWeights;
+    }
 }

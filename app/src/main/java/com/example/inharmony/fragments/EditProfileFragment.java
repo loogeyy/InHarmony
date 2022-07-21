@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -40,11 +39,9 @@ import com.androidbuts.multispinnerfilter.KeyPairBoolData;
 import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
 import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
 import com.bumptech.glide.Glide;
-import com.example.inharmony.MainActivity;
 import com.example.inharmony.R;
 import com.example.inharmony.Search;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -52,6 +49,7 @@ import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -66,8 +64,6 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
-import kaaes.spotify.webapi.android.models.Albums;
-import kaaes.spotify.webapi.android.models.AlbumsPager;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.SeedsGenres;
@@ -119,6 +115,9 @@ public class EditProfileFragment extends Fragment {
     private Artist favArtist;
     private AlbumSimple favAlbum;
 
+    private JSONArray featureAvgs;
+    private JSONArray featureWeights;
+
     private File photoFile;
     private ParseFile photo;
     private String photoFileName = "photo.jpg";
@@ -167,6 +166,15 @@ public class EditProfileFragment extends Fragment {
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
             newSignUp = bundle.getBoolean("newSignUp");
             tvWelcomeText.setText(bundle.getString("tvWelcomeText"));
+            if (newSignUp) {
+                try {
+                    featureAvgs = new JSONArray(bundle.getString("featureAvgs"));
+                    featureWeights = new JSONArray(bundle.getString("featureWeights"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
         } else {
             Log.i(TAG, "BUNDLE WAS NULL");
         }
@@ -373,7 +381,7 @@ public class EditProfileFragment extends Fragment {
                     }
 
                     try {
-                        createUser(username, password, name, age, bio, selectedGenres, photo, favTrack, favArtist, favAlbum, token);
+                        createUser(username, password, name, age, bio, selectedGenres, photo, favTrack, favArtist, favAlbum, featureAvgs, featureWeights, token);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -440,7 +448,6 @@ public class EditProfileFragment extends Fragment {
                     toProfileFragment();
                 }
 
-
             }
         });
     }
@@ -448,9 +455,9 @@ public class EditProfileFragment extends Fragment {
     private void toProfileFragment() {
         bottomMenu.setVisibility(View.VISIBLE);
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        Fragment fragment = new MyProfileFragment(true, ParseUser.getCurrentUser());
+        Fragment fragment = new ProfileFragment(true, ParseUser.getCurrentUser());
         Bundle bundle = new Bundle();
-        bundle.putString(MyProfileFragment.EXTRA_TOKEN, token);
+        bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
         bundle.putBoolean("newSignUp", false);
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
@@ -629,7 +636,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     // add new user to the database
-    private void createUser(String username, String password, String name, Integer age, String bio, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, String token) throws ParseException {
+    private void createUser(String username, String password, String name, Integer age, String bio, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, JSONArray featureAvgs, JSONArray featureWeights, String token) throws ParseException {
         ParseUser user = new ParseUser();
         user.setUsername(username);
         user.setPassword(password);
@@ -639,6 +646,8 @@ public class EditProfileFragment extends Fragment {
         user.put("favArtist", artist.id);
         user.put("favTrack", track.id);
         user.put("favAlbum", album.id);
+        user.put("featureAvgs", featureAvgs);
+        user.put("featureWeights", featureWeights);
 
         if (bio != null) {
             user.put("bio", bio);

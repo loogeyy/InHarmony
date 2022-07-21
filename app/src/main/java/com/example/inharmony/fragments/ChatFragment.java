@@ -6,12 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,30 +21,23 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.inharmony.ChatAdapter;
 import com.example.inharmony.Message;
 import com.example.inharmony.R;
-import com.example.inharmony.Search;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.livequery.ParseLiveQueryClient;
 import com.parse.livequery.SubscriptionHandling;
 
-import org.w3c.dom.Text;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
@@ -64,6 +57,8 @@ public class ChatFragment extends Fragment {
     private TextView tvTrack;
     private Button btnCancel;
     private List<Message> messages;
+    private TextView tvChatTitle;
+    private Button btnChatProfile;
 
     private Track track;
 
@@ -92,6 +87,9 @@ public class ChatFragment extends Fragment {
         btnCancel = view.findViewById(R.id.btnCancel);
         tvTrack = view.findViewById(R.id.tvTrack);
         ivTrack = view.findViewById(R.id.ivTrack);
+        btnChatProfile = view.findViewById(R.id.btnChatProfile);
+        tvChatTitle = view.findViewById(R.id.tvChatTitle);
+
         messages = new ArrayList<>();
         firstLoad = true;
 
@@ -104,6 +102,8 @@ public class ChatFragment extends Fragment {
             user = bundle.getParcelable("user");
             token = bundle.getString(ChatFragment.EXTRA_TOKEN);
         }
+
+        tvChatTitle.setText("Chat with " + user.get("name"));
         chatAdapter = new ChatAdapter(getContext(), user, messages, token);
         rvChat.setAdapter(chatAdapter);
 
@@ -112,11 +112,10 @@ public class ChatFragment extends Fragment {
         rvChat.setLayoutManager(linearLayoutManager);
         refreshMessages();
 
-
         checkSendMessageBtnClicked();
         checkAttachTrackBtnClicked();
         checkCancelTrackBtnClicked();
-
+        checkViewProfileBtnClicked();
     }
 
     private void refreshMessages() {
@@ -295,6 +294,21 @@ public class ChatFragment extends Fragment {
                 tvTrack.setVisibility(View.GONE);
                 ivTrack.setVisibility(View.GONE);
                 btnCancel.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void checkViewProfileBtnClicked() {
+        btnChatProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProfileFragment fragment = new ProfileFragment(false, user);
+                Bundle bundle = new Bundle();
+                bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
+                bundle.putBoolean("newSignUp", false);
+                fragment.setArguments(bundle);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
             }
         });
     }

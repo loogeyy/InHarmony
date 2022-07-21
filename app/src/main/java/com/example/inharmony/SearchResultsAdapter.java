@@ -115,12 +115,12 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
             holder.title.setText(track.name);
 
-            List<String> names = new ArrayList<>();
+            List<String> artistNames = new ArrayList<>();
             for (ArtistSimple i : track.artists) {
-                names.add(i.name);
+                artistNames.add(i.name);
             }
             Joiner joiner = Joiner.on(", ");
-            holder.subtitle.setText(joiner.join(names));
+            holder.subtitle.setText(joiner.join(artistNames));
 
             if (track.album.images.size() != 0) {
                 Image image = track.album.images.get(0);

@@ -8,19 +8,6 @@
     tools:context=".fragments.MatchingFragment">
 
 
-    <com.lorentzos.flingswipe.SwipeFlingAdapterView
-        android:id="@+id/flingContainer"
-        android:layout_width="358dp"
-        android:layout_height="564dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.494"
-        app:rotation_degrees="15.5"
-        tools:context=".MainActivity" />
-
     <TextView
         android:id="@+id/tvNoMatches"
         android:layout_width="362dp"
@@ -29,11 +16,26 @@
         android:fontFamily="@font/fredoka"
         android:textAlignment="center"
         android:textSize="24sp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@+id/flingContainer"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Uh Oh! There are no more current users to match with."
-        tools:visibility="invisible" />
+        tools:visibility="visible" />
+
+    <com.lorentzos.flingswipe.SwipeFlingAdapterView
+        android:id="@+id/flingContainer"
+        android:layout_width="358dp"
+        android:layout_height="564dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.494"
+        app:rotation_degrees="15.5"
+        tools:context=".MainActivity" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,7 +56,6 @@ public class SearchPresenter implements Search.ActionListener {
 
     @Override
     public void init(String accessToken) {
-        //logMessage("Api Client created");
         SpotifyApi spotifyApi = new SpotifyApi();
 
         if (accessToken != null) {
@@ -85,14 +84,10 @@ public class SearchPresenter implements Search.ActionListener {
                 }
 
                 @Override
-                public void onCompleteArtists(List<Artist> artists) {
-
-                }
+                public void onCompleteArtists(List<Artist> artists) {}
 
                 @Override
-                public void onCompleteAlbums(List<AlbumSimple> albums) {
-
-                }
+                public void onCompleteAlbums(List<AlbumSimple> albums) {}
 
                 @Override
                 public void onError(Throwable error) {
@@ -121,9 +116,7 @@ public class SearchPresenter implements Search.ActionListener {
                 }
 
                 @Override
-                public void onCompleteAlbums(List<AlbumSimple> albums) {
-                    //mView.addDataAlbums(albums);
-                }
+                public void onCompleteAlbums(List<AlbumSimple> albums) {}
 
                 @Override
                 public void onError(Throwable error) {
@@ -143,13 +136,10 @@ public class SearchPresenter implements Search.ActionListener {
             mSearchListener = new SearchPager.CompleteListener() {
 
                 @Override
-                public void onCompleteTracks(List<Track> tracks) {
-                    mView.addDataTracks(tracks);
-                }
+                public void onCompleteTracks(List<Track> tracks) {}
 
                 @Override
                 public void onCompleteArtists(List<Artist> artists) {
-                    mView.addDataArtists(artists);
                 }
 
                 @Override
@@ -227,15 +217,7 @@ public class SearchPresenter implements Search.ActionListener {
         }
     }
 
-    @Override
-    public void selectArtist(Artist artist) {
 
-    }
-
-    @Override
-    public void selectAlbum(AlbumSimple album) {
-
-    }
 
     private void logError(String msg) {
         Toast.makeText(mContext, "Error: " + msg, Toast.LENGTH_SHORT).show();

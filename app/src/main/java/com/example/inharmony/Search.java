@@ -38,10 +38,6 @@ public class Search {
 
         void selectTrack(Track item);
 
-        void selectArtist(Artist artist);
-
-        void selectAlbum(AlbumSimple album);
-
         void resume();
 
         void pause();

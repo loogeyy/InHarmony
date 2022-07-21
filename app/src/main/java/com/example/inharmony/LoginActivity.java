@@ -74,27 +74,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-
-    //delete this later
-    private void createUser(String username, String password, String token) {
-        Log.i(TAG, "Attempting to create user " + username + "...");
-        ParseUser user = new ParseUser();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.signUpInBackground(new SignUpCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                     Log.i("createUser TOKEN: ", token);
-                     Log.i("create user E code:", Integer.toString(e.getCode()));
-                     Log.e(TAG, "Issue with sign up", e);
-                     //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
-                    return;
-                }
-            }
-        });
-    }
-
     public void onLoginButtonClicked(View view) {
         final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
                 .setScopes(new String[]{"streaming", "user-read-recently-played", "user-modify-playback-state",
@@ -133,7 +112,6 @@ public class LoginActivity extends AppCompatActivity {
                             String email = service.getMe().email;
                             String id = service.getMe().id;
                             List<String> genreList = service.getSeedsGenres().genres;
-                            Map<String, Object> map = new HashMap<>();
                             Pager<Artist> songId = service.getTopArtists();
                             if (songId.items.size() == 0) {
                                 Log.i("song id", "no size");

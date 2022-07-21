@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/dark_navy">
 
     <EditText
         android:id="@+id/etMessage"
@@ -41,15 +41,12 @@
         android:id="@+id/rvChat"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/dark_navy"
+        android:background="@color/background"
         app:layout_constraintBottom_toTopOf="@+id/tvTrack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/tvChatTitle" />
 
 
     <ImageButton
@@ -100,5 +97,32 @@
         android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/ivTrack"
         app:layout_constraintEnd_toEndOf="@+id/ivTrack" />
+
+    <TextView
+        android:id="@+id/tvChatTitle"
+        android:layout_width="240dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/varelaround"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="10dp"
+        android:text="Chat with Match"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/btnChatProfile"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <Button
+        android:id="@+id/btnChatProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:fontFamily="@font/fredoka"
+        android:text="View their Profile"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/rvChat"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
