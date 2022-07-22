@@ -87,7 +87,9 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        mPlayer.release();
+        if (mPlayer != null) {
+            mPlayer.release();
+        }
         super.onDestroyView();
 
     }

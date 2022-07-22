@@ -658,6 +658,7 @@ public class EditProfileFragment extends Fragment {
         }
 
         if (parseFile != null) {
+            Log.i(TAG, "new pfp found");
             parseFile.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -676,24 +677,13 @@ public class EditProfileFragment extends Fragment {
             });
         }
         else {
-
+            Log.i(TAG, "new pfp not found");
             user.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e != null) {
                         return;
                     } else {
-                        AsyncTask.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                ParseUser.getCurrentUser().put("score", 1);
-                                try {
-                                    ParseUser.getCurrentUser().save();
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
                         toProfileFragment();
                     }
                 }
@@ -719,10 +709,11 @@ public class EditProfileFragment extends Fragment {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         photoFile = getPhotoFileUri(photoFileName);
 
+        Log.i("CONTEXT", getContext().toString());
         Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
-         if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+         if (intent.resolveActivity(getActivity().getApplicationContext().getPackageManager()) != null) {
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
 
@@ -750,7 +741,7 @@ public class EditProfileFragment extends Fragment {
                 // Load the taken image into a preview
                 ivChangeProfilePic.setImageBitmap(takenImage);
             } else { // Result was a failure
-                Toast.makeText(getContext(), "Picture wasn't taken!" + resultCode, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Picture wasn't taken!" + resultCode + " request: " + requestCode, Toast.LENGTH_SHORT).show();
             }
         }
         if ((data != null) && requestCode == PICK_PHOTO_CODE && (resultCode == RESULT_OK)) {
@@ -795,7 +786,9 @@ public class EditProfileFragment extends Fragment {
     // Returns the File for a photo stored on disk given the fileName
     public File getPhotoFileUri(String fileName) {
          File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-
+            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+                Log.d(TAG, "failed to create directory");
+            }
         // Return the file target for the photo based on filename
         return new File(mediaStorageDir.getPath() + File.separator + fileName);
 

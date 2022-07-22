@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                             bundle.putString("tvWelcomeText", welcomeText);
                             fragment.setArguments(bundle);
                             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
-
-                        } else {
+                        }
+                        else {
                             Log.i(TAG, "fragmentstarting");
                             fragment = new ProfileFragment(true, ParseUser.getCurrentUser());
                             bundle.putString(ProfileFragment.EXTRA_TOKEN, token);

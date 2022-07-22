@@ -70,6 +70,4 @@ public class CardAdapter extends ArrayAdapter<Card> {
         return view;
 
     }
-
-
 }
