@@ -231,16 +231,26 @@ public class MatchingFragment extends Fragment {
     }
 
     //THE ALGORITHM
-    private int similarityScore(ParseUser currentUser, ParseUser user) {
-        ArrayList<Float> myFeatureAvgs = (ArrayList<Float>) currentUser.get("featureAvgs");
-        ArrayList<Float> myFeatureWeights = (ArrayList<Float>) currentUser.get("featureWeights");
+    private double similarityScore(ParseUser currentUser, ParseUser user) {
+        int FEATURE_LIST_SIZE = 6;
+        ArrayList<Double> myFeatureAvgs = (ArrayList<Double>) currentUser.get("featureAvgs");
+        ArrayList<Double> myFeatureWeights = (ArrayList<Double>) currentUser.get("featureWeights");
 
-        ArrayList<Float> otherFeatureAvgs = (ArrayList<Float>) user.get("featureAvgs");
-        ArrayList<Float> otherFeatureWeights = (ArrayList<Float>) user.get("featureWeights");
+        ArrayList<Double> otherFeatureAvgs = (ArrayList<Double>) user.get("featureAvgs");
+        ArrayList<Double> otherFeatureWeights = (ArrayList<Double>) user.get("featureWeights");
 
+        double totalSum = 0;
+        double totalSize = 0;
 
-
-        return 1;
+        for (int i = 0; i < FEATURE_LIST_SIZE; i++) {
+            double difference = (double)Math.abs((myFeatureAvgs.get(i) - otherFeatureAvgs.get(i)));
+            double weightedDifference = ((difference) * (myFeatureWeights.get(i) + otherFeatureWeights.get(i)));
+            totalSum += weightedDifference;
+            totalSize += (myFeatureWeights.get(i) + otherFeatureWeights.get(i));
+        }
+        double result = totalSum / totalSize;
+        Log.i("Results", user.getString("bio") + " and " + currentUser.getString("bio") + ": " + result);
+        return result;
     }
 
     //refresh list of potential matches and prevent repeats
@@ -269,15 +279,13 @@ public class MatchingFragment extends Fragment {
                 existingMatch.whereEqualTo(Match.USER_TWO, ParseUser.getCurrentUser());
                 existingMatch.whereEqualTo(Match.STATUS, "matched");
 
-
                 List<Match> objects = (List<Match>) matchesA.find();
                 List<Match> existing = (List<Match>) existingMatch.find();
 
-
                 if (objects.size() == 0 && existing.size() == 0)  {
-                    int score = similarityScore(ParseUser.getCurrentUser(), user);
-                    int threshold = 0;
-                    if (score > threshold) {
+                    double score = similarityScore(ParseUser.getCurrentUser(), user);
+                    double threshold = 0.05; // maximum difference
+                    if (score < threshold) {
                         potentialMatchesList.put(user);
                         Card card = new Card(user);
                         rowItems.add(card);

@@ -25,6 +25,7 @@ import com.parse.ParseUser;
 
 import org.json.JSONArray;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     public static String NEW_SIGN_UP = "NEW_SIGN_UP";
     public static final String EXTRA_TOKEN = "EXTRA_TOKEN";
     private String token;
+    private boolean newSignUp;
 
     final FragmentManager fragmentManager = getSupportFragmentManager();
     private Search.ActionListener mActionListener;
@@ -58,15 +60,17 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         super.onCreate(savedInstanceState);
         Log.i("MAINACTIVITY", "onCreate!");
         setContentView(R.layout.activity_main);
-//        asyncTask.delegate = this;
+
+      //asyncTask.delegate = this;
 
         //grabs intent from login including token
         Intent intent = getIntent();
         token = intent.getStringExtra(EXTRA_TOKEN);
-        Boolean newSignUp = intent.getExtras().getBoolean(NEW_SIGN_UP);
+        calculateTrackFeatures();
+        newSignUp = intent.getExtras().getBoolean(NEW_SIGN_UP);
         Log.i("MAINACTIVITY NEWSIGNUP", String.valueOf(newSignUp));
 
-        calculateTrackFeatures();
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,6 +78,37 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         //getSupportActionBar().setIcon(R.drawable.logo);
 
         bottomMenu = findViewById(R.id.bottomMenu);
+
+    }
+
+    public void onLogout(MenuItem mi) {
+        CredentialsHandler.setToken(MainActivity.this, null, 0, TimeUnit.SECONDS);
+        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(i);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    private void calculateTrackFeatures() {
+        Log.i(TAG, "similarityScore");
+
+        SpotifyApi spotifyApi = new SpotifyApi();
+        spotifyApi.setAccessToken(token);
+        SpotifyService service = spotifyApi.getService();
+        asyncTask = new AlgorithmTask(service);
+        asyncTask.delegate = this;
+        asyncTask.execute();
+    }
+
+    @Override
+    public void processFinish(List<JSONArray> featureList) {
+        featureAvgs = featureList.get(0);
+        featureWeights = featureList.get(1);
 
         bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -101,7 +136,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         Log.i("MAINACTIVITY ACTIONPROFILE", "SWITCHING TO EDIT");
                         Log.i("MainActivity", "newSignUp: " + newSignUp);
                         Log.i(TAG, "featureWeights: " + featureWeights);
+                        Log.i(TAG, "featureAvgs: " + featureAvgs);
                         if (ParseUser.getCurrentUser() == null) {
+                            Log.i(TAG, "fragmentstarting");
                             fragment = new EditProfileFragment();
                             bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                             bundle.putBoolean("newSignUp", true);
@@ -113,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
 
                         } else {
+                            Log.i(TAG, "fragmentstarting");
                             fragment = new ProfileFragment(true, ParseUser.getCurrentUser());
                             bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
                             bundle.putBoolean("newSignUp", false);
@@ -132,7 +170,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         }
                         fragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-
                         break;
                 }
                 return true;
@@ -144,52 +181,5 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         } else {
             bottomMenu.setSelectedItemId(R.id.actionMatch);
         }
-
-    }
-
-    public void onLogout(MenuItem mi) {
-        CredentialsHandler.setToken(MainActivity.this, null, 0, TimeUnit.SECONDS);
-        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(i);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
-        return true;
-    }
-
-    private void calculateTrackFeatures() {
-
-        Log.i(TAG, "similarityScore");
-
-        SpotifyApi spotifyApi = new SpotifyApi();
-        spotifyApi.setAccessToken(token);
-        SpotifyService service = spotifyApi.getService();
-        asyncTask = new AlgorithmTask(service);
-        asyncTask.delegate = this;
-        asyncTask.execute();
-
-//        AsyncTask.execute(new Runnable() {
-//
-//
-//            @Override
-//            public void run() {a
-
-            //}
-//        });
-    }
-
-    @Override
-    public void processFinishAvg(JSONArray featureAvgs) {
-        Log.i("ProcessFinishAvg", featureAvgs.toString());
-        this.featureAvgs = featureAvgs;
-    }
-
-    @Override
-    public void processFinishWeight(JSONArray featureWeights) {
-        Log.i("ProcessFinishWeight", featureWeights.toString());
-        this.featureWeights = featureWeights;
     }
 }

@@ -123,7 +123,7 @@ public class EditProfileFragment extends Fragment {
     private String photoFileName = "photo.jpg";
     public final static int PICK_PHOTO_CODE = 1046;
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
-    private List<String> genreList = Arrays.asList("hi", "hello", "hey");
+    private List<String> genreList = new ArrayList<>();
 
     public EditProfileFragment() {
         // Required empty public constructor

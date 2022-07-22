@@ -5,6 +5,5 @@ import org.json.JSONArray;
 import java.util.List;
 
 public interface AsyncResponse {
-    public void processFinishAvg(JSONArray featureAvgs);
-    public void processFinishWeight(JSONArray featureWeights);
+    public void processFinish(List<JSONArray> featureList);
 }

@@ -49,6 +49,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-runtime:2.4.2'
     implementation 'androidx.navigation:navigation-ui:2.4.2'
     implementation 'androidx.navigation:navigation-fragment:2.4.2'
+    testImplementation 'org.testng:testng:6.9.6'
     annotationProcessor 'org.parceler:parceler:1.1.12'
     implementation 'com.github.parse-community.Parse-SDK-Android:parse:3.0.0'
     implementation 'com.google.guava:guava:27.0.1-android'
@@ -64,6 +65,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.github.parse-community:ParseLiveQuery-Android:1.2.2'
     implementation 'com.google.android.material:material:1.2.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
 }
 
 repositories {
@@ -73,3 +75,4 @@ repositories {
         dirs 'libs'
     }
 }
+

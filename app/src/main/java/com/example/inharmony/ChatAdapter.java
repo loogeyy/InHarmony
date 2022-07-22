@@ -120,7 +120,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         void bindMessage(Message message) {
             ParseUser user = message.getSender();
             try {
-                name.setText(user.fetch().getUsername());
+                name.setText(user.fetch().getString("name"));
                 if (user.get("profilePic") != null) {
                     ParseFile image = (ParseFile) user.get("profilePic");
                     Glide.with(mContext).load(image.getUrl()).into(imageOther);
