@@ -9,13 +9,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -37,17 +39,17 @@ import com.androidbuts.multispinnerfilter.KeyPairBoolData;
 import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
 import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
 import com.bumptech.glide.Glide;
-import com.example.inharmony.MainActivity;
 import com.example.inharmony.R;
+import com.example.inharmony.Search;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -60,7 +62,12 @@ import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.AlbumSimple;
+import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.SeedsGenres;
+import kaaes.spotify.webapi.android.models.Track;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -68,37 +75,64 @@ import retrofit.client.Response;
 public class EditProfileFragment extends Fragment {
 
     static final String TAG = "EditProfileFragment";
-    public static String EXTRA_TOKEN = "EXTRA_TOKEN";
-    private List<String> genreList = Arrays.asList("hi", "hello", "hey");
 
-    private MultiSpinnerSearch genres;
+    public static String FAV_ALBUM = "FAV_ALBUM";
+    public static String FAV_TRACK = "FAV_TRACK";
+    public static String FAV_ARTIST = "FAV_ARTIST";
+    public static String EXTRA_TOKEN = "EXTRA_TOKEN";
+
+    private EditText etAge;
+    private EditText etName;
+    private Button btnFavSong;
+    private Button btnFavAlbum;
+    private Button btnFavArtist;
+    private EditText etChangeBio;
     private TextView tvWelcomeText;
     private Button btnUpdateProfile;
-    private EditText etName;
-    private EditText etAge;
-    private BottomNavigationView bottomMenu;
     private ImageButton btnChangePic;
+    private MultiSpinnerSearch genres;
     private ImageView ivChangeProfilePic;
+    private BottomNavigationView bottomMenu;
 
-    private boolean newSignUp;
+
+    private TextView tvEditFavTrack;
+    private TextView tvEditFavAlbum;
+    private TextView tvEditFavArtist;
+    private ImageView ivEditFavTrack;
+    private ImageView ivEditFavAlbum;
+    private ImageView ivEditFavArtist;
+
+    private Search.ActionListener mActionListener;
+
     private String username;
     private String password;
+
+    // bundle values
     private String token;
+    private boolean newSignUp;
+
+    private Track favTrack;
+    private Artist favArtist;
+    private AlbumSimple favAlbum;
+
+    private JSONArray featureAvgs;
+    private JSONArray featureWeights;
 
     private File photoFile;
+    private ParseFile photo;
     private String photoFileName = "photo.jpg";
-    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
     public final static int PICK_PHOTO_CODE = 1046;
-
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
+    private List<String> genreList = new ArrayList<>();
 
     public EditProfileFragment() {
         // Required empty public constructor
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_edit_profile, container, false);
     }
 
@@ -106,44 +140,44 @@ public class EditProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        genres = view.findViewById(R.id.genres);
-        tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
-        btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
-        etName = view.findViewById(R.id.etName);
         etAge = view.findViewById(R.id.etAge);
-        bottomMenu = getActivity().findViewById(R.id.bottomMenu);
-        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
+        etName = view.findViewById(R.id.etName);
+        genres = view.findViewById(R.id.genres);
+        btnFavSong = view.findViewById(R.id.btnFavSong);
+        btnFavAlbum = view.findViewById(R.id.btnFavAlbum);
+        etChangeBio = view.findViewById(R.id.etChangeBio);
         btnChangePic = view.findViewById(R.id.btnChangePic);
-        //etGender = findViewById(R.id.etGender);
+        btnFavArtist = view.findViewById(R.id.btnFavArtist);
+        tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
+        bottomMenu = getActivity().findViewById(R.id.bottomMenu);
+        btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
+        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
+
+        tvEditFavTrack = view.findViewById(R.id.tvEditFavTrack);
+        tvEditFavAlbum = view.findViewById(R.id.tvEditFavAlbum);
+        tvEditFavArtist = view.findViewById(R.id.tvEditFavArtist);
+
+        ivEditFavTrack = view.findViewById(R.id.ivEditFavTrack);
+        ivEditFavAlbum = view.findViewById(R.id.ivEditFavAlbum);
+        ivEditFavArtist = view.findViewById(R.id.ivEditFavArtist);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
             newSignUp = bundle.getBoolean("newSignUp");
             tvWelcomeText.setText(bundle.getString("tvWelcomeText"));
-            Toast.makeText(getContext(), "token found: " + token, Toast.LENGTH_SHORT).show();
-        }
-
-        if (newSignUp) {
-            bottomMenu.setVisibility(View.GONE);
-        } else {
-                etAge.setText(ParseUser.getCurrentUser().get("age").toString());
-                etName.setText(ParseUser.getCurrentUser().get("name").toString());
-
-                ParseFile profilePic = (ParseFile) ParseUser.getCurrentUser().get("profilePic");
-                if (profilePic != null) {
-                    Glide.with(getContext()).load(profilePic.getUrl()).into(ivChangeProfilePic);
-                } else {
-                    ivChangeProfilePic.setImageResource(R.drawable.nopfp);
+            if (newSignUp) {
+                try {
+                    featureAvgs = new JSONArray(bundle.getString("featureAvgs"));
+                    featureWeights = new JSONArray(bundle.getString("featureWeights"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+            }
 
+        } else {
+            Log.i(TAG, "BUNDLE WAS NULL");
         }
-
-
-//        //Intent intent = getIntent();
-//        newSignUp = intent.getExtras().getBoolean("newSignUp");
-//        token = intent.getStringExtra(EXTRA_TOKEN);
-//        tvWelcomeText.setText(intent.getStringExtra("tvWelcomeText"));
 
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
@@ -152,15 +186,40 @@ public class EditProfileFragment extends Fragment {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
+                if (!newSignUp) {
+                   favTrack = service.getTracks(ParseUser.getCurrentUser().get("favTrack").toString()).tracks.get(0);
+                   favArtist = service.getArtists(ParseUser.getCurrentUser().get("favArtist").toString()).artists.get(0);
+                   List <Album> albums = service.getAlbums(ParseUser.getCurrentUser().get("favAlbum").toString()).albums;
+                    for (Album a : albums) {
+                        if (a.images.size() != 0) {
+                            if (a.images.get(0).url.equals(ParseUser.getCurrentUser().get("favAlbumImageUrl"))) {
+                                favAlbum = a;
+                                break;
+                            }
+                        }
+                    }
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            populateProfile(favTrack, favArtist, favAlbum);
+                        }
+                    });
+                }
+            }
+        });
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
                 username = service.getMe().email;
                 password = service.getMe().id;
-                Log.i("Token", token);
+
                 service.getSeedsGenres(new Callback<SeedsGenres>() {
                     @Override
                     public void success(SeedsGenres seedsGenres, Response response) {
-                        Log.i(TAG, "Success");
                         genreList = seedsGenres.genres;
                         initializeGenreSelector(genres);
+
                     }
 
                     @Override
@@ -168,12 +227,60 @@ public class EditProfileFragment extends Fragment {
                         Log.e(TAG, "Retrofit error", error);
                     }
                 });
+
             }
+
         });
 
         checkUpdatePhotoButtonClicked();
         checkUpdateProfileButtonClicked();
+        checkFavSongButtonClicked();
+        checkFavArtistButtonClicked();
+        checkFavAlbumButtonClicked();
+
+        if (newSignUp) {
+            bottomMenu.setVisibility(View.GONE);
+            ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+        }
+
     }
+
+    private void populateProfile(Track favTrack, Artist favArtist, AlbumSimple favAlbum) {
+        if (!newSignUp){
+            tvEditFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
+            tvEditFavArtist.setText(favArtist.name.toString());
+            tvEditFavAlbum.setText(favAlbum.name.toString());
+            if (favTrack.album.images.size() != 0) {
+                Image image = favTrack.album.images.get(0);
+                Glide.with(getContext()).load(image.url).into(ivEditFavTrack);
+            }
+
+            if (favArtist.images.size() != 0) {
+                Image image = favArtist.images.get(0);
+                Glide.with(getContext()).load(image.url).into(ivEditFavArtist);
+            }
+
+            if (favAlbum.images.size() != 0) {
+                Image image = favAlbum.images.get(0);
+                Glide.with(getContext()).load(image.url).into(ivEditFavAlbum);
+            }
+
+            etAge.setText(ParseUser.getCurrentUser().get("age").toString());
+            etName.setText(ParseUser.getCurrentUser().get("name").toString());
+
+            ParseFile profilePic = (ParseFile) ParseUser.getCurrentUser().get("profilePic");
+            if (profilePic != null) {
+                Glide.with(getContext()).load(profilePic.getUrl()).into(ivChangeProfilePic);
+            } else {
+                ivChangeProfilePic.setImageResource(R.drawable.nopfp);
+            }
+
+            if (ParseUser.getCurrentUser().get("bio") != null) {
+                etChangeBio.setText(ParseUser.getCurrentUser().get("bio").toString());
+            }
+        }
+    }
+
 
     public static Intent createIntent(Context context) {
         return new Intent(context, EditProfileFragment.class);
@@ -201,7 +308,6 @@ public class EditProfileFragment extends Fragment {
 
                 });
                 popUp.show();
-
             }
         });
 
@@ -211,8 +317,6 @@ public class EditProfileFragment extends Fragment {
         btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Log.i("newsignup", String.valueOf(newSignUp));
 
                 String name;
                 Integer age;
@@ -240,9 +344,26 @@ public class EditProfileFragment extends Fragment {
                         return;
                     }
 
+                    if (favTrack == null) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Please select your favorite track", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (favArtist == null) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Please select your favorite artist", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (favAlbum == null) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Please select your favorite album", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     age = Integer.parseInt(etAge.getText().toString());
 
-                    //Log.i("LIST OF SELECTED ITEMS", selectedGenres.toString());
                     selectedGenres = getSelectedGenres();
                     if (selectedGenres.length() == 0) {
                         ((TextView)genres.getSelectedView()).setError("Please select up to 3 genres.");
@@ -250,12 +371,44 @@ public class EditProfileFragment extends Fragment {
                         return;
                     }
 
-                    createUser(username, password, name, age, selectedGenres, token);
-                    Log.i("HELLO", "HELLO");
+                    if (photoFile != null) {
+                        photo = new ParseFile(photoFile);
+                    }
+
+                    String bio = null;
+                    if (etChangeBio.getText() != null) {
+                        bio = etChangeBio.getText().toString();
+                    }
+
+                    try {
+                        createUser(username, password, name, age, bio, selectedGenres, photo, favTrack, favArtist, favAlbum, featureAvgs, featureWeights, token);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
                 // only update user in the database
                 else {
-                    Log.i("NOT NEw SIGN UP", "WORK PLEASE");
+                    if (favTrack != null) {
+                        //ParseUser.getCurrentUser().put("favTrack", favTrack.name + " - " + favTrack.artists.get(0).name);
+                        ParseUser.getCurrentUser().put("favTrack", favTrack.id);
+
+                    }
+                    if (favArtist != null) {
+                        ParseUser.getCurrentUser().put("favArtist", favArtist.id);
+                        //ParseUser.getCurrentUser().put("favArtist", favArtist.name);
+                    }
+                    if (favAlbum != null) {
+                        ParseUser.getCurrentUser().put("favAlbum", favAlbum.id);
+                        //ParseUser.getCurrentUser().put("favAlbum", favAlbum.name);
+                        if (favAlbum.images.size() != 0) {
+                            ParseUser.getCurrentUser().put("favAlbumImageUrl", favAlbum.images.get(0).url);
+                        }
+                    }
+
+                    SpotifyApi spotifyApi = new SpotifyApi();
+                    spotifyApi.setAccessToken(token);
+                    SpotifyService service = spotifyApi.getService();
+
                     if (!TextUtils.isEmpty(etName.getText())) {
                         name = etName.getText().toString();
                         ParseUser.getCurrentUser().put("name", name);
@@ -274,8 +427,12 @@ public class EditProfileFragment extends Fragment {
                         ParseUser.getCurrentUser().put("age", age);
                     }
 
+                    if (!TextUtils.isEmpty(etChangeBio.getText())) {
+                        String bio = etChangeBio.getText().toString();
+                        ParseUser.getCurrentUser().put("bio", bio);
+                    }
+
                     selectedGenres = getSelectedGenres();
-                    Log.i("SELECTED GENRES", String.valueOf(selectedGenres));
                     if (selectedGenres.length() == 0) {
                         ((TextView) genres.getSelectedView()).setError("Please select up to 3 genres.");
                         ((TextView) genres.getSelectedView()).setText("Please select up to 3 genres.");
@@ -284,16 +441,144 @@ public class EditProfileFragment extends Fragment {
                     ParseUser.getCurrentUser().put("favGenres", selectedGenres);
 
                     if (photoFile != null) {
-                        ParseUser.getCurrentUser().put("profilePic", new ParseFile(photoFile));
+                        photo = new ParseFile(photoFile);
+                        ParseUser.getCurrentUser().put("profilePic", photo);
                     }
                     ParseUser.getCurrentUser().saveInBackground();
+                    toProfileFragment();
                 }
 
-                Intent i = new Intent(getContext(), MainActivity.class);
-                i.putExtra(MainActivity.EXTRA_TOKEN, token);
-                i.putExtra(String.valueOf(MainActivity.NEW_SIGN_UP), false);
-                startActivity(i);
-                getActivity().finish();
+            }
+        });
+    }
+
+    private void toProfileFragment() {
+        bottomMenu.setVisibility(View.VISIBLE);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        Fragment fragment = new ProfileFragment(true, ParseUser.getCurrentUser());
+        Bundle bundle = new Bundle();
+        bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
+        bundle.putBoolean("newSignUp", false);
+        fragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
+    }
+
+    private void checkFavSongButtonClicked() {
+        btnFavSong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchFragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(SearchFragment.EXTRA_TOKEN, token);
+                bundle.putString(SearchFragment.SEARCH_TYPE, "TRACK");
+                bundle.putString("TYPE", "profile");
+                if (newSignUp) {
+                    bundle.putBoolean("newSignUp", true);
+                } else {
+                    bundle.putBoolean("newSignUp", false);
+                }
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().setFragmentResultListener("favTrack", EditProfileFragment.this, new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        if (result != null) {
+                            favTrack = result.getParcelable("favTrack");
+                            tvEditFavTrack.setText(favTrack.name);
+                            Image image = favTrack.album.images.get(0);
+                            if (image != null) {
+                                Glide.with(getContext()).load(image.url).into(ivEditFavTrack);
+                            }
+                           }
+
+                    }
+                });
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                if (!fragment.isAdded()) {
+                    ft.add(R.id.flContainer, fragment);
+                }
+                    ft.show(fragment);
+                    ft.hide(EditProfileFragment.this);
+                    ft.commit();
+               }
+        });
+    }
+
+    private void checkFavArtistButtonClicked() {
+        btnFavArtist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchFragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(SearchFragment.EXTRA_TOKEN, token);
+                bundle.putString(SearchFragment.SEARCH_TYPE, "ARTIST");
+                if (newSignUp) {
+                    bundle.putBoolean("newSignUp", true);
+                } else {
+                    bundle.putBoolean("newSignUp", false);
+                }
+                getActivity().getSupportFragmentManager().setFragmentResultListener("favArtist", EditProfileFragment.this, new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        if (result != null) {
+                            favArtist = result.getParcelable("favArtist");
+                            tvEditFavArtist.setText(favArtist.name);
+                            Image image = favArtist.images.get(0);
+                            if (image != null) {
+                                Glide.with(getContext()).load(image.url).into(ivEditFavArtist);
+                            }
+                        }
+
+                    }
+                });
+
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                if (!fragment.isAdded()) {
+                    ft.add(R.id.flContainer, fragment);
+                }
+                ft.show(fragment);
+                ft.hide(EditProfileFragment.this);
+                ft.commit();
+            }
+        });
+    }
+
+    private void checkFavAlbumButtonClicked() {
+        btnFavAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchFragment fragment = new SearchFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(SearchFragment.EXTRA_TOKEN, token);
+                bundle.putString(SearchFragment.SEARCH_TYPE, "ALBUM");
+                if (newSignUp) {
+                    bundle.putBoolean("newSignUp", true);
+                } else {
+                    bundle.putBoolean("newSignUp", false);
+                }
+                getActivity().getSupportFragmentManager().setFragmentResultListener("favAlbum", EditProfileFragment.this, new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        if (result != null) {
+                            favAlbum = result.getParcelable("favAlbum");
+                            tvEditFavAlbum.setText(favAlbum.name);
+                            Image image = favAlbum.images.get(0);
+                            if (image != null) {
+                                Glide.with(getContext()).load(image.url).into(ivEditFavAlbum);
+                            }
+                        }
+
+                    }
+                });
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                if (!fragment.isAdded()) {
+                    ft.add(R.id.flContainer, fragment);
+                }
+                ft.show(fragment);
+                ft.hide(EditProfileFragment.this);
+                ft.commit();
             }
         });
     }
@@ -301,8 +586,6 @@ public class EditProfileFragment extends Fragment {
     // populates genres into the dropdown
     private List<KeyPairBoolData> generateGenresList(List<String> list) {
         List<KeyPairBoolData> newList = new ArrayList<>();
-
-        Log.i("Genres Size ", String.valueOf(list.size()));
 
         // set up list of displayed genres as unselected
         for (int i = 0; i < list.size(); i++) {
@@ -353,35 +636,69 @@ public class EditProfileFragment extends Fragment {
     }
 
     // add new user to the database
-    private void createUser(String username, String password, String name, Integer age, JSONArray selectedGenres, String token) {
-        Log.i(TAG, "Attempting to create user " + username + "...");
+    private void createUser(String username, String password, String name, Integer age, String bio, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, JSONArray featureAvgs, JSONArray featureWeights, String token) throws ParseException {
         ParseUser user = new ParseUser();
         user.setUsername(username);
         user.setPassword(password);
         user.put("name", name);
         user.put("age", age);
         user.put("favGenres", selectedGenres);
-        if (photoFile != null) {
-            user.put("profilePic", new ParseFile(photoFile));
+        user.put("favArtist", artist.id);
+        user.put("favTrack", track.id);
+        user.put("favAlbum", album.id);
+        user.put("featureAvgs", featureAvgs);
+        user.put("featureWeights", featureWeights);
+
+        if (bio != null) {
+            user.put("bio", bio);
         }
 
-        user.signUpInBackground(new SignUpCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                    Log.i("createUser TOKEN: ", token);
-                    Log.i("create user E code:", Integer.toString(e.getCode()));
-                    Log.e(TAG, "Issue with sign up", e);
-                    //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
-                    return;
+        if (favAlbum.images.size() != 0) {
+            user.put("favAlbumImageUrl", favAlbum.images.get(0).url);
+        }
+
+        if (parseFile != null) {
+            Log.i(TAG, "new pfp found");
+            parseFile.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (null == e) {
+                        user.put("profilePic", parseFile);
+                        user.signUpInBackground(new SignUpCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e != null) {
+                                    return;
+                                }
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
+        else {
+            Log.i(TAG, "new pfp not found");
+            user.signUpInBackground(new SignUpCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        return;
+                    } else {
+                        toProfileFragment();
+                    }
+                }
+            });
+        }
+
     }
 
     private JSONArray getSelectedGenres() {
         List<KeyPairBoolData> selectedGenres = genres.getSelectedItems();
         JSONArray list = new JSONArray();
+        if (selectedGenres.size() == 0) {
+            return list;
+        }
+
         for (int i = 0; i < selectedGenres.size(); i++) {
             list.put(selectedGenres.get(i).getName());
         }
@@ -389,62 +706,33 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void launchCamera() {
-        // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Create a File reference for future access
         photoFile = getPhotoFileUri(photoFileName);
 
-        // wrap File object into a content provider
-        // required for API >= 24
-        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
+        Log.i("CONTEXT", getContext().toString());
         Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-            // Start the image capture intent to take photo
+         if (intent.resolveActivity(getActivity().getApplicationContext().getPackageManager()) != null) {
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
 
     }
 
     private void onPickPhoto(View view) {
-        // Create intent for picking a photo from the gallery
-        Log.i("onPickPhoto","Opening camera roll");
         Intent intent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
         if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-            // Bring up gallery to select a photo
             startActivityForResult(intent, PICK_PHOTO_CODE);
         }
-    }
-
-    public Bitmap loadFromUri(Uri photoUri) {
-        Bitmap image = null;
-        try {
-            // check version of Android on device
-            if(Build.VERSION.SDK_INT > 27){
-                // on newer versions of Android, use the new decodeBitmap method
-                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), photoUri);
-                image = ImageDecoder.decodeBitmap(source);
-            } else {
-                // support older versions of Android by using getBitmap
-                image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            Log.i(TAG, "correct");
             // picture taken
             if (resultCode == RESULT_OK) {
                 // by this point we have the camera photo on disk
@@ -453,19 +741,10 @@ public class EditProfileFragment extends Fragment {
                 // Load the taken image into a preview
                 ivChangeProfilePic.setImageBitmap(takenImage);
             } else { // Result was a failure
-                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Picture wasn't taken!" + resultCode + " request: " + requestCode, Toast.LENGTH_SHORT).show();
             }
         }
         if ((data != null) && requestCode == PICK_PHOTO_CODE && (resultCode == RESULT_OK)) {
-//            Uri photoUri = data.getData();
-//            // how to get photo file?
-//            //photoFile = getPhotoFileUri(photoUri.toString());
-//
-//            // Load the image located at photoUri into selectedImage
-//            Bitmap selectedImage = loadFromUri(photoUri);
-//
-//            // Load the selected image into a preview
-//            ivChangeProfilePic.setImageBitmap(selectedImage);
             Uri selectedImage = data.getData();
             try {
                 ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), selectedImage);
@@ -506,16 +785,10 @@ public class EditProfileFragment extends Fragment {
 
     // Returns the File for a photo stored on disk given the fileName
     public File getPhotoFileUri(String fileName) {
-        // Get safe storage directory for photos
-        // Use `getExternalFilesDir` on Context to access package-specific directories.
-        // This way, we don't need to request external read/write runtime permissions.
-        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Log.d("getPhotoUri", "failed to create directory");
-        }
-
+         File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+                Log.d(TAG, "failed to create directory");
+            }
         // Return the file target for the photo based on filename
         return new File(mediaStorageDir.getPath() + File.separator + fileName);
 

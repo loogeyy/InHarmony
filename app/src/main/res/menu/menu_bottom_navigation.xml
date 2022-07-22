@@ -3,18 +3,21 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/actionProfile"
-        android:icon="@drawable/person"
-        android:title="Profile"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/actionMatch"
         android:icon="@drawable/match"
+        android:iconTint="#FFFFFF"
         android:title="Match"
         app:showAsAction="always" />
     <item
         android:id="@+id/actionMessage"
         android:icon="@drawable/message"
+        android:iconTint="#FFFFFF"
         android:title="Message"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/actionProfile"
+        android:icon="@drawable/person"
+        android:iconTint="#FFFFFF"
+        android:title="Profile"
         app:showAsAction="always" />
 </menu>

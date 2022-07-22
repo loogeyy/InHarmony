@@ -1,34 +1,240 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.MyProfileFragment">
+    android:background="@color/dark_navy"
+    tools:context=".fragments.ProfileFragment">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivChatProfilePic"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/nopfp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:fontFamily="@font/fredoka"
+        android:textAlignment="center"
+        android:textColor="@color/light_blue"
+        android:textColorHint="@color/light_blue"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivChatProfilePic"
+        tools:text="Name, 19" />
 
     <ImageView
         android:id="@+id/btnEditProfile"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:srcCompat="@drawable/edit"
-        tools:layout_editor_absoluteX="336dp"
-        tools:layout_editor_absoluteY="25dp" />
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.865"
+        app:layout_constraintStart_toEndOf="@+id/ivChatProfilePic"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/edit" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearanceOverlay="@style/roundedcorners"
+        android:id="@+id/ivFavArtist"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toEndOf="@+id/tvBio"
+        app:layout_constraintTop_toBottomOf="@+id/artistText"
+        tools:src="@tools:sample/avatars"
+        />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/albumText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Favorite Artists"
-        tools:layout_editor_absoluteX="11dp"
-        tools:layout_editor_absoluteY="355dp" />
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="28dp"
+        android:fontFamily="@font/fredoka"
+        android:text="Favorite Album:"
+        android:textColor="@color/light_blue"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/tvBio"
+        app:layout_constraintTop_toBottomOf="@+id/ivFavArtist" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/artistText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Favorite Genres"
-        tools:layout_editor_absoluteX="11dp"
-        tools:layout_editor_absoluteY="433dp" />
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="36dp"
+        android:fontFamily="@font/fredoka"
+        android:text="Favorite Artist:"
+        android:textColor="@color/light_blue"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.104"
+        app:layout_constraintStart_toEndOf="@+id/tvBio"
+        app:layout_constraintTop_toBottomOf="@+id/tvName" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearanceOverlay="@style/roundedcorners"
+        android:id="@+id/ivFavTrack"
+        android:layout_width="52dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toEndOf="@+id/tvBio"
+        app:layout_constraintTop_toBottomOf="@+id/trackText"
+        tools:src="@tools:sample/avatars" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearanceOverlay="@style/roundedcorners"
+        android:id="@+id/ivPlayButton"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:clickable="true"
+        android:src="@drawable/play"
+        app:layout_constraintBottom_toBottomOf="@+id/ivFavTrack"
+        app:layout_constraintEnd_toEndOf="@+id/ivFavTrack"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ivFavTrack"
+        app:layout_constraintTop_toTopOf="@+id/ivFavTrack"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/trackText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="36dp"
+        android:fontFamily="@font/fredoka"
+        android:text="Favorite Track:"
+        android:textColor="@color/light_blue"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/tvBio"
+        app:layout_constraintTop_toBottomOf="@+id/ivFavAlbum" />
+
+    <TextView
+        android:id="@+id/tvFavArtist"
+        android:layout_width="88dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="@font/varelaround"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.07"
+        app:layout_constraintStart_toEndOf="@+id/ivFavArtist"
+        app:layout_constraintTop_toBottomOf="@+id/artistText"
+        tools:text="Dayglow" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearanceOverlay="@style/roundedcorners"
+        android:id="@+id/ivFavAlbum"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toEndOf="@+id/tvBio"
+        app:layout_constraintTop_toBottomOf="@+id/albumText"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvFavTrack"
+        android:layout_width="84dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="@font/varelaround"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.115"
+        app:layout_constraintStart_toEndOf="@+id/ivFavTrack"
+        app:layout_constraintTop_toBottomOf="@+id/trackText"
+        tools:text="Close To You" />
+
+    <TextView
+        android:id="@+id/tvFavAlbum"
+        android:layout_width="93dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="@font/varelaround"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.075"
+        app:layout_constraintStart_toEndOf="@+id/ivFavAlbum"
+        app:layout_constraintTop_toBottomOf="@+id/albumText"
+        tools:text="Harmony House" />
+
+    <TextView
+        android:id="@+id/tvBio"
+        android:layout_width="151dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/varelaround"
+        android:text="No Bio Yet."
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/genresText2"
+        tools:text="Hi! My name is Lucy and I like usingHi! My name is Lucy and I like using spotify.Hi! My name is Lucy and I like using spotify.Hi! My name is Lucy and I like using spotify.Hi! My name is Lucy and I like using spotify.Hi! My name is Lucy and I like using spotify.Hi! My name is Lucy and I like using spotify. spotify." />
+
+    <TextView
+        android:id="@+id/tvFavGenres"
+        android:layout_width="132dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/varelaround"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/genresText"
+        tools:text="Indie Pop, Pop, Electro" />
+
+    <TextView
+        android:id="@+id/genresText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/fredoka"
+        android:text="Favorite Genres:"
+        android:textColor="@color/light_blue"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvBio" />
+
+    <TextView
+        android:id="@+id/genresText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="36dp"
+        android:fontFamily="@font/fredoka"
+        android:text="Bio:"
+        android:textColor="@color/light_blue"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,11 +16,16 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.Track;
 
 public class LoginActivity extends AppCompatActivity {
     public static String token = null;
@@ -37,12 +42,13 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         token = CredentialsHandler.getToken(this);
-        ParseUser.logOutInBackground(); // token error if i dont include this, how to remove while preserving access?
+        //ParseUser.logOutInBackground(); // token error if i dont include this, how to remove while preserving access?
         // login page if no token is found
-        if (token == null) {
-            setContentView(R.layout.activity_login);
-        } else {
+        if ((token != null) && (ParseUser.getCurrentUser() != null)) {
             startMainActivity(token, false);
+        } else {
+            ParseUser.logOutInBackground();
+            setContentView(R.layout.activity_login);
         }
 
     }
@@ -58,35 +64,12 @@ public class LoginActivity extends AppCompatActivity {
                         Log.i("loginUser TOKEN: ", token);
                         Log.i("login user E code:", Integer.toString(e.getCode()));
                         Log.i("Sign up requested: ", "redirect to sign up page");
-                        //createUser(username, password, token);
-                        //startSignUpFragment(token);
                         startMainActivity(token, true);
                     }
                     return;
                 }
                 Log.i("loginUser TOKEN: ", token);
                 startMainActivity(token, false);
-            }
-        });
-    }
-
-
-    //delete this later
-    private void createUser(String username, String password, String token) {
-        Log.i(TAG, "Attempting to create user " + username + "...");
-        ParseUser user = new ParseUser();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.signUpInBackground(new SignUpCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                     Log.i("createUser TOKEN: ", token);
-                     Log.i("create user E code:", Integer.toString(e.getCode()));
-                     Log.e(TAG, "Issue with sign up", e);
-                     //https://parseplatform.org/Parse-SDK-dotNET/api/html/T_Parse_ParseException_ErrorCode.htm
-                    return;
-                }
             }
         });
     }
@@ -99,15 +82,16 @@ public class LoginActivity extends AppCompatActivity {
                         "user-library-read", "user-read-private"}).setShowDialog(true)
                 .build();
 
-        // open up spotify log in scree
+        // open up spotify log in screen
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
     // handle post log in authentication screen
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        Log.i(TAG, "onActivityResult");
         super.onActivityResult(requestCode, resultCode, intent);
-
+        Log.i("request code", String.valueOf(requestCode));
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
@@ -128,6 +112,13 @@ public class LoginActivity extends AppCompatActivity {
                             String email = service.getMe().email;
                             String id = service.getMe().id;
                             List<String> genreList = service.getSeedsGenres().genres;
+                            Pager<Artist> songId = service.getTopArtists();
+                            if (songId.items.size() == 0) {
+                                Log.i("song id", "no size");
+                            }
+                            for (Artist track : songId.items) {
+                                Log.i(TAG, "SIMILARITY: " + track.name);
+                            }
                             loginUser(email, id, token);
                             Log.i("EMAIL", email);
                             Log.i("ID", id);
@@ -159,24 +150,6 @@ public class LoginActivity extends AppCompatActivity {
         }
         startActivity(intent);
         finish();
-    }
-
-    private void startSignUpFragment(String token) {
-////        Fragment fragment = new EditProfileFragment();
-////        Bundle bundle = new Bundle();
-////        bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
-////        bundle.putBoolean("newSignUp", true);
-//       String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
-////        bundle.putString("tvWelcomeText", welcomeText);
-////
-////        fragment.setArguments(bundle);
-////        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-//        Intent intent = SignUpActivity.createIntent(this);
-//        intent.putExtra(SignUpActivity.EXTRA_TOKEN, token);
-//        intent.putExtra("tvWelcomeText", welcomeText);
-//        intent.putExtra("newSignUp", true); //put this as false for edit profile intent
-//        startActivity(intent);
-//        finish();
     }
 
     private void logError(String msg) {

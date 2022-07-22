@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="10dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="60dp"
+    android:clipToPadding="false">
+
+    <TextView
+        android:id="@+id/tvSender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ivProfileOther"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@+id/ivProfileOther"
+        android:fontFamily="@font/fredoka"
+        android:paddingBottom="4dp"
+        android:text="Johny Lindsey" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivProfileOther"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentLeft="true"
+        android:contentDescription="@string/profile_other"
+        android:src="@drawable/nopfp" />
+
+    <TextView
+        android:id="@+id/tvOtherBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvIncomingTrack"
+        android:layout_alignLeft="@+id/tvSender"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/message_incoming"
+        android:elevation="2dp"
+        android:fontFamily="@font/varelaround"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:text="Someone else's message"
+        android:textColor="#000000"
+        android:textSize="18dp" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivIncomingTrack"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/tvSender"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="4dp"
+        android:layout_toEndOf="@+id/ivProfileOther"
+        app:shapeAppearanceOverlay="@style/partialrounded"
+        app:srcCompat="@drawable/ic_launcher_background"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvIncomingTrack"
+        android:layout_width="195dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/tvSender"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/ivIncomingTrack"
+        android:background="@drawable/partialrounded"
+        android:fontFamily="@font/varelaround"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:text="Song Title"
+        android:textColor="#000000"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/ivPlayIncoming"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignStart="@+id/ivIncomingTrack"
+        android:layout_alignBottom="@+id/ivIncomingTrack"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="0dp"
+        android:clickable="true"
+        app:srcCompat="@drawable/play" />
+</RelativeLayout>

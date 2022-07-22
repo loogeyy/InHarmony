@@ -2,6 +2,10 @@ package com.example.inharmony;
 
 import java.util.List;
 
+import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.AlbumSimple;
+import kaaes.spotify.webapi.android.models.Albums;
+import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class Search {
@@ -9,7 +13,13 @@ public class Search {
     public interface View {
         void reset();
 
-        void addData(List<Track> items);
+        void addDataTracks(List<Track> items);
+
+        void addDataArtists(List<Artist> items);
+
+        void addDataAlbums(List<AlbumSimple> items);
+
+
     }
 
     public interface ActionListener {
@@ -18,9 +28,13 @@ public class Search {
 
         String getCurrentQuery();
 
-        void search(String searchQuery);
+        void searchTracks(String searchQuery);
 
-        void loadMoreResults();
+        void searchArtists(String searchQuery);
+
+        void searchAlbums(String searchQuery);
+
+        void loadMoreResults(String searchType);
 
         void selectTrack(Track item);
 

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_navy">
+
+    <EditText
+        android:id="@+id/etMessage"
+        android:layout_width="302dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/varelaround"
+        android:hint="@string/message_hint"
+        android:imeOptions="actionSend"
+        android:inputType="textShortMessage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ibSend"
+        app:layout_constraintStart_toEndOf="@+id/btnAddTrack" />
+
+    <ImageButton
+        android:id="@+id/ibSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/baby_blue"
+        android:contentDescription="@string/send"
+        android:gravity="center"
+        android:paddingRight="10dp"
+        android:src="@drawable/ic_baseline_send_24"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etMessage"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvChat"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/background"
+        app:layout_constraintBottom_toTopOf="@+id/tvTrack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvChatTitle" />
+
+
+    <ImageButton
+        android:id="@+id/btnAddTrack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded"
+        android:clickable="true"
+        android:foreground="@drawable/add_music"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/add_music" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivTrack"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddTrack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:shapeAppearanceOverlay="@style/partialrounded"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvTrack"
+        android:layout_width="208dp"
+        android:layout_height="50dp"
+        android:background="@drawable/partialrounded"
+        android:fontFamily="@font/varelaround"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:text="Song TItle"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/etMessage"
+        app:layout_constraintStart_toEndOf="@+id/ivTrack" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="21dp"
+        android:layout_height="21dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/remove"
+        android:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/ivTrack"
+        app:layout_constraintEnd_toEndOf="@+id/ivTrack" />
+
+    <TextView
+        android:id="@+id/tvChatTitle"
+        android:layout_width="240dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/varelaround"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="10dp"
+        android:text="Chat with Match"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/btnChatProfile"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <Button
+        android:id="@+id/btnChatProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:fontFamily="@font/fredoka"
+        android:text="View their Profile"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/rvChat"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

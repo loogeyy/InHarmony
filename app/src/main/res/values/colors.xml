@@ -13,6 +13,7 @@
 
     <!-- InHarmony Color Scheme -->
     <color name="dark_navy">#050A30</color>
+    <color name="background">#030620</color>
     <color name="navy">#12229D</color>
     <color name="medium_blue">#233DFF</color>
     <color name="baby_blue">#5CB6F9</color>

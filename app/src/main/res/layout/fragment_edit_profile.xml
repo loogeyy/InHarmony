@@ -13,10 +13,10 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="12dp"
         android:src="@drawable/nopfp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.055"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvWelcomeText"
         tools:src="@drawable/nopfp" />
@@ -25,127 +25,217 @@
         android:id="@+id/btnChangePic"
         android:layout_width="47dp"
         android:layout_height="47dp"
-        android:layout_marginStart="220dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="96dp"
         android:background="@drawable/ic_camera"
         android:backgroundTint="@color/white"
         android:scaleType="centerInside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ivChangeProfilePic" />
 
+
     <EditText
         android:id="@+id/etChangeBio"
         android:layout_width="350dp"
         android:layout_height="105dp"
+        android:layout_marginTop="216dp"
         android:ems="10"
-        android:fontFamily="sans-serif"
-        android:hint="Bio"
+        android:fontFamily="@font/varelaround"
+        android:hint="Add a short bio here"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.295"
+        app:layout_constraintHorizontal_bias="0.36"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="423dp" />
+        app:layout_constraintTop_toBottomOf="@+id/genres" />
 
     <TextView
         android:id="@+id/tvWelcomeText"
         android:layout_width="324dp"
-        android:layout_height="63dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:fontFamily="@font/fredoka"
+        android:textAlignment="center"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Welcome new user! Start by filling out some basic profile details!" />
 
     <EditText
         android:id="@+id/etName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="104dp"
+        android:layout_marginEnd="10dp"
         android:ems="10"
-        android:fontFamily="@font/anteb_bold"
+        android:fontFamily="@font/varelaround"
+        android:hint="Name"
         android:inputType="textPersonName"
-        android:text="Name"
         android:textColor="@color/light_blue"
+        android:textColorHint="@color/light_blue"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivChangeProfilePic" />
+        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintStart_toEndOf="@+id/ivChangeProfilePic"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/etAge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="10dp"
         android:ems="10"
-        android:fontFamily="@font/anteb_bold"
+        android:fontFamily="@font/varelaround"
+        android:hint="Age"
         android:inputType="number"
-        android:text="Age"
         android:textColor="@color/light_blue"
+        android:textColorHint="@color/light_blue"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintStart_toEndOf="@+id/ivChangeProfilePic"
         app:layout_constraintTop_toBottomOf="@+id/etName" />
-
-    <TextView
-        android:id="@+id/etGender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gender"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="542dp" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Favorite Artists"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.139"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="542dp" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Favorite Song"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:text="Favorite Lyrics"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
         android:id="@+id/genres"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="378dp"
+        android:layout_height="30dp"
         android:layout_margin="10dp"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="#C63E3E"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_corners"
+        android:dropDownWidth="wrap_content"
+        android:forceDarkAllowed="true"
+        android:spinnerMode="dropdown"
         app:hintText="Select Your Top 3 Genres"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.473"
+        app:layout_constraintHorizontal_bias="0.254"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etAge"
-        app:textColor="@color/white" />
+        app:layout_constraintTop_toBottomOf="@+id/ivChangeProfilePic"
+        app:textColor="@color/dark_navy" />
 
     <Button
         android:id="@+id/btnUpdateProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="72dp"
-        android:fontFamily="@font/anteb_bold"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/navy"
+        android:fontFamily="@font/fredoka"
         android:text="Update Profile"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnFavSong"
+        android:layout_width="104dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="@color/baby_blue"
+        android:fontFamily="@font/fredoka"
+        android:text="Pick your favorite song"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/genres" />
+
+    <Button
+        android:id="@+id/btnFavArtist"
+        android:layout_width="106dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/baby_blue"
+        android:fontFamily="@font/fredoka"
+        android:text="Pick your favorite artist"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnFavSong" />
+
+    <Button
+        android:id="@+id/btnFavAlbum"
+        android:layout_width="106dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/baby_blue"
+        android:fontFamily="@font/fredoka"
+        android:text="Pick Your Favorite Album"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnFavArtist" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearanceOverlay="@style/roundedcorners"
+        android:id="@+id/ivEditFavTrack"
+        android:layout_width="52dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/btnFavSong"
+        app:layout_constraintTop_toBottomOf="@+id/genres"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvEditFavArtist"
+        android:layout_width="187dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:clickable="true"
+        android:fontFamily="@font/varelaround"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/ivEditFavArtist"
+        app:layout_constraintTop_toBottomOf="@+id/tvEditFavTrack"
+        tools:text="Dayglow" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearanceOverlay="@style/roundedcorners"
+        android:id="@+id/ivEditFavArtist"
+        android:layout_width="52dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/btnFavArtist"
+        app:layout_constraintTop_toBottomOf="@+id/ivEditFavTrack"
+        tools:src="@tools:sample/avatars" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearanceOverlay="@style/roundedcorners"
+        android:id="@+id/ivEditFavAlbum"
+        android:layout_width="52dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/btnFavAlbum"
+        app:layout_constraintTop_toBottomOf="@+id/ivEditFavArtist"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvEditFavAlbum"
+        android:layout_width="187dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="48dp"
+        android:fontFamily="@font/varelaround"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/ivEditFavAlbum"
+        app:layout_constraintTop_toBottomOf="@+id/tvEditFavArtist"
+        tools:text="Harmony House" />
+
+    <TextView
+        android:id="@+id/tvEditFavTrack"
+        android:layout_width="193dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/varelaround"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/ivEditFavTrack"
+        app:layout_constraintTop_toBottomOf="@+id/genres"
+        tools:text="Close To You" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
