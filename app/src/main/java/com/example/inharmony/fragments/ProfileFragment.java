@@ -199,120 +199,120 @@ public class ProfileFragment extends Fragment {
         service = spotifyApi.getService();
     }
 
-    private void populateProfile(Track favTrack, Artist favArtist, AlbumSimple favAlbum) {
-        ArrayList<String> genres = (ArrayList<String>) user.get("favGenres");
-        String favGenres = "";
-        for (int i = 0; i < genres.size(); i++) {
-            if (i == 0) {
-                favGenres = genres.get(i);
-            } else {
-                favGenres = favGenres + ", " + genres.get(i);
-            }
-        }
-        tvFavGenres.setText(favGenres);
-        tvFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
-        tvFavArtist.setText(favArtist.name.toString());
-        tvFavAlbum.setText(favAlbum.name.toString());
-        if (favTrack.album.images.size() != 0) {
-            Image image = favTrack.album.images.get(0);
-            Glide.with(getContext()).load(image.url).into(ivFavTrack);
-        }
+//    private void populateProfile(Track favTrack, Artist favArtist, AlbumSimple favAlbum) {
+//        ArrayList<String> genres = (ArrayList<String>) user.get("favGenres");
+//        String favGenres = "";
+//        for (int i = 0; i < genres.size(); i++) {
+//            if (i == 0) {
+//                favGenres = genres.get(i);
+//            } else {
+//                favGenres = favGenres + ", " + genres.get(i);
+//            }
+//        }
+//        tvFavGenres.setText(favGenres);
+//        tvFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
+//        tvFavArtist.setText(favArtist.name.toString());
+//        tvFavAlbum.setText(favAlbum.name.toString());
+//        if (favTrack.album.images.size() != 0) {
+//            Image image = favTrack.album.images.get(0);
+//            Glide.with(getContext()).load(image.url).into(ivFavTrack);
+//        }
+//
+//        if (favArtist.images.size() != 0) {
+//            Image image = favArtist.images.get(0);
+//            Glide.with(getContext()).load(image.url).into(ivFavArtist);
+//        }
+//
+//        if (favAlbum.images.size() != 0) {
+//            Image image = favAlbum.images.get(0);
+//            Glide.with(getContext()).load(image.url).into(ivFavAlbum);
+//        }
+//
+//        tvName.setText(user.get("name").toString() + ", " + user.get("age").toString());
+//
+//        if (user.get("bio") != null) {
+//            tvBio.setText(user.get("bio").toString());
+//        }
+//
+//        ParseFile profilePic = (ParseFile) user.get("profilePic");
+//        if (profilePic != null) {
+//            Glide.with(getContext()).load(profilePic.getUrl()).into(ivProfilePic);
+//        } else {
+//            ivProfilePic.setImageResource(R.drawable.nopfp);
+//        }
+//
+//        if (favTrack.preview_url == null) {
+//            ivPlayButton.setVisibility(View.GONE);
+//        }
+//
+//    }
+//
+//    public void selectTrack(Track track) {
+//
+//        String previewUrl = track.preview_url;
+//
+//        if (mPlayer == null) {
+//            Log.i(TAG, "mPlayer is Null");
+//            return;
+//        }
+//
+//        String currentTrackUrl = mPlayer.getCurrentTrack();
+//
+//        if (currentTrackUrl == null || !currentTrackUrl.equals(previewUrl)) {
+//            Log.i(TAG, "Play");
+//            mPlayer.play(previewUrl);
+//            ivPlayButton.setImageResource(R.drawable.pause);
+//
+//        }
+//        else if (mPlayer.isPlaying()) {
+//            Log.i(TAG, "Pause");
+//            mPlayer.pause();
+//            ivPlayButton.setImageResource(R.drawable.play);
+//        } else {
+//            Log.i(TAG, "Resume");
+//            ivPlayButton.setImageResource(R.drawable.pause);
+//            mPlayer.resume();
+//        }
+//    }
+//
+////
+//    private void checkSpotifyButtonClicked() {
+//        btnSpotifyProfile.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(profileUrl));
+//                startActivity(intent);
+//                Log.i(TAG, profileUrl);
+//            }
+//        });
+//    }
+//
+//    private void checkPlayButtonClicked() {
+//        ivPlayButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.i(TAG, "Clicked: " + favTrack.name.toString());
+//                initializeSpotifyService();
+//                selectTrack(favTrack);
+//            }
+//        });
+//    }
 
-        if (favArtist.images.size() != 0) {
-            Image image = favArtist.images.get(0);
-            Glide.with(getContext()).load(image.url).into(ivFavArtist);
-        }
-
-        if (favAlbum.images.size() != 0) {
-            Image image = favAlbum.images.get(0);
-            Glide.with(getContext()).load(image.url).into(ivFavAlbum);
-        }
-
-        tvName.setText(user.get("name").toString() + ", " + user.get("age").toString());
-
-        if (user.get("bio") != null) {
-            tvBio.setText(user.get("bio").toString());
-        }
-
-        ParseFile profilePic = (ParseFile) user.get("profilePic");
-        if (profilePic != null) {
-            Glide.with(getContext()).load(profilePic.getUrl()).into(ivProfilePic);
-        } else {
-            ivProfilePic.setImageResource(R.drawable.nopfp);
-        }
-
-        if (favTrack.preview_url == null) {
-            ivPlayButton.setVisibility(View.GONE);
-        }
-
-    }
-
-    public void selectTrack(Track track) {
-
-        String previewUrl = track.preview_url;
-
-        if (mPlayer == null) {
-            Log.i(TAG, "mPlayer is Null");
-            return;
-        }
-
-        String currentTrackUrl = mPlayer.getCurrentTrack();
-
-        if (currentTrackUrl == null || !currentTrackUrl.equals(previewUrl)) {
-            Log.i(TAG, "Play");
-            mPlayer.play(previewUrl);
-            ivPlayButton.setImageResource(R.drawable.pause);
-
-        }
-        else if (mPlayer.isPlaying()) {
-            Log.i(TAG, "Pause");
-            mPlayer.pause();
-            ivPlayButton.setImageResource(R.drawable.play);
-        } else {
-            Log.i(TAG, "Resume");
-            ivPlayButton.setImageResource(R.drawable.pause);
-            mPlayer.resume();
-        }
-    }
-
-
-    private void checkSpotifyButtonClicked() {
-        btnSpotifyProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(profileUrl));
-                startActivity(intent);
-                Log.i(TAG, profileUrl);
-            }
-        });
-    }
-
-    private void checkPlayButtonClicked() {
-        ivPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "Clicked: " + favTrack.name.toString());
-                initializeSpotifyService();
-                selectTrack(favTrack);
-            }
-        });
-    }
-
-    private void checkEditProfileButtonClicked() {
-        btnEditProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPlayer.release();
-                Fragment fragment = new EditProfileFragment();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("newSignUp", false);
-                String welcomeText = "Edit your profile details below.";
-                bundle.putString("tvWelcomeText", welcomeText);
-                bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
-            }
-        });
-    }
+//    private void checkEditProfileButtonClicked() {
+//        btnEditProfile.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mPlayer.release();
+//                Fragment fragment = new EditProfileFragment();
+//                Bundle bundle = new Bundle();
+//                bundle.putBoolean("newSignUp", false);
+//                String welcomeText = "Edit your profile details below.";
+//                bundle.putString("tvWelcomeText", welcomeText);
+//                bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
+//                fragment.setArguments(bundle);
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
+//            }
+//        });
+//    }
 
 }

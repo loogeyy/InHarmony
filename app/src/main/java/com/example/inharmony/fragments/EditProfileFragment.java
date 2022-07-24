@@ -438,7 +438,7 @@ public class EditProfileFragment extends Fragment {
                         photo = new ParseFile(photoFile);
                         ParseUser.getCurrentUser().put("profilePic", photo);
                     }
-                    ParseUser.getCurrentUser().put("spotifyProfileId", spotifyProfileId);
+                   // ParseUser.getCurrentUser().put("spotifyProfileId", spotifyProfileId);
                     ParseUser.getCurrentUser().saveInBackground();
                     toProfileFragment();
                 }

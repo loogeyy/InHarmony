@@ -33,19 +33,14 @@ import kaaes.spotify.webapi.android.SpotifyService;
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse {
     private static final String TAG = "MainActivity";
-
-    private BottomNavigationView bottomMenu;
-
     public static String NEW_SIGN_UP = "NEW_SIGN_UP";
     public static final String EXTRA_TOKEN = "EXTRA_TOKEN";
+
+    private BottomNavigationView bottomMenu;
+    final FragmentManager fragmentManager = getSupportFragmentManager();
+
     private String token;
     private boolean newSignUp;
-
-    final FragmentManager fragmentManager = getSupportFragmentManager();
-    private Search.ActionListener mActionListener;
-
-    private LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
-    private SearchResultsAdapter mAdapter;
 
     private AlgorithmTask asyncTask;
     private JSONArray featureAvgs = new JSONArray();
@@ -61,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         Log.i("MAINACTIVITY", "onCreate!");
         setContentView(R.layout.activity_main);
 
-      //asyncTask.delegate = this;
-
         //grabs intent from login including token
         Intent intent = getIntent();
         token = intent.getStringExtra(EXTRA_TOKEN);
@@ -72,14 +65,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        //getSupportActionBar().setLogo(R.drawable.logo);
-        //getSupportActionBar().setIcon(R.drawable.logo);
-
         bottomMenu = findViewById(R.id.bottomMenu);
-
     }
 
     public void onLogout(MenuItem mi) {
@@ -90,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
@@ -101,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
         SpotifyService service = spotifyApi.getService();
+
         asyncTask = new AlgorithmTask(service);
         asyncTask.delegate = this;
         asyncTask.execute();
