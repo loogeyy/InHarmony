@@ -89,7 +89,9 @@ public class MatchingFragment extends Fragment {
 
         arrayAdapter = new CardAdapter(getContext(), R.layout.item, rowItems, token, newSignUp);
         try {
-            updatePotentialMatches();
+            if (rowItems.size() == 0) {
+                updatePotentialMatches();
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -231,7 +233,7 @@ public class MatchingFragment extends Fragment {
     }
 
     //THE ALGORITHM
-    private double similarityScore(ParseUser currentUser, ParseUser user) {
+    public double similarityScore(ParseUser currentUser, ParseUser user) {
         int FEATURE_LIST_SIZE = 6;
         ArrayList<Double> myFeatureAvgs = (ArrayList<Double>) currentUser.get("featureAvgs");
         ArrayList<Double> myFeatureWeights = (ArrayList<Double>) currentUser.get("featureWeights");
@@ -249,7 +251,7 @@ public class MatchingFragment extends Fragment {
             totalSize += (myFeatureWeights.get(i) + otherFeatureWeights.get(i));
         }
         double result = totalSum / totalSize;
-        Log.i("Results", user.getString("bio") + " and " + currentUser.getString("bio") + ": " + result);
+        //Log.i("Results", user.getString("bio") + " and " + currentUser.getString("bio") + ": " + result);
         return result;
     }
 

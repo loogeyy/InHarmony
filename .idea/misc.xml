@@ -5,6 +5,7 @@
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="../../.gradle/caches/transforms-3/bfec8dfcaf6c34e166a516bbd7a3f400/transformed/material-1.6.1/res/layout/design_bottom_navigation_item.xml" value="0.1388888888888889" />
+        <entry key="app/src/main/res/drawable/bottom_menu.xml" value="0.1945" />
         <entry key="app/src/main/res/drawable/ic_baseline_logout_24.xml" value="0.176" />
         <entry key="app/src/main/res/drawable/ic_baseline_send_24.xml" value="0.279" />
         <entry key="app/src/main/res/drawable/message_incoming.xml" value="0.1995" />
@@ -14,9 +15,10 @@
         <entry key="app/src/main/res/drawable/person.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/rounded.xml" value="0.178" />
         <entry key="app/src/main/res/drawable/rounded_corners.xml" value="0.194" />
+        <entry key="app/src/main/res/drawable/top_menu.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.266839599609375" />
         <entry key="app/src/main/res/layout/activity_login_temp.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25467071533203123" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.26324768066406257" />
         <entry key="app/src/main/res/layout/activity_matching.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_matching_temp.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.38457014416460467" />
@@ -25,9 +27,10 @@
         <entry key="app/src/main/res/layout/fragment_edit_profile.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_match_popup.xml" value="0.47171325683593757" />
         <entry key="app/src/main/res/layout/fragment_matching.xml" value="0.18303571428571427" />
-        <entry key="app/src/main/res/layout/fragment_my_profile.xml" value="0.26313018798828136" />
+        <entry key="app/src/main/res/layout/fragment_my_profile.xml" value="0.32701263427734384" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.2102752685546875" />
-        <entry key="app/src/main/res/layout/item.xml" value="0.3227493286132813" />
+        <entry key="app/src/main/res/layout/item.xml" value="0.3507125854492188" />
         <entry key="app/src/main/res/layout/item_chatlist.xml" value="0.26920283220816343" />
         <entry key="app/src/main/res/layout/list_item.xml" value="0.3058475633249549" />
         <entry key="app/src/main/res/layout/match_popup.xml" value="0.38005218505859373" />

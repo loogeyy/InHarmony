@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -42,36 +43,39 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         token = CredentialsHandler.getToken(this);
-        //ParseUser.logOutInBackground(); // token error if i dont include this, how to remove while preserving access?
-        // login page if no token is found
+        // existing user is already logged in, redirect past log-in screen
         if ((token != null) && (ParseUser.getCurrentUser() != null)) {
             startMainActivity(token, false);
-        } else {
+        }
+        // no user logged in, display log-in screen
+        else {
             ParseUser.logOutInBackground();
             setContentView(R.layout.activity_login);
         }
 
     }
 
-    //TO-DO: rather than rely on error codes, query the user database and collect list of users to check against
     private void loginUser(String username, String password, String token) {
-        ParseUser.logInInBackground(username, password, new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException e) {
-                if (e != null) {
-                    Log.i("E code:", Integer.toString(e.getCode()));
-                    if (e.getCode() == 101) {
-                        Log.i("loginUser TOKEN: ", token);
-                        Log.i("login user E code:", Integer.toString(e.getCode()));
-                        Log.i("Sign up requested: ", "redirect to sign up page");
-                        startMainActivity(token, true);
-                    }
-                    return;
-                }
-                Log.i("loginUser TOKEN: ", token);
-                startMainActivity(token, false);
+        ParseQuery<ParseUser> allUsers = ParseUser.getQuery();
+        allUsers.whereEqualTo("username", username);
+        try {
+            List<ParseUser> userMatch = allUsers.find();
+            // indicates new user -> sign up
+            if (userMatch.size() == 0) {
+                startMainActivity(token, true);
             }
-        });
+            // existing user -> log in
+            else {
+                ParseUser.logInInBackground(username, password, new LogInCallback() {
+                    @Override
+                    public void done(ParseUser user, ParseException e) {
+                        startMainActivity(token, false);
+                    }
+                });
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onLoginButtonClicked(View view) {
@@ -98,7 +102,6 @@ public class LoginActivity extends AppCompatActivity {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    //logMessage("Got token: " + response.getAccessToken());
                     CredentialsHandler.setToken(this, token, response.getExpiresIn(), TimeUnit.SECONDS);
 
                     token = response.getAccessToken();

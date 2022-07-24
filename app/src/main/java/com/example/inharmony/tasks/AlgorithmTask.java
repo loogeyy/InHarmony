@@ -116,8 +116,8 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
                     e.printStackTrace();
                 }
             }
-            Log.i(TAG, "featureavgs: " + featureAvgs.toString());
-            Log.i(TAG, "featureweight" + featureWeights.toString());
+            //Log.i(TAG, "featureavgs: " + featureAvgs.toString());
+            //Log.i(TAG, "featureweight" + featureWeights.toString());
             return data;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -139,10 +139,10 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
         double sd = 0;
         double sq = 0;
         double result = 0;
-        System.out.println("Elements are:");
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i));
-        }
+//        System.out.println("Elements are:");
+//        for (int i = 0; i < list.size(); i++) {
+//            System.out.println(list.get(i));
+//        }
 
         for (int i = 0; i < list.size(); i++) {
             sum = sum + list.get(i);
@@ -156,20 +156,20 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
 
         sq = sd / list.size();
         result = (double) Math.sqrt(sq);
-        Log.i("Standard Deviation", String.valueOf(result));
+        //Log.i("Standard Deviation", String.valueOf(result));
         return result;
     }
 
     private double calculateWeight(List<Double> list) {
         double standardDeviation = calculateStandardDeviation(list);
         double result = (double) (10/(standardDeviation + 0.3) - 5);
-        Log.i("weight", String.valueOf(result));
+        //Log.i("weight", String.valueOf(result));
         return result;
     }
 
     @Override
     protected void onPostExecute(List<JSONArray> jsonArray) {
-        Log.i(TAG, "post execute");
+        //Log.i(TAG, "post execute");
         delegate.processFinish(jsonArray);
     }
 }

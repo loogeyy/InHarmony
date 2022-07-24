@@ -70,11 +70,12 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         newSignUp = intent.getExtras().getBoolean(NEW_SIGN_UP);
         Log.i("MAINACTIVITY NEWSIGNUP", String.valueOf(newSignUp));
 
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setLogo(R.drawable.logo);
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        //getSupportActionBar().setLogo(R.drawable.logo);
         //getSupportActionBar().setIcon(R.drawable.logo);
 
         bottomMenu = findViewById(R.id.bottomMenu);
