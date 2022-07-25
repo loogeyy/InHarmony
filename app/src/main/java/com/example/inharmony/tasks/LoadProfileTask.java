@@ -62,7 +62,6 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
     private ImageView ivPlayButton;
     private ImageView btnSpotifyProfile;
 
-    private boolean myProfile;
     private ParseUser user;
     private FragmentManager fragmentManager;
 
@@ -123,10 +122,8 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
         ParseUser user = parseUsers[0];
         favTrack = service.getTracks(user.get("favTrack").toString()).tracks.get(0);
         favArtist = service.getArtists(user.get("favArtist").toString()).artists.get(0);
-        Log.i("ALBUM:", user.get("favAlbum").toString());
         String favAlbumId = user.get("favAlbum").toString();
         List<Album> albums = service.getAlbums(favAlbumId.toString()).albums;
-        Log.i(TAG, "album size:" +  albums.size());
         for (Album a : albums) {
             if (a.id.equals(favAlbumId)) {
                 favAlbum = a;
@@ -134,17 +131,9 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
             }
 //
         }
-        Log.i("ALBUM FOUND:", favAlbum.toString());
-//        Log.i(TAG, user.getString("spotifyProfileId"));
-//        UserPublic userProfile = service.getUser(user.get("spotifyProfileId").toString());
-//        if (userProfile == null) {
-//            Log.i(TAG, "no profile found");
-//        } else {
-//            Log.i(TAG, "profile found!");
-//        }
-//        Map<String, String> externalUrls = userProfile.external_urls;
-//        profileUrl = externalUrls.get("spotify");
-//        Log.i(TAG, userProfile.href.toString());
+        UserPublic userProfile = service.getUser(user.get("spotifyProfileId").toString());
+        Map<String, String> externalUrls = userProfile.external_urls;
+        profileUrl = externalUrls.get("spotify");
 
         return null;
     }

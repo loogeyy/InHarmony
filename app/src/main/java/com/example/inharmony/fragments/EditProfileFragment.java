@@ -438,7 +438,6 @@ public class EditProfileFragment extends Fragment {
                         photo = new ParseFile(photoFile);
                         ParseUser.getCurrentUser().put("profilePic", photo);
                     }
-                   // ParseUser.getCurrentUser().put("spotifyProfileId", spotifyProfileId);
                     ParseUser.getCurrentUser().saveInBackground();
                     toProfileFragment();
                 }
@@ -450,7 +449,7 @@ public class EditProfileFragment extends Fragment {
     private void toProfileFragment() {
         bottomMenu.setVisibility(View.VISIBLE);
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        Fragment fragment = new ProfileFragment(true, ParseUser.getCurrentUser());
+        Fragment fragment = new ProfileFragment(ParseUser.getCurrentUser());
         Bundle bundle = new Bundle();
         bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
         bundle.putBoolean("newSignUp", false);
@@ -644,6 +643,7 @@ public class EditProfileFragment extends Fragment {
         user.put("featureAvgs", featureAvgs);
         user.put("featureWeights", featureWeights);
         user.put("spotifyProfileId", spotifyProfileId);
+        user.put("potentialMatches", new JSONArray());
 
         if (bio != null) {
             user.put("bio", bio);

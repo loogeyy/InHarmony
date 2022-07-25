@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         // no user logged in, display log-in screen
         else {
-            ParseUser.logOutInBackground();
+            //ParseUser.logOutInBackground();
             setContentView(R.layout.activity_login);
         }
 

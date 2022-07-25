@@ -2,7 +2,9 @@ package com.example.inharmony.tasks;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
@@ -14,11 +16,14 @@ import com.bumptech.glide.Glide;
 import com.example.inharmony.Player;
 import com.example.inharmony.PlayerService;
 import com.example.inharmony.R;
+import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -26,16 +31,19 @@ import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.UserPublic;
 
-public class LoadMatchCardTask extends AsyncTask<ParseUser, Void, Void> {
+public class LoadMatchCardTask extends AsyncTask<Void, Void, Void> {
     private static final String TAG = "LoadProfileTask";
 
     View view;
     String token;
     SpotifyService service;
+    ParseUser user;
 
     String bio;
     String basic;
+    String profileUrl;
     Album favAlbum;
     Track favTrack;
     Artist favArtist;
@@ -46,6 +54,7 @@ public class LoadMatchCardTask extends AsyncTask<ParseUser, Void, Void> {
     TextView tvNameCard;
     TextView tvFavTrack;
     ImageView ivFavTrack;
+    ImageView btnSpotify;
     ImageView ivPlayButton;
     TextView tvFavAlbumCard;
     ImageView ivFavAlbumCard;
@@ -68,11 +77,13 @@ public class LoadMatchCardTask extends AsyncTask<ParseUser, Void, Void> {
         }
     };
 
-    public LoadMatchCardTask(View view, String token, SpotifyService service) {
+    public LoadMatchCardTask(View view, String token, SpotifyService service, ParseUser user) {
         this.view = view;
         this.token = token;
         this.service = service;
+        this.user = user;
     }
+
 
     @Override
     protected void onPreExecute() {
@@ -80,6 +91,7 @@ public class LoadMatchCardTask extends AsyncTask<ParseUser, Void, Void> {
         tvNameCard = view.findViewById(R.id.tvNameCard);
         tvFavTrack = view.findViewById(R.id.tvFavTrackCard);
         ivFavTrack = view.findViewById(R.id.ivFavTrackCard);
+        btnSpotify = view.findViewById(R.id.btnSpotify);
         ivFavAlbumCard = view.findViewById(R.id.ivFavAlbumCard);
         tvFavAlbumCard = view.findViewById(R.id.tvFavAlbumCard);
         ivPlayButton = view.findViewById(R.id.ivPlayButtonCard);
@@ -87,53 +99,112 @@ public class LoadMatchCardTask extends AsyncTask<ParseUser, Void, Void> {
         ivFavArtistCard = view.findViewById(R.id.ivFavArtistCard);
         tvFavArtistCard = view.findViewById(R.id.tvFavArtistCard);
         ivProfilePicCard = view.findViewById(R.id.ivProfilePicCard);
-
+        Log.i(TAG, user.getUsername());
         view.getContext().bindService(PlayerService.getIntent(view.getContext()), mServiceConnection, Activity.BIND_AUTO_CREATE);
     }
 
     @Override
-    protected Void doInBackground(ParseUser... parseUsers) {
-        ParseUser user = parseUsers[0];
-
+    protected Void doInBackground(Void... voids) {
         // basic info
-        basic = user.get("name")+ ", " + user.get("age");
-        profilePic = (ParseFile) user.get("profilePic");
-        if (user.get("bio") != null) {
-            bio = user.get("bio").toString();
-        }
+        try {
+            basic = user.fetch().get("name") + ", " + user.fetch().get("age");
 
-        // favorite genres
-        ArrayList<String> genres = (ArrayList<String>) user.get("favGenres");
-        favGenres = "";
-        for (int i = 0; i < genres.size(); i++) {
-            if (i == 0) {
-                favGenres = genres.get(i);
+            profilePic = (ParseFile) user.fetch().get("profilePic");
+            if (user.fetch().get("bio") != null) {
+                bio = user.fetch().get("bio").toString();
+            }
+            UserPublic userProfile = service.getUser(user.fetch().get("spotifyProfileId").toString());
+            Map<String, String> externalUrls = userProfile.external_urls;
+            profileUrl = externalUrls.get("spotify");
 
-            } else {
-                favGenres = favGenres + ", " + genres.get(i);
+            // favorite genres
+            ArrayList<String> genres = (ArrayList<String>) user.fetch().get("favGenres");
+            favGenres = "";
+            for (int i = 0; i < genres.size(); i++) {
+                if (i == 0) {
+                    favGenres = genres.get(i);
+
+                } else {
+                    favGenres = favGenres + ", " + genres.get(i);
+                }
+
             }
 
-        }
+            // favorite track
+            favTrack = service.getTracks(user.fetch().get("favTrack").toString()).tracks.get(0);
 
-        // favorite track
-        favTrack = service.getTracks(parseUsers[0].get("favTrack").toString()).tracks.get(0);
+            // favorite artist
+            favArtist = service.getArtists(user.fetch().get("favArtist").toString()).artists.get(0);
 
-        // favorite artist
-        favArtist = service.getArtists(parseUsers[0].get("favArtist").toString()).artists.get(0);
-
-        // favorite album
-        List<Album> albums = service.getAlbums(user.get("favAlbum").toString()).albums;
-        favAlbum = albums.get(0);
-        for (Album a : albums) {
-            if (a.images.size() != 0) {
-                if (a.images.get(0).url.equals(user.get("favAlbumImageUrl"))) {
-                    favAlbum = a;
+            // favorite album
+            List<Album> albums = service.getAlbums(user.fetch().get("favAlbum").toString()).albums;
+            favAlbum = albums.get(0);
+            for (Album a : albums) {
+                if (a.images.size() != 0) {
+                    if (a.images.get(0).url.equals(user.get("favAlbumImageUrl"))) {
+                        favAlbum = a;
+                    }
                 }
             }
-        }
 
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return null;
     }
+
+
+//    @Override
+//    protected Void doInBackground(ParseUser... parseUsers) {
+//        ParseUser user = parseUsers[0];
+//
+//        // basic info
+//        try {
+//            basic = user.fetch().get("name") + ", " + user.fetch().get("age");
+//
+//        profilePic = (ParseFile) user.fetch().get("profilePic");
+//        if (user.get("bio") != null) {
+//            bio = user.fetch().get("bio").toString();
+//        }
+//        UserPublic userProfile = service.getUser(user.fetch().get("spotifyProfileId").toString());
+//        Map<String, String> externalUrls = userProfile.external_urls;
+//        profileUrl = externalUrls.get("spotify");
+//
+//        // favorite genres
+//        ArrayList<String> genres = (ArrayList<String>) user.fetch().get("favGenres");
+//        favGenres = "";
+//        for (int i = 0; i < genres.size(); i++) {
+//            if (i == 0) {
+//                favGenres = genres.get(i);
+//
+//            } else {
+//                favGenres = favGenres + ", " + genres.get(i);
+//            }
+//
+//        }
+//
+//        // favorite track
+//        favTrack = service.getTracks(parseUsers[0].fetch().get("favTrack").toString()).tracks.get(0);
+//
+//        // favorite artist
+//        favArtist = service.getArtists(parseUsers[0].fetch().get("favArtist").toString()).artists.get(0);
+//
+//        // favorite album
+//        List<Album> albums = service.getAlbums(user.fetch().get("favAlbum").toString()).albums;
+//        favAlbum = albums.get(0);
+//        for (Album a : albums) {
+//            if (a.images.size() != 0) {
+//                if (a.images.get(0).url.equals(user.get("favAlbumImageUrl"))) {
+//                    favAlbum = a;
+//                }
+//            }
+//        }
+//
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
     @Override
     protected void onPostExecute(Void unused) {
@@ -166,6 +237,8 @@ public class LoadMatchCardTask extends AsyncTask<ParseUser, Void, Void> {
                 selectTrack(favTrack);
             }
         });
+
+        // favorite album
         tvFavAlbumCard.setText(favAlbum.name.toString());
         if (favAlbum.images.size() != 0) {
             Image image = favAlbum.images.get(0);
@@ -179,6 +252,7 @@ public class LoadMatchCardTask extends AsyncTask<ParseUser, Void, Void> {
         }
         tvFavArtistCard.setText(favArtist.name.toString());
 
+        checkSpotifyButtonClicked();
     }
 
     public void selectTrack(Track track) {
@@ -207,6 +281,17 @@ public class LoadMatchCardTask extends AsyncTask<ParseUser, Void, Void> {
             ivPlayButton.setImageResource(R.drawable.pause);
             mPlayer.resume();
         }
+    }
+
+    private void checkSpotifyButtonClicked() {
+        btnSpotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(profileUrl));
+                view.getContext().startActivity(intent);
+                Log.i(TAG, profileUrl);
+            }
+        });
     }
 
 }

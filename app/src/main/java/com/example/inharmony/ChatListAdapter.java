@@ -160,7 +160,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
             tvChatName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ProfileFragment fragment = new ProfileFragment(false, user);
+                    ProfileFragment fragment = new ProfileFragment(user);
                     Bundle bundle = new Bundle();
                     bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
                     bundle.putBoolean("newSignUp", false);
