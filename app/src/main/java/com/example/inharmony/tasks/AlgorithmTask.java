@@ -1,7 +1,6 @@
 package com.example.inharmony.tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.inharmony.AsyncResponse;
 import com.parse.ParseException;
@@ -25,6 +24,8 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
     public AsyncResponse delegate = null;
     private SpotifyService service;
 
+    public AlgorithmTask() {}
+
     public AlgorithmTask(SpotifyService service) {
         this.service = service;
     }
@@ -39,33 +40,30 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
         List<Double> valence = new ArrayList<>();
         Pager<Track> topTracks = service.getTopTracks();
 
-        if (topTracks.items.size() == 0) {
-            Log.i("song id", "no size");
-        }
         int i = 1;
         for (Track track : topTracks.items) {
-            Log.i(TAG, "#" + i + " song: " + track.name + " " + track.artists.get(0).name);
+           // Log.i(TAG, "#" + i + " song: " + track.name + " " + track.artists.get(0).name);
             i++;
             AudioFeaturesTracks audioFeaturesTracks = service.getTracksAudioFeatures(track.id);
             List<AudioFeaturesTrack> list = audioFeaturesTracks.audio_features;
             int j = 1;
             for (AudioFeaturesTrack feature : list) {
-                Log.i("acousticness", j + ":" + String.valueOf(feature.acousticness));
+               // Log.i("acousticness", j + ":" + String.valueOf(feature.acousticness));
                 acousticness.add((double) feature.acousticness);
 
-                Log.i("danceability", j + ":" + String.valueOf(feature.danceability));
+               // Log.i("danceability", j + ":" + String.valueOf(feature.danceability));
                 danceability.add((double) feature.danceability);
 
-                Log.i("energy", j + ":" + String.valueOf(feature.energy));
+               // Log.i("energy", j + ":" + String.valueOf(feature.energy));
                 energy.add((double) feature.energy);
 
-                Log.i("instrumentalness", j + ":" + String.valueOf(feature.instrumentalness));
+               // Log.i("instrumentalness", j + ":" + String.valueOf(feature.instrumentalness));
                 instrumentalness.add((double) feature.instrumentalness);
 
-                Log.i("speechiness", j + ":" + String.valueOf(feature.speechiness));
+                //Log.i("speechiness", j + ":" + String.valueOf(feature.speechiness));
                 speechiness.add((double) feature.speechiness);
 
-                Log.i("valence", j + ":" + String.valueOf(feature.valence));
+               // Log.i("valence", j + ":" + String.valueOf(feature.valence));
                 valence.add((double) feature.valence);
                 j++;
             }
@@ -116,8 +114,8 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
                     e.printStackTrace();
                 }
             }
-            Log.i(TAG, "featureavgs: " + featureAvgs.toString());
-            Log.i(TAG, "featureweight" + featureWeights.toString());
+            //Log.i(TAG, "featureavgs: " + featureAvgs.toString());
+            //Log.i(TAG, "featureweight" + featureWeights.toString());
             return data;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -125,7 +123,7 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
         return new ArrayList<>();
     }
 
-    private Double calculateAverage(List<Double> list) {
+    public Double calculateAverage(List<Double> list) {
         double total = 0;
         for (Double number : list) {
             total += number;
@@ -133,43 +131,38 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
         return total / list.size();
     }
 
-    private Double calculateStandardDeviation(List<Double> list) {
+    public Double calculateStandardDeviation(List<Double> list) {
         double sum = 0;
         double mean = 0;
         double sd = 0;
         double sq = 0;
         double result = 0;
-        System.out.println("Elements are:");
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i));
-        }
 
         for (int i = 0; i < list.size(); i++) {
-            sum = sum + list.get(i);
+            sum += list.get(i);
         }
 
         mean = sum / list.size();
 
         for (int i = 0; i < list.size(); i++) {
-            sd = (double) (sd + Math.pow((list.get(i) - mean), 2));
+            sd += (double) (Math.pow((list.get(i) - mean), 2));
         }
 
         sq = sd / list.size();
         result = (double) Math.sqrt(sq);
-        Log.i("Standard Deviation", String.valueOf(result));
+        //Log.i("Standard Deviation", String.valueOf(result));
         return result;
     }
 
-    private double calculateWeight(List<Double> list) {
+    public double calculateWeight(List<Double> list) {
         double standardDeviation = calculateStandardDeviation(list);
         double result = (double) (10/(standardDeviation + 0.3) - 5);
-        Log.i("weight", String.valueOf(result));
         return result;
     }
 
     @Override
     protected void onPostExecute(List<JSONArray> jsonArray) {
-        Log.i(TAG, "post execute");
+        //Log.i(TAG, "post execute");
         delegate.processFinish(jsonArray);
     }
 }

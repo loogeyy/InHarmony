@@ -237,4 +237,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvName" />
 
+    <ImageView
+        android:id="@+id/btnSpotifyProfile"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/spotify_redirect_logo"
+        app:layout_constraintBottom_toBottomOf="@+id/ivChatProfilePic"
+        app:layout_constraintEnd_toEndOf="@+id/ivChatProfilePic"
+        android:clickable="true"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/ivChatProfilePic"
+        app:layout_constraintTop_toTopOf="@+id/ivChatProfilePic"
+        app:layout_constraintVertical_bias="0.92"
+        app:srcCompat="@drawable/spotify_redirect_logo"
+        tools:srcCompat="@drawable/spotify_redirect_logo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

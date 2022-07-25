@@ -1,48 +1,36 @@
 package com.example.inharmony.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.loader.content.AsyncTaskLoader;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.inharmony.CardAdapter;
 import com.example.inharmony.Match;
-import com.example.inharmony.Player;
 import com.example.inharmony.R;
 import com.example.inharmony.Card;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.Parse;
+
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.AudioFeaturesTrack;
-import kaaes.spotify.webapi.android.models.AudioFeaturesTracks;
-import kaaes.spotify.webapi.android.models.Pager;
-import kaaes.spotify.webapi.android.models.Track;
 
 
 public class MatchingFragment extends Fragment {
@@ -58,14 +46,11 @@ public class MatchingFragment extends Fragment {
 
     ArrayList<Card> rowItems;
 
-    public MatchingFragment() {
-        // Required empty public constructor
-    }
+    public MatchingFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_matching, container, false);
     }
 
@@ -86,15 +71,24 @@ public class MatchingFragment extends Fragment {
         service = spotifyApi.getService();
 
         rowItems = new ArrayList<Card>();
+        arrayAdapter = new CardAdapter(getContext(), R.layout.item, rowItems, token);
 
-        arrayAdapter = new CardAdapter(getContext(), R.layout.item, rowItems, token, newSignUp);
+        SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) view.findViewById(R.id.flingContainer);
+
+        List<ParseUser> potentialMatches = (List<ParseUser>) ParseUser.getCurrentUser().get("potentialMatches");
         try {
             updatePotentialMatches();
+//            if (potentialMatches.size() == 0) {
+//                Log.i(TAG, "updating potential matches");
+//                updatePotentialMatches();
+//            }
+//            else {
+//                Log.i(TAG, "no need to update potential matches");
+//                populateCards(potentialMatches);
+//            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-        SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) view.findViewById(R.id.flingContainer);
 
         flingContainer.setAdapter(arrayAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
@@ -197,6 +191,10 @@ public class MatchingFragment extends Fragment {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
+                if (rowItems.size() == 0) {
+                    tvNoMatches.setVisibility(View.VISIBLE);
+                    tvNoMatches.setText("Uh Oh! There are no more users to match with.");
+                }
                 try {
                     if (itemsInAdapter == 0) {
                         updatePotentialMatches();
@@ -204,12 +202,7 @@ public class MatchingFragment extends Fragment {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                if (rowItems.size() == 0) {
-                    tvNoMatches.setVisibility(View.VISIBLE);
-                    tvNoMatches.setText("Uh Oh! There are no more users to match with.");
-                } else {
-                    //tvNoMatches.setVisibility(View.INVISIBLE);
-                }
+
             }
 
             @Override
@@ -217,6 +210,25 @@ public class MatchingFragment extends Fragment {
 
             }
         });
+    }
+
+    private void populateCards(List<ParseUser> potentialMatches) {
+        Log.i(TAG, "populateCards");
+        ParseQuery<Match> matches = ParseQuery.getQuery(Match.class);
+        matches.whereEqualTo("userOne", ParseUser.getCurrentUser());
+        try {
+            List<Match> repeat = matches.find();
+
+            for (ParseUser potentialMatch : potentialMatches) {
+                if (!repeat.contains(potentialMatch)) {
+                    Card card = new Card(potentialMatch);
+                    rowItems.add(card);
+                    arrayAdapter.notifyDataSetChanged();
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showMatchDialog(ParseUser matchedUser) {
@@ -231,16 +243,22 @@ public class MatchingFragment extends Fragment {
     }
 
     //THE ALGORITHM
-    private double similarityScore(ParseUser currentUser, ParseUser user) {
-        int FEATURE_LIST_SIZE = 6;
+    public double similarityScore(ParseUser currentUser, ParseUser user) {
+
         ArrayList<Double> myFeatureAvgs = (ArrayList<Double>) currentUser.get("featureAvgs");
         ArrayList<Double> myFeatureWeights = (ArrayList<Double>) currentUser.get("featureWeights");
 
         ArrayList<Double> otherFeatureAvgs = (ArrayList<Double>) user.get("featureAvgs");
         ArrayList<Double> otherFeatureWeights = (ArrayList<Double>) user.get("featureWeights");
 
+        return calculateScore(myFeatureAvgs, myFeatureWeights, otherFeatureAvgs, otherFeatureWeights);
+    }
+
+    public double calculateScore(List<Double> myFeatureAvgs, List<Double> myFeatureWeights, List<Double> otherFeatureAvgs, List<Double> otherFeatureWeights) {
         double totalSum = 0;
         double totalSize = 0;
+
+        int FEATURE_LIST_SIZE = 6;
 
         for (int i = 0; i < FEATURE_LIST_SIZE; i++) {
             double difference = (double)Math.abs((myFeatureAvgs.get(i) - otherFeatureAvgs.get(i)));
@@ -249,12 +267,12 @@ public class MatchingFragment extends Fragment {
             totalSize += (myFeatureWeights.get(i) + otherFeatureWeights.get(i));
         }
         double result = totalSum / totalSize;
-        Log.i("Results", user.getString("bio") + " and " + currentUser.getString("bio") + ": " + result);
         return result;
     }
 
     //refresh list of potential matches and prevent repeats
     private void updatePotentialMatches() throws ParseException {
+        Log.i(TAG, "updatePotentialMatches");
         List<ParseUser> users = new ArrayList<>();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         try {
@@ -284,7 +302,8 @@ public class MatchingFragment extends Fragment {
 
                 if (objects.size() == 0 && existing.size() == 0)  {
                     double score = similarityScore(ParseUser.getCurrentUser(), user);
-                    double threshold = 0.05; // maximum difference
+                    //Log.i(TAG, ParseUser.getCurrentUser().getUsername() + " " + ParseUser.getCurrentUser().get("favGenres").toString() + " and " + user.getUsername() + " " + user.get("favGenres").toString() + " " + score);
+                    double threshold = 0.06; // maximum difference
                     if (score < threshold) {
                         potentialMatchesList.put(user);
                         Card card = new Card(user);
@@ -294,7 +313,6 @@ public class MatchingFragment extends Fragment {
                 }
             }
         }
-
         ParseUser.getCurrentUser().put("potentialMatches", potentialMatchesList);
         ParseUser.getCurrentUser().save();
     }

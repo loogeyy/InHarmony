@@ -93,6 +93,7 @@ public class MatchPopupFragment extends DialogFragment {
         btnNewChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                alert.dismiss();
                 ChatFragment fragment = new ChatFragment();
 
                 Bundle bundle = new Bundle();
@@ -101,8 +102,7 @@ public class MatchPopupFragment extends DialogFragment {
                 bundle.putString(ChatFragment.EXTRA_TOKEN, token);
 
                 fragment.setArguments(bundle);
-                ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-
+                ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).commit();
             }
         });
 

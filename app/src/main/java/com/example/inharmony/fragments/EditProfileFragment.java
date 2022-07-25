@@ -94,7 +94,6 @@ public class EditProfileFragment extends Fragment {
     private ImageView ivChangeProfilePic;
     private BottomNavigationView bottomMenu;
 
-
     private TextView tvEditFavTrack;
     private TextView tvEditFavAlbum;
     private TextView tvEditFavArtist;
@@ -106,6 +105,7 @@ public class EditProfileFragment extends Fragment {
 
     private String username;
     private String password;
+    private String spotifyProfileId;
 
     // bundle values
     private String token;
@@ -125,10 +125,7 @@ public class EditProfileFragment extends Fragment {
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
     private List<String> genreList = new ArrayList<>();
 
-    public EditProfileFragment() {
-        // Required empty public constructor
-    }
-
+    public EditProfileFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -213,6 +210,7 @@ public class EditProfileFragment extends Fragment {
             public void run() {
                 username = service.getMe().email;
                 password = service.getMe().id;
+                spotifyProfileId = service.getMe().id;
 
                 service.getSeedsGenres(new Callback<SeedsGenres>() {
                     @Override
@@ -317,7 +315,6 @@ public class EditProfileFragment extends Fragment {
         btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String name;
                 Integer age;
                 JSONArray selectedGenres = new JSONArray();
@@ -381,7 +378,7 @@ public class EditProfileFragment extends Fragment {
                     }
 
                     try {
-                        createUser(username, password, name, age, bio, selectedGenres, photo, favTrack, favArtist, favAlbum, featureAvgs, featureWeights, token);
+                        createUser(username, password, name, age, bio, selectedGenres, photo, favTrack, favArtist, favAlbum, featureAvgs, featureWeights, token, spotifyProfileId);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -404,10 +401,6 @@ public class EditProfileFragment extends Fragment {
                             ParseUser.getCurrentUser().put("favAlbumImageUrl", favAlbum.images.get(0).url);
                         }
                     }
-
-                    SpotifyApi spotifyApi = new SpotifyApi();
-                    spotifyApi.setAccessToken(token);
-                    SpotifyService service = spotifyApi.getService();
 
                     if (!TextUtils.isEmpty(etName.getText())) {
                         name = etName.getText().toString();
@@ -446,6 +439,7 @@ public class EditProfileFragment extends Fragment {
                     }
                     ParseUser.getCurrentUser().saveInBackground();
                     toProfileFragment();
+
                 }
 
             }
@@ -455,7 +449,7 @@ public class EditProfileFragment extends Fragment {
     private void toProfileFragment() {
         bottomMenu.setVisibility(View.VISIBLE);
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        Fragment fragment = new ProfileFragment(true, ParseUser.getCurrentUser());
+        Fragment fragment = new ProfileFragment(ParseUser.getCurrentUser());
         Bundle bundle = new Bundle();
         bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
         bundle.putBoolean("newSignUp", false);
@@ -636,7 +630,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     // add new user to the database
-    private void createUser(String username, String password, String name, Integer age, String bio, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, JSONArray featureAvgs, JSONArray featureWeights, String token) throws ParseException {
+    private void createUser(String username, String password, String name, Integer age, String bio, JSONArray selectedGenres, ParseFile parseFile, Track track, Artist artist, AlbumSimple album, JSONArray featureAvgs, JSONArray featureWeights, String token, String spotifyProfileId) throws ParseException {
         ParseUser user = new ParseUser();
         user.setUsername(username);
         user.setPassword(password);
@@ -648,6 +642,8 @@ public class EditProfileFragment extends Fragment {
         user.put("favAlbum", album.id);
         user.put("featureAvgs", featureAvgs);
         user.put("featureWeights", featureWeights);
+        user.put("spotifyProfileId", spotifyProfileId);
+        user.put("potentialMatches", new JSONArray());
 
         if (bio != null) {
             user.put("bio", bio);

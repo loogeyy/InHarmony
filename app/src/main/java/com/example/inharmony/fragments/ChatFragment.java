@@ -212,7 +212,7 @@ public class ChatFragment extends Fragment {
                     ft.add(R.id.flContainer, fragment);
                 }
                 ft.show(fragment);
-                ft.hide(ChatFragment.this);
+                ft.hide(ChatFragment.this).addToBackStack(null);
                 ft.commit();
             }
         });
@@ -302,7 +302,7 @@ public class ChatFragment extends Fragment {
         btnChatProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProfileFragment fragment = new ProfileFragment(false, user);
+                ProfileFragment fragment = new ProfileFragment(user);
                 Bundle bundle = new Bundle();
                 bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
                 bundle.putBoolean("newSignUp", false);

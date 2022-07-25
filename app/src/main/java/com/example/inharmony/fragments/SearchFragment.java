@@ -146,7 +146,7 @@ public class SearchFragment extends Fragment implements Search.View {
                     bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                     bundle.putParcelable("selectedTrack", track);
                     getActivity().getSupportFragmentManager().setFragmentResult("selectedTrack", bundle);
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).show(fragment).commit();
                 }
 }
 
