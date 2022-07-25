@@ -75,7 +75,7 @@ public class ExampleUnitTest {
         otherFeatureAvgs = Arrays.asList(0.1, 0.1, 0.1, 0.1, 0.1, 0.1);
         otherFeatureWeights = Arrays.asList(20.0, 20.0, 20.0, 20.0, 20.0, 20.0);
 
-        // difference score < 0.05 in order for it to be considered a potential match
+        // difference score < 0.06 in order for it to be considered a potential match
         assertEquals(0, matchingFragment.calculateScore(myFeatureAvgs, myFeatureWeights, otherFeatureAvgs, otherFeatureWeights), 0.001);
 
         // change weights

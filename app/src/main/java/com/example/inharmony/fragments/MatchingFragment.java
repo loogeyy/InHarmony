@@ -77,14 +77,15 @@ public class MatchingFragment extends Fragment {
 
         List<ParseUser> potentialMatches = (List<ParseUser>) ParseUser.getCurrentUser().get("potentialMatches");
         try {
-            if (potentialMatches.size() == 0) {
-                Log.i(TAG, "updating potential matches");
-                updatePotentialMatches();
-            }
-            else {
-                Log.i(TAG, "no need to update potential matches");
-                populateCards(potentialMatches);
-            }
+            updatePotentialMatches();
+//            if (potentialMatches.size() == 0) {
+//                Log.i(TAG, "updating potential matches");
+//                updatePotentialMatches();
+//            }
+//            else {
+//                Log.i(TAG, "no need to update potential matches");
+//                populateCards(potentialMatches);
+//            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -213,15 +214,20 @@ public class MatchingFragment extends Fragment {
 
     private void populateCards(List<ParseUser> potentialMatches) {
         Log.i(TAG, "populateCards");
-        for (ParseUser potentialMatch : potentialMatches) {
-            try {
-                Log.i(TAG, potentialMatch.fetch().getUsername());
-            } catch (ParseException e) {
-                e.printStackTrace();
+        ParseQuery<Match> matches = ParseQuery.getQuery(Match.class);
+        matches.whereEqualTo("userOne", ParseUser.getCurrentUser());
+        try {
+            List<Match> repeat = matches.find();
+
+            for (ParseUser potentialMatch : potentialMatches) {
+                if (!repeat.contains(potentialMatch)) {
+                    Card card = new Card(potentialMatch);
+                    rowItems.add(card);
+                    arrayAdapter.notifyDataSetChanged();
+                }
             }
-            Card card = new Card(potentialMatch);
-            rowItems.add(card);
-            arrayAdapter.notifyDataSetChanged();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
@@ -296,18 +302,17 @@ public class MatchingFragment extends Fragment {
 
                 if (objects.size() == 0 && existing.size() == 0)  {
                     double score = similarityScore(ParseUser.getCurrentUser(), user);
-                    double threshold = 0.05; // maximum difference
+                    //Log.i(TAG, ParseUser.getCurrentUser().getUsername() + " " + ParseUser.getCurrentUser().get("favGenres").toString() + " and " + user.getUsername() + " " + user.get("favGenres").toString() + " " + score);
+                    double threshold = 0.06; // maximum difference
                     if (score < threshold) {
                         potentialMatchesList.put(user);
                         Card card = new Card(user);
                         rowItems.add(card);
-                        //arrayAdapter.notifyDataSetChanged();
+                        arrayAdapter.notifyDataSetChanged();
                     }
                 }
             }
         }
-
-        arrayAdapter.notifyDataSetChanged();
         ParseUser.getCurrentUser().put("potentialMatches", potentialMatchesList);
         ParseUser.getCurrentUser().save();
     }

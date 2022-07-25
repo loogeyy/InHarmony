@@ -212,7 +212,7 @@ public class ChatFragment extends Fragment {
                     ft.add(R.id.flContainer, fragment);
                 }
                 ft.show(fragment);
-                ft.hide(ChatFragment.this);
+                ft.hide(ChatFragment.this).addToBackStack(null);
                 ft.commit();
             }
         });

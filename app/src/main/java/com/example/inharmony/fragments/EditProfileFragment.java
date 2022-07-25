@@ -315,7 +315,6 @@ public class EditProfileFragment extends Fragment {
         btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String name;
                 Integer age;
                 JSONArray selectedGenres = new JSONArray();
@@ -440,6 +439,7 @@ public class EditProfileFragment extends Fragment {
                     }
                     ParseUser.getCurrentUser().saveInBackground();
                     toProfileFragment();
+
                 }
 
             }

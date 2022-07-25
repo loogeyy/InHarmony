@@ -1,7 +1,6 @@
 package com.example.inharmony.tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.inharmony.AsyncResponse;
 import com.parse.ParseException;

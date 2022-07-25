@@ -46,11 +46,6 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = "MyProfileFragment";
 
     private ParseUser user;
-
-    private String profileUrl;
-    private Track favTrack;
-    private Artist favArtist;
-    private AlbumSimple favAlbum;
     private SpotifyService service;
 
 
