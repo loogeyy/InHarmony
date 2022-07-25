@@ -25,6 +25,8 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
     public AsyncResponse delegate = null;
     private SpotifyService service;
 
+    public AlgorithmTask() {}
+
     public AlgorithmTask(SpotifyService service) {
         this.service = service;
     }
@@ -122,7 +124,7 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
         return new ArrayList<>();
     }
 
-    private Double calculateAverage(List<Double> list) {
+    public Double calculateAverage(List<Double> list) {
         double total = 0;
         for (Double number : list) {
             total += number;
@@ -130,7 +132,7 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
         return total / list.size();
     }
 
-    private Double calculateStandardDeviation(List<Double> list) {
+    public Double calculateStandardDeviation(List<Double> list) {
         double sum = 0;
         double mean = 0;
         double sd = 0;
@@ -138,13 +140,13 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
         double result = 0;
 
         for (int i = 0; i < list.size(); i++) {
-            sum = sum + list.get(i);
+            sum += list.get(i);
         }
 
         mean = sum / list.size();
 
         for (int i = 0; i < list.size(); i++) {
-            sd = (double) (sd + Math.pow((list.get(i) - mean), 2));
+            sd += (double) (Math.pow((list.get(i) - mean), 2));
         }
 
         sq = sd / list.size();
@@ -153,10 +155,9 @@ public class AlgorithmTask extends AsyncTask<Void, Void, List<JSONArray>> {
         return result;
     }
 
-    private double calculateWeight(List<Double> list) {
+    public double calculateWeight(List<Double> list) {
         double standardDeviation = calculateStandardDeviation(list);
         double result = (double) (10/(standardDeviation + 0.3) - 5);
-        //Log.i("weight", String.valueOf(result));
         return result;
     }
 

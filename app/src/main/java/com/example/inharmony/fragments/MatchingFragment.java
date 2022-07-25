@@ -238,14 +238,21 @@ public class MatchingFragment extends Fragment {
 
     //THE ALGORITHM
     public double similarityScore(ParseUser currentUser, ParseUser user) {
-        int FEATURE_LIST_SIZE = 6;
+
         ArrayList<Double> myFeatureAvgs = (ArrayList<Double>) currentUser.get("featureAvgs");
         ArrayList<Double> myFeatureWeights = (ArrayList<Double>) currentUser.get("featureWeights");
 
         ArrayList<Double> otherFeatureAvgs = (ArrayList<Double>) user.get("featureAvgs");
         ArrayList<Double> otherFeatureWeights = (ArrayList<Double>) user.get("featureWeights");
+
+        return calculateScore(myFeatureAvgs, myFeatureWeights, otherFeatureAvgs, otherFeatureWeights);
+    }
+
+    public double calculateScore(List<Double> myFeatureAvgs, List<Double> myFeatureWeights, List<Double> otherFeatureAvgs, List<Double> otherFeatureWeights) {
         double totalSum = 0;
         double totalSize = 0;
+
+        int FEATURE_LIST_SIZE = 6;
 
         for (int i = 0; i < FEATURE_LIST_SIZE; i++) {
             double difference = (double)Math.abs((myFeatureAvgs.get(i) - otherFeatureAvgs.get(i)));
@@ -254,7 +261,6 @@ public class MatchingFragment extends Fragment {
             totalSize += (myFeatureWeights.get(i) + otherFeatureWeights.get(i));
         }
         double result = totalSum / totalSize;
-        //Log.i("Results", user.getString("bio") + " and " + currentUser.getString("bio") + ": " + result);
         return result;
     }
 
