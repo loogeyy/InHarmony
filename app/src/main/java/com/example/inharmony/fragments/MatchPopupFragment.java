@@ -102,7 +102,9 @@ public class MatchPopupFragment extends DialogFragment {
                 bundle.putString(ChatFragment.EXTRA_TOKEN, token);
 
                 fragment.setArguments(bundle);
-                ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment, "CHATFRAGMENT").addToBackStack(null).commit();
+
+               // ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).commit();
             }
         });
 
