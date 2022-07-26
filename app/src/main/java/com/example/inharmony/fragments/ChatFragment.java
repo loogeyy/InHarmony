@@ -65,15 +65,12 @@ public class ChatFragment extends Fragment {
     private boolean firstLoad;
     ChatAdapter chatAdapter;
 
-    public ChatFragment() {
-        // Required empty public constructor
-    }
+    public ChatFragment() {}
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
@@ -153,28 +150,13 @@ public class ChatFragment extends Fragment {
         });
     }
 
-   // static final long POLL_INTERVAL = TimeUnit.SECONDS.toMillis(3);
-    //Handler myHandler = new android.os.Handler();
-//    Runnable mRefreshMessagesRunnable = new Runnable() {
-//        @Override
-//        public void run() {
-//            refreshMessages();
-//            //myHandler.postDelayed(this, POLL_INTERVAL);
-//        }
-//    };
-
     @Override
     public void onResume() {
         super.onResume();
-
-        // Only start checking for new messages when the app becomes active in foreground
-       // myHandler.postDelayed(mRefreshMessagesRunnable, POLL_INTERVAL);
-    }
+ }
 
     @Override
     public void onPause() {
-        // Stop background task from refreshing messages, to avoid unnecessary traffic & battery drain
-        //myHandler.removeCallbacksAndMessages(null);
         super.onPause();
     }
 
@@ -268,8 +250,6 @@ public class ChatFragment extends Fragment {
                     e.printStackTrace();
                 }
                 ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
-                // parseQuery.whereNotEqualTo(USER_ID_KEY, ParseUser.getCurrentUser().getObjectId());
-
                 SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
                 subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, ((query, object) -> {
                     messages.add(0, object);

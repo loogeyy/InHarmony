@@ -76,9 +76,6 @@ public class EditProfileFragment extends Fragment {
 
     static final String TAG = "EditProfileFragment";
 
-    public static String FAV_ALBUM = "FAV_ALBUM";
-    public static String FAV_TRACK = "FAV_TRACK";
-    public static String FAV_ARTIST = "FAV_ARTIST";
     public static String EXTRA_TOKEN = "EXTRA_TOKEN";
 
     private EditText etAge;
@@ -100,8 +97,6 @@ public class EditProfileFragment extends Fragment {
     private ImageView ivEditFavTrack;
     private ImageView ivEditFavAlbum;
     private ImageView ivEditFavArtist;
-
-    private Search.ActionListener mActionListener;
 
     private String username;
     private String password;
@@ -136,28 +131,7 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        etAge = view.findViewById(R.id.etAge);
-        etName = view.findViewById(R.id.etName);
-        genres = view.findViewById(R.id.genres);
-        btnFavSong = view.findViewById(R.id.btnFavSong);
-        btnFavAlbum = view.findViewById(R.id.btnFavAlbum);
-        etChangeBio = view.findViewById(R.id.etChangeBio);
-        btnChangePic = view.findViewById(R.id.btnChangePic);
-        btnFavArtist = view.findViewById(R.id.btnFavArtist);
-        tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
-        bottomMenu = getActivity().findViewById(R.id.bottomMenu);
-        btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
-        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
-
-        tvEditFavTrack = view.findViewById(R.id.tvEditFavTrack);
-        tvEditFavAlbum = view.findViewById(R.id.tvEditFavAlbum);
-        tvEditFavArtist = view.findViewById(R.id.tvEditFavArtist);
-
-        ivEditFavTrack = view.findViewById(R.id.ivEditFavTrack);
-        ivEditFavAlbum = view.findViewById(R.id.ivEditFavAlbum);
-        ivEditFavArtist = view.findViewById(R.id.ivEditFavArtist);
-
+        initializeUI(view);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
@@ -240,6 +214,30 @@ public class EditProfileFragment extends Fragment {
             bottomMenu.setVisibility(View.GONE);
             ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
         }
+
+    }
+
+    private void initializeUI(View view) {
+        etAge = view.findViewById(R.id.etAge);
+        etName = view.findViewById(R.id.etName);
+        genres = view.findViewById(R.id.genres);
+        btnFavSong = view.findViewById(R.id.btnFavSong);
+        btnFavAlbum = view.findViewById(R.id.btnFavAlbum);
+        etChangeBio = view.findViewById(R.id.etChangeBio);
+        btnChangePic = view.findViewById(R.id.btnChangePic);
+        btnFavArtist = view.findViewById(R.id.btnFavArtist);
+        tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
+        bottomMenu = getActivity().findViewById(R.id.bottomMenu);
+        btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
+        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
+
+        tvEditFavTrack = view.findViewById(R.id.tvEditFavTrack);
+        tvEditFavAlbum = view.findViewById(R.id.tvEditFavAlbum);
+        tvEditFavArtist = view.findViewById(R.id.tvEditFavArtist);
+
+        ivEditFavTrack = view.findViewById(R.id.ivEditFavTrack);
+        ivEditFavAlbum = view.findViewById(R.id.ivEditFavAlbum);
+        ivEditFavArtist = view.findViewById(R.id.ivEditFavArtist);
 
     }
 
@@ -611,13 +609,7 @@ public class EditProfileFragment extends Fragment {
         genres.setClearText("Reset");
         genres.setItems(generateGenresList(genreList), new MultiSpinnerListener() {
             @Override
-            public void onItemsSelected(List<KeyPairBoolData> items) {
-                for (int i = 0; i < items.size(); i++) {
-                    if (items.get(i).isSelected()) {
-                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
-                    }
-                }
-            }
+            public void onItemsSelected(List<KeyPairBoolData> items) {}
         });
         // maximum of 3 genres can be selected
         genres.setLimit(3, new MultiSpinnerSearch.LimitExceedListener() {
@@ -664,7 +656,9 @@ public class EditProfileFragment extends Fragment {
                             @Override
                             public void done(ParseException e) {
                                 if (e != null) {
-                                    return;
+                                    Log.i(TAG, e.toString());
+                                } else {
+                                    toProfileFragment();
                                 }
                             }
                         });
@@ -678,7 +672,7 @@ public class EditProfileFragment extends Fragment {
                 @Override
                 public void done(ParseException e) {
                     if (e != null) {
-                        return;
+                        Log.i(TAG, e.toString());
                     } else {
                         toProfileFragment();
                     }
@@ -705,7 +699,6 @@ public class EditProfileFragment extends Fragment {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         photoFile = getPhotoFileUri(photoFileName);
 
-        Log.i("CONTEXT", getContext().toString());
         Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
