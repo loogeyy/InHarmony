@@ -101,7 +101,7 @@ public class ChatFragment extends Fragment {
         }
 
         tvChatTitle.setText("Chat with " + user.get("name"));
-        chatAdapter = new ChatAdapter(getContext(), user, messages, token);
+        chatAdapter = new ChatAdapter(getContext(), messages, token);
         rvChat.setAdapter(chatAdapter);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());

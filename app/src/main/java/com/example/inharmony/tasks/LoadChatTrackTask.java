@@ -2,7 +2,6 @@ package com.example.inharmony.tasks;
 
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -16,10 +15,6 @@ import com.example.inharmony.Message;
 import com.example.inharmony.Player;
 import com.example.inharmony.PlayerService;
 import com.example.inharmony.R;
-import com.example.inharmony.fragments.MatchingFragment;
-import com.parse.ParseUser;
-
-import org.w3c.dom.Text;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -77,7 +72,6 @@ public class LoadChatTrackTask extends AsyncTask<Message, Void, Track> {
     @Override
     protected Track doInBackground(Message... messages) {
         Track track = service.getTracks(messages[0].get("trackId").toString()).tracks.get(0);
-        // Log.i("LoadTrackTask", String.valueOf(parseUsers[0].getUsername()));
         return track;
     }
 
@@ -98,7 +92,6 @@ public class LoadChatTrackTask extends AsyncTask<Message, Void, Track> {
             ivPlayOutgoing.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i(TAG, "Clicked: " + track.name.toString());
                     SpotifyApi spotifyApi = new SpotifyApi();
                     spotifyApi.setAccessToken(token);
                     selectTrack(track);
@@ -152,7 +145,6 @@ public class LoadChatTrackTask extends AsyncTask<Message, Void, Track> {
         }
 
         else if (mPlayer.isPlaying()) {
-            Log.i(TAG, "Pause");
             mPlayer.pause();
             if (sendType) {
                 ivPlayOutgoing.setImageResource(R.drawable.play);
@@ -160,7 +152,7 @@ public class LoadChatTrackTask extends AsyncTask<Message, Void, Track> {
                 ivPlayIncoming.setImageResource(R.drawable.play);
             }
         } else {
-            Log.i(TAG, "Resume");if (sendType) {
+            if (sendType) {
                 ivPlayOutgoing.setImageResource(R.drawable.pause);
             } else {
                 ivPlayIncoming.setImageResource(R.drawable.pause);

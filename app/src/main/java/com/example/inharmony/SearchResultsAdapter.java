@@ -1,7 +1,6 @@
 package com.example.inharmony;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistSimple;
@@ -42,9 +40,9 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
         public ViewHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.entity_title);
-            subtitle = (TextView) itemView.findViewById(R.id.entity_subtitle);
-            image = (ImageView) itemView.findViewById(R.id.entity_image);
+            title = itemView.findViewById(R.id.entity_title);
+            subtitle = itemView.findViewById(R.id.entity_subtitle);
+            image = itemView.findViewById(R.id.entity_image);
             itemView.setOnClickListener(this);
         }
 
@@ -150,22 +148,13 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             }
 
             AlbumSimple album = mAlbums.get(position);
-            AlbumSimple albums = mAlbums.get(position);
 
             holder.title.setText(album.name);
-            List<String> names = new ArrayList<>();
-            //can't do this with albumsimple :(
-//            for (ArtistSimple i : album.artists) {
-//                names.add(i.name);
-//            }
-//            Joiner joiner = Joiner.on(", ");
-//            holder.subtitle.setText(joiner.join(names));
 
             if (album.images.size() != 0) {
                 Image image = album.images.get(0);
                 Picasso.with(mContext).load(image.url).into(holder.image);
             }
-
         }
     }
 

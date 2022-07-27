@@ -1,10 +1,7 @@
 package com.example.inharmony;
 
 import android.content.Context;
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,21 +11,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.inharmony.fragments.ChatFragment;
-import com.example.inharmony.fragments.EditProfileFragment;
 import com.example.inharmony.fragments.ProfileFragment;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
-import org.parceler.Parcels;
 
 import java.util.Date;
 import java.util.List;
@@ -99,9 +90,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
             try {
                 sentMessages = sentMessagesParseQuery.find();
                 receivedMessages = receivedMessagesParseQuery.find();
-                Log.i("sent messages", String.valueOf(sentMessages.size()));
-                Log.i("received messages", String.valueOf(receivedMessages.size()));
-
 
                 // new chat preview
                 if ((sentMessages.size() == 0) && receivedMessages.size() == 0) {
@@ -134,7 +122,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
                 // most recent chat preview
                 if ((receivedMessages.size() > 0) && (sentMessages.size() > 0)) {
                     Date sentLatest = (Date) sentMessages.get(0).fetchIfNeeded().getCreatedAt();
-                    Log.i("date sent", sentLatest.toString());
                     Date receivedLatest = (Date) receivedMessages.get(0).fetchIfNeeded().getCreatedAt();
                     if (sentLatest.after(receivedLatest)) {
                         if (sentMessages.get(0).getBody() != null) {

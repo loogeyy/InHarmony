@@ -1,6 +1,5 @@
 package com.example.inharmony;
 
-
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -11,9 +10,7 @@ public class Match extends ParseObject {
     public static final String USER_TWO = "userTwo";
     public static final String STATUS = "status";
 
-    public String getStatus() {
-        return getString(STATUS);
-    }
+    public String getStatus() { return getString(STATUS); }
 
     public void setStatus(String status) {
         put(STATUS, status);

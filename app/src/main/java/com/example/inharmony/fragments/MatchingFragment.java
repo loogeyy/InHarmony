@@ -73,19 +73,11 @@ public class MatchingFragment extends Fragment {
         rowItems = new ArrayList<Card>();
         arrayAdapter = new CardAdapter(getContext(), R.layout.item, rowItems, token);
 
-        SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) view.findViewById(R.id.flingContainer);
+        SwipeFlingAdapterView flingContainer = view.findViewById(R.id.flingContainer);
 
         List<ParseUser> potentialMatches = (List<ParseUser>) ParseUser.getCurrentUser().get("potentialMatches");
         try {
             updatePotentialMatches();
-//            if (potentialMatches.size() == 0) {
-//                Log.i(TAG, "updating potential matches");
-//                updatePotentialMatches();
-//            }
-//            else {
-//                Log.i(TAG, "no need to update potential matches");
-//                populateCards(potentialMatches);
-//            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -102,8 +94,6 @@ public class MatchingFragment extends Fragment {
                      Log.i(TAG, "empty");
                      tvNoMatches.setText("Uh Oh! There are no more users to match with.");
                      tvNoMatches.setVisibility(View.VISIBLE);
-                } else {
-                    //tvNoMatches.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -213,7 +203,6 @@ public class MatchingFragment extends Fragment {
     }
 
     private void populateCards(List<ParseUser> potentialMatches) {
-        Log.i(TAG, "populateCards");
         ParseQuery<Match> matches = ParseQuery.getQuery(Match.class);
         matches.whereEqualTo("userOne", ParseUser.getCurrentUser());
         try {
@@ -237,7 +226,6 @@ public class MatchingFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putBoolean("newSignUp", false);
         bundle.putString(MatchPopupFragment.EXTRA_TOKEN, token);
-        Log.i(TAG, "matched user: " + matchedUser.toString());
         matchPopupFragment.setArguments(bundle);
         matchPopupFragment.show(fm, "matchpopup");
     }
@@ -272,7 +260,6 @@ public class MatchingFragment extends Fragment {
 
     //refresh list of potential matches and prevent repeats
     private void updatePotentialMatches() throws ParseException {
-        Log.i(TAG, "updatePotentialMatches");
         List<ParseUser> users = new ArrayList<>();
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         try {
@@ -302,7 +289,6 @@ public class MatchingFragment extends Fragment {
 
                 if (objects.size() == 0 && existing.size() == 0)  {
                     double score = similarityScore(ParseUser.getCurrentUser(), user);
-                    //Log.i(TAG, ParseUser.getCurrentUser().getUsername() + " " + ParseUser.getCurrentUser().get("favGenres").toString() + " and " + user.getUsername() + " " + user.get("favGenres").toString() + " " + score);
                     double threshold = 0.06; // maximum difference
                     if (score < threshold) {
                         potentialMatchesList.put(user);

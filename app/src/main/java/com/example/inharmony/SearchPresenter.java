@@ -4,21 +4,12 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
-import android.os.Bundle;
 import android.os.IBinder;
-
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
-
-import com.example.inharmony.fragments.EditProfileFragment;
-import com.example.inharmony.fragments.SearchFragment;
-
 import java.util.List;
-
 import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
@@ -180,7 +171,6 @@ public class SearchPresenter implements Search.ActionListener {
 
     @Override
     public void loadMoreResults(String searchType) {
-        Log.d(TAG, "Load more...");
         if (searchType.equals("TRACK")) {
             mSearchPager.getNextPage("TRACK", mSearchListener);
         }
@@ -211,7 +201,6 @@ public class SearchPresenter implements Search.ActionListener {
             mPlayer.play(previewUrl);
         } else if (mPlayer.isPlaying()) {
             mPlayer.pause();
-
         } else {
             mPlayer.resume();
         }

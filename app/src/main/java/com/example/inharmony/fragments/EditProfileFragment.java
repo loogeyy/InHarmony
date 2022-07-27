@@ -667,7 +667,6 @@ public class EditProfileFragment extends Fragment {
             });
         }
         else {
-            Log.i(TAG, "new pfp not found");
             user.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -721,13 +720,9 @@ public class EditProfileFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            Log.i(TAG, "correct");
             // picture taken
             if (resultCode == RESULT_OK) {
-                // by this point we have the camera photo on disk
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                // RESIZE BITMAP, see section below
-                // Load the taken image into a preview
                 ivChangeProfilePic.setImageBitmap(takenImage);
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!" + resultCode + " request: " + requestCode, Toast.LENGTH_SHORT).show();
@@ -739,19 +734,14 @@ public class EditProfileFragment extends Fragment {
                 ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), selectedImage);
                 Bitmap bitmap = ImageDecoder.decodeBitmap(source);
 
-                // Store smaller bitmap to disk
-                // Configure byte output stream
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                // Compress the image further
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-                // Create a new file for the resized bitmap
                 File resizedFile = getPhotoFileUri(photoFileName + "_resized");
                 try {
                     resizedFile.createNewFile();
                     FileOutputStream fos = null;
                     try {
                         fos = new FileOutputStream(resizedFile);
-                        // Write the bytes of the bitmap to file
                         fos.write(bytes.toByteArray());
                         fos.close();
                     } catch (FileNotFoundException e) {
@@ -775,12 +765,8 @@ public class EditProfileFragment extends Fragment {
     // Returns the File for a photo stored on disk given the fileName
     public File getPhotoFileUri(String fileName) {
          File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-                Log.d(TAG, "failed to create directory");
-            }
         // Return the file target for the photo based on filename
         return new File(mediaStorageDir.getPath() + File.separator + fileName);
-
     }
 
 }

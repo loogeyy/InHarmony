@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide;
 import com.example.inharmony.Player;
 import com.example.inharmony.PlayerService;
 import com.example.inharmony.R;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -67,7 +66,6 @@ public class LoadMatchCardTask extends AsyncTask<Void, Void, Void> {
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i(TAG, "player is connected");
             mPlayer = ((PlayerService.PlayerBinder) service).getService();
         }
 
@@ -99,7 +97,7 @@ public class LoadMatchCardTask extends AsyncTask<Void, Void, Void> {
         ivFavArtistCard = view.findViewById(R.id.ivFavArtistCard);
         tvFavArtistCard = view.findViewById(R.id.tvFavArtistCard);
         ivProfilePicCard = view.findViewById(R.id.ivProfilePicCard);
-        Log.i(TAG, user.getUsername());
+
         view.getContext().bindService(PlayerService.getIntent(view.getContext()), mServiceConnection, Activity.BIND_AUTO_CREATE);
     }
 
@@ -259,25 +257,19 @@ public class LoadMatchCardTask extends AsyncTask<Void, Void, Void> {
 
         String previewUrl = track.preview_url;
         if (mPlayer == null) {
-            Log.i(TAG, "mPlayer is Null");
             return;
         }
 
         String currentTrackUrl = mPlayer.getCurrentTrack();
 
         if (currentTrackUrl == null || !currentTrackUrl.equals(previewUrl)) {
-            Log.i(TAG, "Play");
             mPlayer.play(previewUrl);
             ivPlayButton.setImageResource(R.drawable.pause);
-
         }
-
         else if (mPlayer.isPlaying()) {
-            Log.i(TAG, "Pause");
             mPlayer.pause();
             ivPlayButton.setImageResource(R.drawable.play);
         } else {
-            Log.i(TAG, "Resume");
             ivPlayButton.setImageResource(R.drawable.pause);
             mPlayer.resume();
         }
@@ -289,7 +281,6 @@ public class LoadMatchCardTask extends AsyncTask<Void, Void, Void> {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(profileUrl));
                 view.getContext().startActivity(intent);
-                Log.i(TAG, profileUrl);
             }
         });
     }

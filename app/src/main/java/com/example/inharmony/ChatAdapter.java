@@ -1,8 +1,6 @@
 package com.example.inharmony;
 
 import android.content.Context;
-import android.media.Image;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,14 +26,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     private List<Message> mMessages;
     private Context mContext;
     private String token;
-    private ParseUser mUser;
     private SpotifyService service;
 
     private static final int MESSAGE_OUTGOING = 0;
     private static final int MESSAGE_INCOMING = 1;
 
-    public ChatAdapter(Context context, ParseUser user, List<Message> messages, String token) {
-        mUser = user;
+    public ChatAdapter(Context context, List<Message> messages, String token) {
         mMessages = messages;
         mContext = context;
         this.token = token;
@@ -48,7 +44,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-
         Message message = mMessages.get(position);
         holder.bindMessage(message);
     }
