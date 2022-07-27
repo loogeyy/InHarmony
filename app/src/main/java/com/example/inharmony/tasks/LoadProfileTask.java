@@ -2,7 +2,6 @@ package com.example.inharmony.tasks;
 
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
@@ -18,7 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
-import com.example.inharmony.Message;
 import com.example.inharmony.Player;
 import com.example.inharmony.PlayerService;
 import com.example.inharmony.R;
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
@@ -45,7 +42,6 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
     View view;
     String token;
     SpotifyService service;
-    boolean newSignUp;
 
     private ImageView btnEditProfile;
     private ImageView ivProfilePic;
@@ -196,24 +192,20 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
         String previewUrl = track.preview_url;
 
         if (mPlayer == null) {
-            Log.i(TAG, "mPlayer is Null");
             return;
         }
 
         String currentTrackUrl = mPlayer.getCurrentTrack();
 
         if (currentTrackUrl == null || !currentTrackUrl.equals(previewUrl)) {
-            Log.i(TAG, "Play");
             mPlayer.play(previewUrl);
             ivPlayButton.setImageResource(R.drawable.pause);
 
         }
         else if (mPlayer.isPlaying()) {
-            Log.i(TAG, "Pause");
             mPlayer.pause();
             ivPlayButton.setImageResource(R.drawable.play);
         } else {
-            Log.i(TAG, "Resume");
             ivPlayButton.setImageResource(R.drawable.pause);
             mPlayer.resume();
         }
@@ -226,7 +218,6 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(profileUrl));
                 view.getContext().startActivity(intent);
-                Log.i(TAG, profileUrl);
             }
         });
     }
@@ -235,7 +226,6 @@ public class LoadProfileTask extends AsyncTask<ParseUser, Void, Void> {
         ivPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "Clicked: " + favTrack.name.toString());
                 selectTrack(favTrack);
             }
         });

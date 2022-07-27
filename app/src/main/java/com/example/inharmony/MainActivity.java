@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         handler.postDelayed(runnable = new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, "calculateTrackFeatures");
                 handler.postDelayed(runnable, delay);
                 calculateTrackFeatures();
                 ParseUser.getCurrentUser().put("featureAvgs", featureAvgs);
@@ -85,16 +84,14 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("MAINACTIVITY", "onCreate!");
         setContentView(R.layout.activity_main);
 
         //grabs intent from login including token
         Intent intent = getIntent();
         token = intent.getStringExtra(EXTRA_TOKEN);
         newSignUp = intent.getExtras().getBoolean(NEW_SIGN_UP);
-        Log.i("MAINACTIVITY NEWSIGNUP", String.valueOf(newSignUp));
         calculateTrackFeatures();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
@@ -118,8 +115,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     }
 
     private void calculateTrackFeatures() {
-        Log.i(TAG, "similarityScore");
-
         SpotifyApi spotifyApi = new SpotifyApi();
         spotifyApi.setAccessToken(token);
         SpotifyService service = spotifyApi.getService();
@@ -131,84 +126,11 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
     @Override
     public void processFinish(List<JSONArray> featureList) {
-        Log.i(TAG, "processFinish");
         featureAvgs = featureList.get(0);
         featureWeights = featureList.get(1);
         if (newSignUp) {
             configureNavigation();
         }
-//
-//        bottomMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                Fragment fragment;
-//                Bundle bundle = new Bundle();
-//                switch (item.getItemId()) {
-//                    case R.id.actionMatch:
-//                        fragment = new MatchingFragment();
-//                        bundle.putString(MatchingFragment.EXTRA_TOKEN, token);
-//                        bundle.putBoolean("newSignUp", false);
-//                        fragment.setArguments(bundle);
-//                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-//                        break;
-//
-//                    case R.id.actionMessage:
-//                        Log.d("Menu", "Profile pressed");
-//                        fragment = new ChatListFragment();
-//                        fragment.setArguments(bundle);
-//                        bundle.putString(ChatListFragment.EXTRA_TOKEN, token);
-//                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-//                        break;
-//
-//                    case R.id.actionProfile:
-//                        Log.i("MAINACTIVITY ACTIONPROFILE", "SWITCHING TO EDIT");
-//                        Log.i("MainActivity", "newSignUp: " + newSignUp);
-//                        Log.i(TAG, "featureWeights: " + featureWeights);
-//                        Log.i(TAG, "featureAvgs: " + featureAvgs);
-//                        if (ParseUser.getCurrentUser() == null) {
-//                            Log.i(TAG, "fragmentstarting");
-//                            fragment = new EditProfileFragment();
-//                            bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
-//                            bundle.putBoolean("newSignUp", true);
-//                            bundle.putString("featureAvgs", featureAvgs.toString());
-//                            bundle.putString("featureWeights", featureWeights.toString());
-//                            String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
-//                            bundle.putString("tvWelcomeText", welcomeText);
-//                            fragment.setArguments(bundle);
-//                            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
-//                        }
-//                        else {
-//                            Log.i(TAG, "fragmentstarting");
-//                            fragment = new ProfileFragment(ParseUser.getCurrentUser());
-//                            bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
-//                            bundle.putBoolean("newSignUp", false);
-//                            String welcomeText = "Edit your profile details below.";
-//                            bundle.putString("tvWelcomeText", welcomeText);
-//                            fragment.setArguments(bundle);
-//                            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-//                        }
-//                        break;
-//                    default:
-//                        Log.i("DEFAULT", "NEW EDITPROFILEFRAGMENT");
-//                        fragment = new EditProfileFragment();
-//                        if (ParseUser.getCurrentUser() == null) {
-//                            bundle.putBoolean("newSignUp", true);
-//                        } else {
-//                            bundle.putBoolean("newSignUp", false);
-//                        }
-//                        fragment.setArguments(bundle);
-//                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).addToBackStack(null).commit();
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
-//
-//        if (ParseUser.getCurrentUser() == null) {
-//            bottomMenu.setSelectedItemId(R.id.actionProfile);
-//        } else {
-//            bottomMenu.setSelectedItemId(R.id.actionMatch);
-//        }
     }
 
     private void configureNavigation() {
@@ -228,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         break;
 
                     case R.id.actionMessage:
-                        Log.d("Menu", "Profile pressed");
                         fragment = new ChatListFragment();
                         fragment.setArguments(bundle);
                         bundle.putString(ChatListFragment.EXTRA_TOKEN, token);
@@ -236,12 +157,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         break;
 
                     case R.id.actionProfile:
-                        Log.i("MAINACTIVITY ACTIONPROFILE", "SWITCHING TO EDIT");
-                        Log.i("MainActivity", "newSignUp: " + newSignUp);
-                        Log.i(TAG, "featureWeights: " + featureWeights);
-                        Log.i(TAG, "featureAvgs: " + featureAvgs);
                         if (ParseUser.getCurrentUser() == null) {
-                            Log.i(TAG, "fragmentstarting");
                             fragment = new EditProfileFragment();
                             bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
                             bundle.putBoolean("newSignUp", true);
@@ -250,11 +166,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                             String welcomeText = "It looks like you're new here! Let's start by filling out some basic profile details.";
                             bundle.putString("tvWelcomeText", welcomeText);
                             fragment.setArguments(bundle);
-                            Log.i(TAG, "switching to edit screen");
                             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "EDITPROFILE").addToBackStack(null).commit();
                         }
                         else {
-                            Log.i(TAG, "fragmentstarting");
                             fragment = new ProfileFragment(ParseUser.getCurrentUser());
                             bundle.putString(ProfileFragment.EXTRA_TOKEN, token);
                             bundle.putBoolean("newSignUp", false);
@@ -265,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         }
                         break;
                     default:
-                        Log.i("DEFAULT", "NEW EDITPROFILEFRAGMENT");
                         fragment = new EditProfileFragment();
                         if (ParseUser.getCurrentUser() == null) {
                             bundle.putBoolean("newSignUp", true);

@@ -37,8 +37,6 @@ public abstract class ResultListScrollListener extends RecyclerView.OnScrollList
             mAwaitingItems = false;
         }
 
-        Log.d(TAG, String.format("loading %s, item count: %s/%s, itemPosition %s", mAwaitingItems, mCurrentItemCount, itemCount, itemPosition));
-
         if (!mAwaitingItems && itemPosition + 1 >= itemCount - SCROLL_BUFFER) {
             mAwaitingItems = true;
             onLoadMore();

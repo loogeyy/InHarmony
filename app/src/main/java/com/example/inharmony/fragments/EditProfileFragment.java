@@ -76,9 +76,6 @@ public class EditProfileFragment extends Fragment {
 
     static final String TAG = "EditProfileFragment";
 
-    public static String FAV_ALBUM = "FAV_ALBUM";
-    public static String FAV_TRACK = "FAV_TRACK";
-    public static String FAV_ARTIST = "FAV_ARTIST";
     public static String EXTRA_TOKEN = "EXTRA_TOKEN";
 
     private EditText etAge;
@@ -100,8 +97,6 @@ public class EditProfileFragment extends Fragment {
     private ImageView ivEditFavTrack;
     private ImageView ivEditFavAlbum;
     private ImageView ivEditFavArtist;
-
-    private Search.ActionListener mActionListener;
 
     private String username;
     private String password;
@@ -136,28 +131,7 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        etAge = view.findViewById(R.id.etAge);
-        etName = view.findViewById(R.id.etName);
-        genres = view.findViewById(R.id.genres);
-        btnFavSong = view.findViewById(R.id.btnFavSong);
-        btnFavAlbum = view.findViewById(R.id.btnFavAlbum);
-        etChangeBio = view.findViewById(R.id.etChangeBio);
-        btnChangePic = view.findViewById(R.id.btnChangePic);
-        btnFavArtist = view.findViewById(R.id.btnFavArtist);
-        tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
-        bottomMenu = getActivity().findViewById(R.id.bottomMenu);
-        btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
-        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
-
-        tvEditFavTrack = view.findViewById(R.id.tvEditFavTrack);
-        tvEditFavAlbum = view.findViewById(R.id.tvEditFavAlbum);
-        tvEditFavArtist = view.findViewById(R.id.tvEditFavArtist);
-
-        ivEditFavTrack = view.findViewById(R.id.ivEditFavTrack);
-        ivEditFavAlbum = view.findViewById(R.id.ivEditFavAlbum);
-        ivEditFavArtist = view.findViewById(R.id.ivEditFavArtist);
-
+        initializeUI(view);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             token = bundle.getString(EditProfileFragment.EXTRA_TOKEN);
@@ -243,6 +217,30 @@ public class EditProfileFragment extends Fragment {
 
     }
 
+    private void initializeUI(View view) {
+        etAge = view.findViewById(R.id.etAge);
+        etName = view.findViewById(R.id.etName);
+        genres = view.findViewById(R.id.genres);
+        btnFavSong = view.findViewById(R.id.btnFavSong);
+        btnFavAlbum = view.findViewById(R.id.btnFavAlbum);
+        etChangeBio = view.findViewById(R.id.etChangeBio);
+        btnChangePic = view.findViewById(R.id.btnChangePic);
+        btnFavArtist = view.findViewById(R.id.btnFavArtist);
+        tvWelcomeText = view.findViewById(R.id.tvWelcomeText);
+        bottomMenu = getActivity().findViewById(R.id.bottomMenu);
+        btnUpdateProfile = view.findViewById(R.id.btnUpdateProfile);
+        ivChangeProfilePic = view.findViewById(R.id.ivChangeProfilePic);
+
+        tvEditFavTrack = view.findViewById(R.id.tvEditFavTrack);
+        tvEditFavAlbum = view.findViewById(R.id.tvEditFavAlbum);
+        tvEditFavArtist = view.findViewById(R.id.tvEditFavArtist);
+
+        ivEditFavTrack = view.findViewById(R.id.ivEditFavTrack);
+        ivEditFavAlbum = view.findViewById(R.id.ivEditFavAlbum);
+        ivEditFavArtist = view.findViewById(R.id.ivEditFavArtist);
+
+    }
+
     private void populateProfile(Track favTrack, Artist favArtist, AlbumSimple favAlbum) {
         if (!newSignUp){
             tvEditFavTrack.setText(favTrack.name.toString() + " - " + favTrack.artists.get(0).name.toString());
@@ -284,7 +282,7 @@ public class EditProfileFragment extends Fragment {
         return new Intent(context, EditProfileFragment.class);
     }
 
-    private void checkUpdatePhotoButtonClicked() {
+     private void checkUpdatePhotoButtonClicked() {
         btnChangePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -386,17 +384,14 @@ public class EditProfileFragment extends Fragment {
                 // only update user in the database
                 else {
                     if (favTrack != null) {
-                        //ParseUser.getCurrentUser().put("favTrack", favTrack.name + " - " + favTrack.artists.get(0).name);
                         ParseUser.getCurrentUser().put("favTrack", favTrack.id);
 
                     }
                     if (favArtist != null) {
                         ParseUser.getCurrentUser().put("favArtist", favArtist.id);
-                        //ParseUser.getCurrentUser().put("favArtist", favArtist.name);
                     }
                     if (favAlbum != null) {
                         ParseUser.getCurrentUser().put("favAlbum", favAlbum.id);
-                        //ParseUser.getCurrentUser().put("favAlbum", favAlbum.name);
                         if (favAlbum.images.size() != 0) {
                             ParseUser.getCurrentUser().put("favAlbumImageUrl", favAlbum.images.get(0).url);
                         }
@@ -439,9 +434,7 @@ public class EditProfileFragment extends Fragment {
                     }
                     ParseUser.getCurrentUser().saveInBackground();
                     toProfileFragment();
-
                 }
-
             }
         });
     }
@@ -482,8 +475,7 @@ public class EditProfileFragment extends Fragment {
                             if (image != null) {
                                 Glide.with(getContext()).load(image.url).into(ivEditFavTrack);
                             }
-                           }
-
+                        }
                     }
                 });
                 fragment.setArguments(bundle);
@@ -611,13 +603,7 @@ public class EditProfileFragment extends Fragment {
         genres.setClearText("Reset");
         genres.setItems(generateGenresList(genreList), new MultiSpinnerListener() {
             @Override
-            public void onItemsSelected(List<KeyPairBoolData> items) {
-                for (int i = 0; i < items.size(); i++) {
-                    if (items.get(i).isSelected()) {
-                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
-                    }
-                }
-            }
+            public void onItemsSelected(List<KeyPairBoolData> items) {}
         });
         // maximum of 3 genres can be selected
         genres.setLimit(3, new MultiSpinnerSearch.LimitExceedListener() {
@@ -664,7 +650,9 @@ public class EditProfileFragment extends Fragment {
                             @Override
                             public void done(ParseException e) {
                                 if (e != null) {
-                                    return;
+                                    Log.i(TAG, e.toString());
+                                } else {
+                                    toProfileFragment();
                                 }
                             }
                         });
@@ -673,12 +661,11 @@ public class EditProfileFragment extends Fragment {
             });
         }
         else {
-            Log.i(TAG, "new pfp not found");
             user.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e != null) {
-                        return;
+                        Log.i(TAG, e.toString());
                     } else {
                         toProfileFragment();
                     }
@@ -705,7 +692,6 @@ public class EditProfileFragment extends Fragment {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         photoFile = getPhotoFileUri(photoFileName);
 
-        Log.i("CONTEXT", getContext().toString());
         Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
@@ -728,13 +714,9 @@ public class EditProfileFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            Log.i(TAG, "correct");
             // picture taken
             if (resultCode == RESULT_OK) {
-                // by this point we have the camera photo on disk
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                // RESIZE BITMAP, see section below
-                // Load the taken image into a preview
                 ivChangeProfilePic.setImageBitmap(takenImage);
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!" + resultCode + " request: " + requestCode, Toast.LENGTH_SHORT).show();
@@ -746,19 +728,14 @@ public class EditProfileFragment extends Fragment {
                 ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), selectedImage);
                 Bitmap bitmap = ImageDecoder.decodeBitmap(source);
 
-                // Store smaller bitmap to disk
-                // Configure byte output stream
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                // Compress the image further
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-                // Create a new file for the resized bitmap
                 File resizedFile = getPhotoFileUri(photoFileName + "_resized");
                 try {
                     resizedFile.createNewFile();
                     FileOutputStream fos = null;
                     try {
                         fos = new FileOutputStream(resizedFile);
-                        // Write the bytes of the bitmap to file
                         fos.write(bytes.toByteArray());
                         fos.close();
                     } catch (FileNotFoundException e) {
@@ -782,12 +759,8 @@ public class EditProfileFragment extends Fragment {
     // Returns the File for a photo stored on disk given the fileName
     public File getPhotoFileUri(String fileName) {
          File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-                Log.d(TAG, "failed to create directory");
-            }
         // Return the file target for the photo based on filename
         return new File(mediaStorageDir.getPath() + File.separator + fileName);
-
     }
 
 }

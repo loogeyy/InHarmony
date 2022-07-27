@@ -9,18 +9,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.inharmony.CardAdapter;
 import com.example.inharmony.ChatListAdapter;
 import com.example.inharmony.Match;
 import com.example.inharmony.R;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -28,26 +24,19 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
-import kaaes.spotify.webapi.android.SpotifyService;
-
 public class ChatListFragment extends Fragment {
     private static final String TAG = "ChatListFragment";
-    private ChatListAdapter chatListAdapter;
 
     public static String EXTRA_TOKEN = "EXTRA_TOKEN";
     private static String token;
     private boolean newSignUp;
     List<ParseUser> users;
 
-    public ChatListFragment() {
-        // Required empty public constructor
-    }
-
+    public ChatListFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_chatlist, container, false);
     }
 
@@ -73,8 +62,6 @@ public class ChatListFragment extends Fragment {
         matchesA.whereEqualTo(Match.STATUS, "matched");
         try {
             List<Match> resultsA = matchesA.find();
-            Log.i("size of matchA", String.valueOf(resultsA.size()));
-
             for (Match match : resultsA) {
                 users.add(match.getUserTwo());
                 chatListAdapter.notifyDataSetChanged();
@@ -88,8 +75,6 @@ public class ChatListFragment extends Fragment {
         matchesB.whereEqualTo(Match.STATUS, "matched");
         try {
             List<Match> resultsB = matchesB.find();
-            Log.i("size of matchB", String.valueOf(resultsB.size()));
-
             for (Match match : resultsB) {
                 users.add(match.getUserOne());
                 chatListAdapter.notifyDataSetChanged();
@@ -97,7 +82,6 @@ public class ChatListFragment extends Fragment {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Log.i("user list size", String.valueOf(users.size()));
         if (users.size() != 0) {
             tvNoChats.setVisibility(View.GONE);
             rvChats.setVisibility(View.VISIBLE);

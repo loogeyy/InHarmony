@@ -1,6 +1,5 @@
 package com.example.inharmony;
 
-import com.parse.Parse;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;

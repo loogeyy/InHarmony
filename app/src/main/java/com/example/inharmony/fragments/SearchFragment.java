@@ -62,15 +62,11 @@ public class SearchFragment extends Fragment implements Search.View {
         }
     }
 
-
-    public SearchFragment() {
-
-    }
+    public SearchFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
 
@@ -88,7 +84,7 @@ public class SearchFragment extends Fragment implements Search.View {
         mActionListener.init(token);
 
         // Setup search field
-        searchView = (SearchView) view.findViewById(R.id.search_view);
+        searchView = view.findViewById(R.id.search_view);
         if (searchType.equals("TRACK")) {
             searchView.setQueryHint("Search Tracks");
         }
@@ -102,9 +98,7 @@ public class SearchFragment extends Fragment implements Search.View {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.i("SEARCH TYPE IS", SEARCH_TYPE);
                 if (searchType.equals("TRACK")) {
-
                     mActionListener.searchTracks(query);
                     searchView.clearFocus();
                 }
@@ -140,7 +134,6 @@ public class SearchFragment extends Fragment implements Search.View {
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
                 }
                 if (bundle.getString("TYPE").equals("message")) {
-                    Log.i("TYPE", "message");
                     ChatFragment fragment = (ChatFragment) getActivity().getSupportFragmentManager().findFragmentByTag("CHATFRAGMENT");
                     Bundle bundle = new Bundle();
                     bundle.putString(EditProfileFragment.EXTRA_TOKEN, token);
@@ -171,8 +164,6 @@ public class SearchFragment extends Fragment implements Search.View {
                 getActivity().getSupportFragmentManager().setFragmentResult("favAlbum", bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).show(fragment).commit();
             }
-
-
         });
 
         resultsList = view.findViewById(R.id.search_results);
@@ -181,7 +172,6 @@ public class SearchFragment extends Fragment implements Search.View {
         resultsList.setAdapter(mAdapter);
         resultsList.addOnScrollListener(mScrollListener);
 
-        // If Activity was recreated with active search restore it
         if (savedInstanceState != null) {
             String currentQuery = savedInstanceState.getString(KEY_CURRENT_QUERY);
             if (searchType.equals("TRACK")) {

@@ -12,27 +12,22 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Pager;
-import kaaes.spotify.webapi.android.models.Track;
 
 public class LoginActivity extends AppCompatActivity {
     public static String token = null;
 
     private static final String TAG = LoginActivity.class.getSimpleName();
-    final FragmentManager fragmentManager = getSupportFragmentManager();
 
     private static final String CLIENT_ID = "8a91678afa49446c9aff1beaabe9c807";
     private static final String REDIRECT_URI = "testschema://callback";
@@ -93,9 +88,7 @@ public class LoginActivity extends AppCompatActivity {
     // handle post log in authentication screen
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        Log.i(TAG, "onActivityResult");
         super.onActivityResult(requestCode, resultCode, intent);
-        Log.i("request code", String.valueOf(requestCode));
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
@@ -103,7 +96,6 @@ public class LoginActivity extends AppCompatActivity {
                 // Response was successful and contains auth token
                 case TOKEN:
                     CredentialsHandler.setToken(this, token, response.getExpiresIn(), TimeUnit.SECONDS);
-
                     token = response.getAccessToken();
 
                     SpotifyApi spotifyApi = new SpotifyApi();
@@ -116,16 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                             String id = service.getMe().id;
                             List<String> genreList = service.getSeedsGenres().genres;
                             Pager<Artist> songId = service.getTopArtists();
-                            if (songId.items.size() == 0) {
-                                Log.i("song id", "no size");
-                            }
-                            for (Artist track : songId.items) {
-                                Log.i(TAG, "SIMILARITY: " + track.name);
-                            }
                             loginUser(email, id, token);
-                            Log.i("EMAIL", email);
-                            Log.i("ID", id);
-                            Log.i("GENRES", genreList.toString());
                         }
                     });
                     break;
@@ -145,7 +128,6 @@ public class LoginActivity extends AppCompatActivity {
     private void startMainActivity(String token, boolean signUp) {
         Intent intent = MainActivity.createIntent(this);
         intent.putExtra(MainActivity.EXTRA_TOKEN, token);
-        Log.i("SIGN UP IN LOGIN ACTIVITY", String.valueOf(signUp));
         if (signUp) {
             intent.putExtra(String.valueOf(MainActivity.NEW_SIGN_UP), true);
         } else {
@@ -158,10 +140,5 @@ public class LoginActivity extends AppCompatActivity {
     private void logError(String msg) {
         Toast.makeText(this, "Error: " + msg, Toast.LENGTH_SHORT).show();
         Log.e(TAG, msg);
-    }
-
-    private void logMessage(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        Log.d(TAG, msg);
     }
 }

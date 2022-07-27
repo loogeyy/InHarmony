@@ -19,7 +19,6 @@ import kaaes.spotify.webapi.android.SpotifyService;
 public class CardAdapter extends ArrayAdapter<Card> {
 
     private static final String TAG = "CardAdapter";
-    Context context;
     String token;
     private ParseUser user;
 
@@ -42,11 +41,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
         SpotifyService service = spotifyApi.getService();
         Card card_item = getItem(position);
         user = card_item.getUser();
-        try {
-            Log.i(TAG, user.fetch().getUsername());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+
         LoadMatchCardTask loadProfileTask = new LoadMatchCardTask(view, token, service, user);
         loadProfileTask.execute();
 

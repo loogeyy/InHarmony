@@ -30,9 +30,7 @@ public class MatchPopupFragment extends DialogFragment {
     public static String EXTRA_TOKEN = "EXTRA_TOKEN";
     private String token;
 
-    public MatchPopupFragment() {
-        // Required empty public constructor
-    }
+    public MatchPopupFragment() {}
 
     public MatchPopupFragment(ParseUser user) {
         matchedUser = user;
@@ -41,7 +39,6 @@ public class MatchPopupFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_match_popup, container, false);
     }
 
@@ -67,12 +64,11 @@ public class MatchPopupFragment extends DialogFragment {
         Button btnKeepMatching = view.findViewById(R.id.btnKeepMatching);
         Button btnNewChat = view.findViewById(R.id.btnNewChat);
 
-        Log.i("user", String.valueOf(matchedUser));
-
         tvMatchDisplay.setText("You Matched a Beat with " + matchedUser.get("name").toString() + "!");
 
         ParseFile profilePicOne = (ParseFile) matchedUser.get("profilePic");
         ParseFile profilePicTwo = (ParseFile) ParseUser.getCurrentUser().get("profilePic");
+
         if (profilePicOne != null) {
             Glide.with(getContext()).load(profilePicOne.getUrl()).into(userOne);
         }
@@ -102,12 +98,9 @@ public class MatchPopupFragment extends DialogFragment {
                 bundle.putString(ChatFragment.EXTRA_TOKEN, token);
 
                 fragment.setArguments(bundle);
-                ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContainer, fragment, "CHATFRAGMENT").addToBackStack(null).commit();
             }
         });
-
         return alert;
     }
-
-
 }
