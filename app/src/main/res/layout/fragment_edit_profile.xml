@@ -99,6 +99,7 @@
 
     <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
         android:id="@+id/genres"
+        android:theme="@style/Platform.MaterialComponents.Light"
         android:layout_width="378dp"
         android:layout_height="30dp"
         android:layout_margin="10dp"
@@ -106,14 +107,12 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/rounded_corners"
         android:dropDownWidth="wrap_content"
-        android:forceDarkAllowed="true"
         android:spinnerMode="dropdown"
         app:hintText="Select Your Top 3 Genres"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.254"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivChangeProfilePic"
-        app:textColor="@color/dark_navy" />
+        app:layout_constraintTop_toBottomOf="@+id/ivChangeProfilePic" />
 
     <Button
         android:id="@+id/btnUpdateProfile"

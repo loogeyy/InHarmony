@@ -282,7 +282,7 @@ public class EditProfileFragment extends Fragment {
         return new Intent(context, EditProfileFragment.class);
     }
 
-    private void checkUpdatePhotoButtonClicked() {
+     private void checkUpdatePhotoButtonClicked() {
         btnChangePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -384,17 +384,14 @@ public class EditProfileFragment extends Fragment {
                 // only update user in the database
                 else {
                     if (favTrack != null) {
-                        //ParseUser.getCurrentUser().put("favTrack", favTrack.name + " - " + favTrack.artists.get(0).name);
                         ParseUser.getCurrentUser().put("favTrack", favTrack.id);
 
                     }
                     if (favArtist != null) {
                         ParseUser.getCurrentUser().put("favArtist", favArtist.id);
-                        //ParseUser.getCurrentUser().put("favArtist", favArtist.name);
                     }
                     if (favAlbum != null) {
                         ParseUser.getCurrentUser().put("favAlbum", favAlbum.id);
-                        //ParseUser.getCurrentUser().put("favAlbum", favAlbum.name);
                         if (favAlbum.images.size() != 0) {
                             ParseUser.getCurrentUser().put("favAlbumImageUrl", favAlbum.images.get(0).url);
                         }
@@ -437,9 +434,7 @@ public class EditProfileFragment extends Fragment {
                     }
                     ParseUser.getCurrentUser().saveInBackground();
                     toProfileFragment();
-
                 }
-
             }
         });
     }
@@ -480,8 +475,7 @@ public class EditProfileFragment extends Fragment {
                             if (image != null) {
                                 Glide.with(getContext()).load(image.url).into(ivEditFavTrack);
                             }
-                           }
-
+                        }
                     }
                 });
                 fragment.setArguments(bundle);
